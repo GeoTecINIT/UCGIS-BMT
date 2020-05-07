@@ -1,0 +1,162 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-12 col-md-12">
+      <h1 class="title">
+        BoK Matches
+      </h1>
+      <div class="text-center" [hidden]="!isAnonymous">
+        <h5>You have limited functionality because you are not logged in. <a href="#" routerLink="/login"> Login </a> to
+          use all functionality in the tool.
+        </h5>
+      </div>
+      <div class="card card-accent-primary">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-sm-4 col-md-2"
+              tooltip="{{isAnonymous? 'Login to be able to add occupational profiles' : ''}}">
+              <button type="button" class="btn btn-block btn-outline-primary" routerLink="/newmatch/empty"
+                [disabled]="isAnonymous">
+                New Match
+              </button>
+            </div>
+            <div class="col-sm-4 offset-md-4 col-md-4">
+              <div class="input-group">
+                <span class="input-group-prepend">
+                  <button class="btn btn-primary" type="button">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </span>
+                <input class="form-control" id="input1-group2" type="search" name="input1-group2" placeholder="Search"
+                  autocomplete="search" [(ngModel)]="searchText" (keyup)="filter()" />
+              </div>
+            </div>
+            <div class="col-sm-4 col-md-2">
+              <button type="button" class="btn btn-block btn-link" (click)="advancedSearch = !advancedSearch">
+                Advanced Search
+              </button>
+            </div>
+            <!-- Advanced search -->
+            <ng-container *ngIf="advancedSearch">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2 offset-md-6 col-sm-4" style="display: inline-flex">
+                    <!-- Knowledge checkbox -->
+                    <span class="input-group-prepend">
+                      <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                        <input class="switch-input" type="checkbox" value="knowledges" [(ngModel)]="knowledgeFilter"
+                          checked />
+                        <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                      </label>
+                      <div class="pl-1">Knowledges</div>
+                    </span>
+                  </div>
+                  <div class="col-md-2 col-sm-4" style="display: inline-flex">
+                    <!-- Skills checkbox -->
+                    <span class="input-group-prepend">
+                      <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                        <input class="switch-input" type="checkbox" value="skills" [(ngModel)]="skillFilter" checked />
+                        <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                      </label>
+                      <div class="pl-1">Skills</div>
+                    </span>
+                  </div>
+                  <div class="col-md-2 col-sm-4" style="display: inline-flex">
+                    <!-- Competences checkbox -->
+                    <span class="input-group-prepend">
+                      <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                        <input class="switch-input" type="checkbox" value="competences" [(ngModel)]="competencesFilter"
+                          checked />
+                        <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                      </label>
+                      <div class="pl-1">Transversal skills</div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="card-body">
+         <!--  <div *ngFor="let o of filteredOccuProfiles">
+            <div class="row" *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)" >    
+              <div class="col-md-10">
+                <button type="button" class="btn text-justify" routerLink="/detail/{{ o._id }}">
+                  <span>
+                    <h1 style="display: inline;">{{ o.title }}</h1>
+                    <h6 *ngIf="o.isPublic" style="display: inline;" class="text-level">EO4GEO</h6>
+                    <h6 *ngIf="!o.isPublic" style="display: inline;" class="text-level text-secondary">{{ o.orgName }}</h6>
+                    <br>
+                    {{ o.knowledge.length }} Knowledge |
+                    {{ o.skills.length }} Skills |
+                    {{ o.competences.length }} Transversal skills
+                  </span>
+
+                  <p>{{ o.description }}</p>
+
+                </button>
+              </div>
+
+              <div class="col-md-2">
+                <div class="row">
+                  <div class="col-3 col-sm-3 col-md-3 no-padding">
+                    <button type="button" class="btn btn-block btn-link" [popover]="popTemplateList" tooltip="Share"
+                      popoverTitle="Copy link, export to PDF or XML" placement="top" [outsideClick]="true">
+                      <i class="fa fa-share-alt fa-lg mt-4"></i>
+                    </button>
+                  </div>
+                  <div class="col-3 col-sm-3 col-md-3 no-padding"
+                    tooltip="{{isAnonymous? 'Login to be able to duplicate' : 'Duplicate'}}">
+                    <button type="button" class="btn btn-block btn-link" routerLink="/newmatch/duplicate/{{ o._id }}"
+                      [disabled]="isAnonymous">
+                      <i class="fa fa-copy fa-lg mt-4"></i>
+                    </button>
+                  </div>
+                  <div class="col-3 col-sm-3 col-md-3 no-padding"
+                    tooltip="{{isAnonymous? 'Login to be able to edit' : o.userId==afAuth.auth.currentUser?.uid?  'Edit' : 'You can edit only your own profiles'}}">
+                    <button type="button" class="btn btn-block btn-link" routerLink="/newmatch/copy/{{ o._id }}"
+                      [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(o.orgId) == -1)">
+                      <i class="fa fa-edit fa-lg mt-4"></i>
+                    </button>
+                  </div>
+                  <div class="col-3 col-sm-3 col-md-3 no-padding"
+                    tooltip="{{isAnonymous? 'Login to be able to remove' : o.userId==afAuth.auth.currentUser?.uid?  'Remove' : 'You can remove only your own profiles'}}">
+                    <button type="button" class="btn btn-block btn-link" data-toggle="modal"
+                      (click)="dangerModal.show()" [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(o.orgId) == -1)">
+                      <i class="fa fa-trash-o fa-lg mt-4"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <ng-template #popTemplateList>
+                <app-popup idOP="{{o._id}}"></app-popup>
+              </ng-template>
+            </div>
+
+            <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+              aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-danger" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Are you sure you want to delete this Occupational Profile?</h4>
+                    <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>After you delete it it won't be accessible to anyone.</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" (click)="dangerModal.hide()">Close</button>
+                    <button type="button" class="btn btn-danger" (click)="removeOccuProfile(o._id)">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/.col-->
+</div>
+<!--/.row-->

@@ -1,0 +1,442 @@
+<div class="animated fadeIn">
+  <h1 class="title">{{ title }}</h1>
+  <div class="row">
+    <div class="col-sm-12 col-md-12">
+      <div class="card card-accent-primary">
+
+        <div class="card-header">
+          <div class="row">
+            <!--             <div class="col-sm-4 col-md-4">
+              <p *ngIf="userOrgs.length > 0" class="text-primary text-right">Save under organization </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <ng-select *ngIf="userOrgs.length > 0 && userOrgs.length == currentUser.organizations.length"
+                [items]="userOrgs" name="userOrgs" bindLabel="name" [multiple]="false" [(ngModel)]="saveOrg">
+                <ng-template ng-optgroup-tmp let-item="item">
+                  {{item.name}}
+                </ng-template>
+              </ng-select>
+              <button *ngIf="userOrgs.length == 0" type="button" class="btn btn-block btn-link text-secondary"
+                routerLink="/organization">
+                &nbsp;You need to join or create an organization before you can save an occupational profile.
+              </button>
+
+            </div> -->
+            <div class="col-sm-12 col-md-12 text-right">
+              <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
+                *ngIf="model.title != '' && model.description != '' ">
+                Save
+              </button>
+              <button type="submit" class="btn btn-pill btn-primary"
+                *ngIf="model.title == '' || model.description == '' "
+                tooltip="Add a title and a description to save your ." [disabled]="!saveOrg">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- card body -->
+        <div class="card-body">
+          <!-- [hidden]="userOrgs.length == 0"  -->
+          <form #newMForm="ngForm">
+            <!-- general info card -->
+            <div class="card card-accent-secondary">
+              <div class="card-header">
+                General Information
+                <span
+                  tooltip="The occupational profile knowledge represent the comprehensive awareness in certain areas/domains, which complete the list of theoretical capacity learning."
+                  class="badge badge-primary badge-pill">i</span>
+              </div>
+              <div class="card-body" style="background-color: #faf9f8">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label for="title">Title</label>
+                      <input type="text" class="form-control" id="title" placeholder="Title" [(ngModel)]="model.title"
+                        name="title" required />
+                    </div>
+                  </div>
+                  <!--    <div *ngIf="saveOrg && saveOrg.isPublic" class="col-md-2" style="display: inline-flex">
+                    <span class="input-group-prepend">
+                      <div class="pr-1"> Visibility: Private </div>
+                      <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                        <input class="switch-input" type="checkbox" value="knowledges" name="isPublic"
+                          [(ngModel)]="model.isPublic" />
+                        <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                      </label>
+                      <div class="pl-1">Public </div>
+                    </span>
+                  </div> -->
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="description">Description</label>
+                      <textarea class="form-control" id="description" placeholder="Description" name="textarea-input"
+                        [(ngModel)]="model.description" rows="4"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <!-- <hr /> -->
+          <!-- Select resource to match -->
+          <div class="row">
+            <div class="col-sm-6 col-md-6">
+              <div class="card card-accent-secondary">
+                <div class="card-header">
+                  Browse or select resource
+                  <small>Browse or select resource to see the matching</small>
+                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                </div>
+                <div class="card-body" style="background-color: #faf9f8">
+                  <!-- Browse or search -->
+                  <div class="row">
+                    <div class="col-md-5">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input primary" id="customFile1"
+                          (change)="onFileChange1($event)">
+                        <label class="custom-file-label" for="customFile">Upload resource</label>
+                      </div>
+                    </div>
+                    <div class="col-md-1 text-center">
+                      or
+                    </div>
+                    <div class="col-md-6">
+                      <div class="input-group">
+                        <span class="input-group-prepend">
+                          <button class="btn btn-primary" type="button" (click)="filter1()">
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </span>
+                        <input class="form-control" id="input2-group1" type="search" name="input2-group1"
+                          placeholder="Search EO4GEO resource" autocomplete="search" [(ngModel)]="searchText1"
+                          (keyup)="filter1()" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="uploadPercent1">
+                    <div class="col-md-6">
+                      Progress: {{uploadPercent1  | async | number:'3.0-0'}}
+                    </div>
+                  </div>
+                  <div class="row text-left">
+                    <div *ngIf="file1 != null" class="col-md-12">
+                      <br>
+                      <h4 style="display: inline;"> {{file1.name}}</h4>
+                      <h6 class="text-level text-secondary">
+                        Type: {{ file1.type }} - Size: {{ file1.size / 1048576 | number}} Mb </h6>
+                    </div>
+
+                    <div *ngIf="filteredResources1.length > 1" class="col-md-12">
+                      <div class="row mb-2 mt-4">
+                        <!-- Filter by type -->
+                        <div class="col-md-12">
+                          <div class="text-center">
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource1==-1}" (click)="showResource1=-1">All</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource1==0}" (click)="showResource1=0">Learning
+                              Content</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource1==1}" (click)="showResource1=1">Occupational
+                              Profiles</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource1==2}" (click)="showResource1=2">Job Offers</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource1==3}" (click)="showResource1=3">Others</button>
+                          </div>
+                        </div>
+                        <!--                  <div class="col-md-2">
+                          <button type="button" class="btn btn-block btn-link"
+                            (click)="advancedSearch1 = !advancedSearch1">
+                            Advanced Search
+                          </button>
+                        </div> -->
+                        <!-- Advanced search -->
+                        <!--              <ng-container *ngIf="advancedSearch1">
+                          <div class="row">
+                            <div class="col-md-6" style="display: inline-flex">
+                              <span class="input-group-prepend">
+                                <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                                  <input class="switch-input" type="checkbox" value="knowledge1"
+                                    [(ngModel)]="conceptsFilter1" checked />
+                                  <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                                </label>
+                                <div class="pl-1">Knowledge linked</div>
+                              </span>
+                            </div>
+                            <div class="col-md-6" style="display: inline-flex">
+                              <span class="input-group-prepend">
+                                <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                                  <input class="switch-input" type="checkbox" value="skills1"
+                                    [(ngModel)]="skillsFilter1" checked />
+                                  <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                                </label>
+                                <div class="pl-1">Learning Outcomes linked</div>
+                              </span>
+                            </div>
+                          </div>
+                        </ng-container> -->
+                      </div>
+
+                      <div *ngFor="let resource of filteredResources1; index as i">
+                        <div *ngIf="showResource1==-1 || showResource1 == resource.type" class="row">
+                          <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
+                          <div class="col-md-12">
+                            <button type="button" class="btn text-justify" (click)="selectResource1(resource)">
+                              <!-- routerLink="/detail/{{ resource._id }}" -->
+                              <span>
+                                <h4 style="display: inline;">{{ resource.name }}</h4>
+                                <h6 style="display: inline;" class="text-level"> ({{ resource.collectionDisplay }})</h6>
+                                <!--  <h6 *ngIf="resource.isPublic" style="display: inline;" class="text-level">EO4GEO</h6>
+                                <h6 *ngIf="!resource.isPublic" style="display: inline;"
+                                  class="text-level text-secondary">
+                                  {{ resource.orgName }}</h6> -->
+                                <h6 style="display: inline;" class="text-level text-secondary">
+                                  {{ resource.orgName }}</h6>
+                                <div style="display: inline;"
+                                  *ngIf="resource.knowledge && resource.knowledge.length> 0">
+                                  {{ resource.knowledge.length }} Knowledge | </div>
+                                <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
+                                  {{ resource.skills.length }} Skills </div>
+                                <br>
+                              </span>
+
+                              <p>{{ resource.description }}
+                                <a href={{resource.url}} target="_blank">More info</a>
+                              </p>
+
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="col-sm-6 col-md-6">
+              <div class="card card-accent-secondary">
+                <div class="card-header">
+                  Browse or select resource
+                  <small>Browse or select resource to see the matching</small>
+                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                </div>
+                <div class="card-body" style="background-color: #faf9f8">
+                  <!-- Browse or search -->
+                  <div class="row">
+                    <div class="col-md-5">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input primary" id="customFile2"
+                          (change)="onFileChange2($event)">
+                        <label class="custom-file-label" for="customFile">Upload resource</label>
+                      </div>
+                    </div>
+                    <div class="col-md-1 text-center">
+                      or
+                    </div>
+                    <div class="col-md-6">
+                      <div class="input-group">
+                        <span class="input-group-prepend">
+                          <button class="btn btn-primary" type="button" (click)="filter2()">
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </span>
+                        <input class="form-control" id="input2-group2" type="search" name="input2-group2"
+                          placeholder="Search EO4GEO resource" autocomplete="search" [(ngModel)]="searchText2"
+                          (keyup)="filter2()" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="uploadPercent2">
+                    <div class="col-md-6">
+                      Progress: {{uploadPercent2  | async | number:'3.0-0'}}
+                    </div>
+                  </div>
+                  <div class="row text-left">
+                    <div *ngIf="file2 != null" class="col-md-12">
+                      <br>
+                      <h4 style="display: inline;"> {{file2.name}}</h4>
+                      <h6 class="text-level text-secondary">
+                        Type: {{ file2.type }} - Size: {{ file2.size / 1048576 | number}} Mb </h6>
+                    </div>
+
+                    <div *ngIf="filteredResources2.length > 1" class="col-md-12">
+                      <div class="row mb-2 mt-4">
+                        <!-- Filter by type -->
+                        <div class="col-md-12">
+                          <div class="text-center">
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource2==-1}" (click)="showResource2=-1">All</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource2==0}" (click)="showResource2=0">Learning
+                              Content</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource2==1}" (click)="showResource2=1">Occupational
+                              Profiles</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource2==2}" (click)="showResource2=2">Job Offers</button>
+                            <button class="btn btn-pill btn-outline-primary mr-2"
+                              [ngClass]="{'active': showResource2==3}" (click)="showResource2=3">Others</button>
+                          </div>
+                        </div>
+                        <!--     <div class="col-md-2">
+                          <button type="button" class="btn btn-block btn-link"
+                            (click)="advancedSearch2 = !advancedSearch2">
+                            Advanced Search
+                          </button>
+                        </div> -->
+                        <!-- Advanced search -->
+                        <!--   <ng-container *ngIf="advancedSearch2">
+                          <div class="row">
+                            <div class="col-md-6" style="display: inline-flex">
+                              <span class="input-group-prepend">
+                                <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                                  <input class="switch-input" type="checkbox" value="knowledge2"
+                                    [(ngModel)]="conceptsFilter2" checked />
+                                  <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                                </label>
+                                <div class="pl-1">Knowledge linked</div>
+                              </span>
+                            </div>
+                            <div class="col-md-6" style="display: inline-flex">
+                              <span class="input-group-prepend">
+                                <label class="switch switch-label switch-pill switch-outline-primary-alt">
+                                  <input class="switch-input" type="checkbox" value="skills2"
+                                    [(ngModel)]="skillsFilter2" checked />
+                                  <span class="switch-slider" data-checked="✓" data-unchecked="X"></span>
+                                </label>
+                                <div class="pl-1">Learning Outcomes linked</div>
+                              </span>
+                            </div>
+                          </div>
+                        </ng-container> -->
+                      </div>
+
+                      <div *ngFor="let resource of filteredResources2; index as i ">
+                        <div *ngIf="showResource2==-1 || showResource2 == resource.type" class="row">
+                          <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
+                          <div class="col-md-12">
+                            <button type="button" class="btn text-justify" (click)="selectResource2(resource)">
+                              <!-- routerLink="/detail/{{ resource._id }}" -->
+                              <span>
+                                <h4 style="display: inline;">{{ resource.name }}</h4>
+                                <h6 style="display: inline;" class="text-level"> ({{ resource.collectionDisplay }})</h6>
+                                <h6 style="display: inline;" class="text-level text-secondary">
+                                  {{ resource.orgName }}</h6>
+                                <div style="display: inline;"
+                                  *ngIf="resource.knowledge && resource.knowledge.length> 0">
+                                  {{ resource.knowledge.length }} Knowledge | </div>
+                                <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
+                                  {{ resource.skills.length }} Skills </div>
+                                <br>
+                              </span>
+
+                              <p>{{ resource.description }}
+                                <a href="{{resource.url}}" target="_blank">More info</a>
+                              </p>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+              <div class="card card-accent-secondary">
+                <div class="card-header">
+                  Matching BoK concepts
+                  <small>BoK concepts present in both resources</small>
+                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                </div>
+                <div class="card-body" style="background-color: #faf9f8">
+                  <div class="row text-center ma">
+                    <div *ngIf="commonBokConcepts.length == 0">Select a resource or upload a file to see the matching
+                    </div>
+                    <button *ngFor="let mk of commonBokConcepts" type="button" class="btn btn-pill"
+                      [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                      {{ mk }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-6">
+              <div class="card card-accent-secondary">
+                <div class="card-header">
+                  Not matching BoK concepts
+                  <small>BoK concepts present in one resource</small>
+                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                </div>
+                <div class="card-body" style="background-color: #faf9f8">
+                  <div class="row text-center ma">
+                    <button *ngFor="let mk of bokConcepts1" type="button" class="btn btn-pill"
+                      [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                      {{ mk }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-6">
+              <div class="card card-accent-secondary">
+                <div class="card-header">
+                  Not matching BoK concepts
+                  <small>BoK concepts present in one resource</small>
+                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                </div>
+                <div class="card-body" style="background-color: #faf9f8">
+                  <div class="row  text-center ma">
+                    <button *ngFor="let mk of bokConcepts2" type="button" class="btn btn-pill"
+                      [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                      {{ mk }}
+                    </button>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 
+            <div class="row">
+              <div *ngIf="meta1" class="col-md-6">
+                {{meta1.info.Subject}}
+              </div>
+              <div *ngIf="meta2" class="col-md-6">
+                {{meta2.info.Subject}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+
+              </div>
+              <div class="col-md-6">
+
+              </div>
+            </div> -->
+
+
+            <div class="col-md-12 text-right">
+              <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
+                *ngIf="model.title != '' && model.description != '' ">
+                Save
+              </button>
+              <button type="submit" class="btn btn-pill btn-primary"
+                *ngIf="model.title == '' || model.description == '' "
+                tooltip="Add a title and a description to save your Match." [disabled]="!saveOrg">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/.col-->
+    </div>
+    <!--/.row-->
+  </div>

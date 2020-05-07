@@ -1,0 +1,230 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-12 col-md-12">
+      <h1 class="title">
+        Your Organization(s) Details
+      </h1>
+
+      <div class="text-center" *ngIf="orgs && orgs.length > 0">
+        <h5>You are part of {{orgs.length}} organization(s). You can also create your own organization.
+        </h5>
+      </div>
+
+      <div class="card card-accent-primary">
+
+        <div class="card-header">
+          <div class="row">
+            <div class="col-sm-1 col-md-1">
+              <!--        <button type="button" class="btn btn-block btn-outline-primary" (click)="newOrg()">
+                New Organization
+              </button> -->
+            </div>
+            <div class="col-sm-3 col-md-3">
+              <p class="text-primary text-right">Join an organization </p>
+            </div>
+
+            <div class="col-md-3">
+              <ng-select [items]="allOrgs" name="org" bindLabel="name" [multiple]="false" [(ngModel)]="joinOrg">
+                <ng-template ng-optgroup-tmp let-item="item">
+                  {{item.name}}
+                </ng-template>
+              </ng-select>
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-block btn-outline-primary" (click)="userJoinOrg()"
+                [disabled]="!joinOrg">
+                Join
+              </button>
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-12 text-center">
+              <p class="text-success mt-3" [innerText]="msgSavedJoin" [hidden]="!msgSavedJoin"> </p>
+              <p class="text-danger mt-3" [innerText]="msgErrorJoin" [hidden]="!msgErrorJoin"> </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body" *ngIf="orgs && orgs.length>0; else loading">
+          <div *ngFor="let o of orgs; index as i;">
+            <div *ngIf="(o.admin.indexOf(user._id) > -1  || o.regular.indexOf(user._id) > -1);">
+              <form>
+                <div class="row">
+                  <div class="col-sm-6 col-md-8 mt-3">
+                    <!--  <p class="text-muted"> {{ o.name }} Details</p>-->
+                    <h1> {{ o.name }} </h1>
+
+                    <div class="input-group mb-3">
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Organization Name" name="name" required
+                          [(ngModel)]="o.name" [disabled]="!(o.admin.indexOf(user._id) > -1)">
+                      </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Organization Description"
+                          name="description" required [(ngModel)]="o.description"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">
+                      </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Organization contact email"
+                          name="contact" required [(ngModel)]="o.contact"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="col-sm-6 col-md-4 text-center mt-5">
+                    <button type="button" class="btn btn-outline-primary px-4 mt-3 " (click)="save(i)"
+                      [hidden]="!(o.admin.indexOf(user._id) > -1)">Save
+                      changes</button>
+
+                    <button type="button" class="btn btn-outline-danger px-4 mt-3 " (click)="delete(i)"
+                      [hidden]="!(o.admin.indexOf(user._id) > -1)">Delete
+                      organization</button>
+
+                    <button type="button" class="btn btn-outline-danger px-4 mt-3 "
+                      (click)="removeUser(i, user._id, 'regular')" [hidden]="!(o.regular.indexOf(user._id) > -1)">Leave
+                      organization
+                    </button>
+
+                    <div [hidden]="currentOrg && o._id != currentOrg._id">
+                      <p class="text-success mt-3" [innerText]="msgSaved" [hidden]="!msgSaved"></p>
+                    </div>
+                  </div>
+                  <!--    <div [hidden]="currentOrg && o._id != currentOrg._id" class="col-sm-6 col-md-1 mt-5 text-center">
+                    <p class="text-success mt-3" [innerText]="msgSaved" [hidden]="!msgSaved"></p>
+                  </div> -->
+                </div>
+                <div class="row" style="max-width: 80%; margin: auto;" *ngIf="o.admin.indexOf(user._id) > -1">
+                  <div class="col-sm-12 col-md-12 mb-3">
+                    <p class="text-muted" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Add / Remove users or change
+                      permissions</p>
+                  </div>
+                  <div class="col-sm-6 col-md-3 mb-3"> Name
+                  </div>
+                  <div class="col-sm-6 col-md-3 mb-3"> Email
+                  </div>
+                  <div class="col-sm-6 col-md-2 mb-3 text-center"> Permission
+                  </div>
+                  <div class="col-sm-6 col-md-2 mb-3 text-center" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Click to
+                    change
+                  </div>
+                  <div class="col-sm-6 col-md-2 mb-3 text-center" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Remove
+                  </div>
+                </div>
+                <!-- Admin users -->
+                <div *ngIf="o.adminUser && o.adminUser.length > 0 && o.admin.indexOf(user._id) > -1">
+                  <div *ngFor="let admin of o.adminUser" class="row" style="max-width: 80%; margin: auto;">
+                    <div class="col-sm-6 col-md-3 mb-1"> {{admin.name}}
+                    </div>
+                    <div class="col-sm-6 col-md-3 mb-1"> {{admin.email}}
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center"> Admin
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center">
+                      <div class="btn-group" role="group" aria-label="Admin or Regular">
+                        <button type="button" class="btn btn-primary"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">Admin</button>
+                        <button type="button" class="btn btn-outline-primary" (click)="makeRegularUser(i, admin._id)"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">Regular</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center">
+                      <button type="button" class="btn  btn-outline-primary px-4"
+                        (click)="removeUser(i, admin._id, 'admin')" [hidden]="!(o.admin.indexOf(user._id) > -1)"><i
+                          class="icon-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Regular users -->
+                <div *ngIf="o.regularUser && o.regularUser.length > 0 && o.admin.indexOf(user._id) > -1">
+                  <div *ngFor="let reg of o.regularUser" class="row" style="max-width: 80%; margin: auto;">
+                    <div class="col-sm-6 col-md-3 mb-1"> {{reg.name}}
+                    </div>
+                    <div class="col-sm-6 col-md-3 mb-1"> {{reg.email}}
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center"> Regular
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center">
+                      <div class="btn-group" role="group" aria-label="Admin or Regular">
+                        <button type="button" class="btn btn-outline-primary" (click)="makeAdminUser(i, reg._id)"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">Admin</button>
+                        <button type="button" class="btn btn-primary"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">Regular</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center">
+                      <button type="button" class="btn btn-outline-primary px-4"
+                        (click)="removeUser(i, reg._id, 'regular')" [hidden]="!(o.admin.indexOf(user._id) > -1)"><i
+                          class="icon-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Pending users -->
+                <div *ngIf="o.pendingUser && o.pendingUser.length > 0 && o.admin.indexOf(user._id) > -1">
+                  <div *ngFor="let pen of o.pendingUser" class="row" style="max-width: 80%; margin: auto;">
+                    <div class="col-sm-6 col-md-3 mb-1"> {{pen.name}}
+                    </div>
+                    <div class="col-sm-6 col-md-3 mb-1"> {{pen.email}}
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center"> Pending <span
+                        class="badge badge-pill badge-success">1</span>
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center">
+                      <div class="btn-group" role="group" aria-label="Admin or Regular">
+                        <button type="button" class="btn btn-outline-primary" (click)="makeAdminUser(i, pen._id)"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">Admin</button>
+                        <button type="button" class="btn btn-outline-primary" (click)="makeRegularUser(i, pen._id)"
+                          [disabled]="!(o.admin.indexOf(user._id) > -1)">Regular</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 col-md-2 mb-1 text-center">
+                      <button type="button" class="btn btn-outline-primary px-4"
+                        (click)="removeUser(i, pen._id, 'pending')" [hidden]="!(o.admin.indexOf(user._id) > -1)"><i
+                          class="icon-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" style="max-width: 80%; margin: auto;">
+                  <div class="col-sm-6 col-md-9 mb-3 mt-3">
+                    <div class="input-group mb-3">
+                      <div class="input-group" [hidden]="!(o.admin.indexOf(user._id) > -1)">
+                        <input #emailToAdd type="email" class="form-control" placeholder="User email to add"
+                          name="email">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="col-sm-6 col-md-3 mt-3 text-center">
+                    <button type="button" class="btn  btn-outline-primary px-4"
+                      (click)="addUserToOrg(i, emailToAdd.value)" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Add
+                      user</button>
+                  </div>
+
+                  <div [hidden]="currentOrg && o._id != currentOrg._id" class="col-sm-12 col-md-12 mb-3 text-center">
+                    <p class="text-success" [innerText]="msgUsrSaved" [hidden]="!msgUsrSaved"></p>
+                    <p class="text-danger" [innerText]="msgUsrError" [hidden]="!msgUsrError"></p>
+                  </div>
+
+                </div>
+              </form>
+              <!--  <hr> -->
+            </div>
+          </div>
+          <ng-template #loading>
+            <app-loading-indicator></app-loading-indicator>
+          </ng-template>
+        </div>
+        <p class="text-primary text-center" [hidden]="!orgs || orgs.length> 0">
+          <span class="badge badge-pill badge-success">N</span> You are not a member of any organization.
+          Create
+          one to start!</p>
+      </div>
+    </div>
+  </div>
