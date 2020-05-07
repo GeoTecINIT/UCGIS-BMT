@@ -21,7 +21,7 @@ npm install -g @angular/cli
 
 ``` bash
 # clone the repo
-$ git clone https://github.com/GeoTecINIT/EO4GEO-OPT.git my-project
+$ git clone https://github.com/GeoTecINIT/EO4GEO-BMT.git my-project
 
 # go into app's directory
 $ cd my-project
