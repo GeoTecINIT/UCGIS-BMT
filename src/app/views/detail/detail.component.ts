@@ -1,10 +1,12 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { OcupationalProfile } from '../../model/resources.model';
+import { OcupationalProfile, Match } from '../../model/resources.model';
 import { ActivatedRoute } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UserService, User } from '../../services/user.service';
+import {MatchService} from '../../services/match.service';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
   selector: 'app-detail',
@@ -29,15 +31,17 @@ export class DetailComponent implements OnInit {
     AM: 'Analytical Methods'
   };
 
-  selectedProfile: OcupationalProfile;
+  selectedProfile: Match;
   currentUser: User = new User();
 
+  profileUrl: Observable<any>;
   @ViewChild('dangerModal') public dangerModal: ModalDirective;
 
   constructor(
-  /*   public occuprofilesService: OcuprofilesService, */
+    private matchService: MatchService,
     private userService: UserService,
     private route: ActivatedRoute,
+    private storage: AngularFireStorage,
     public afAuth: AngularFireAuth
   ) {
     this.afAuth.auth.onAuthStateChanged(user => {
@@ -53,25 +57,24 @@ export class DetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOccuProfileId();
+    this.getMatchId();
   }
 
-  getOccuProfileId(): void {
+  getMatchId(): void {
     const _id = this.route.snapshot.paramMap.get('name');
-   /*  this.occuprofilesService
-      .getOccuProfileById(_id)
+     this.matchService
+      .getMatchById(_id)
       .subscribe(profile => {
         this.selectedProfile = profile;
         this.calculateStatistics();
-      }); */
+      });
   }
-
   calculateStatistics() {
     if (this.selectedProfile) {
       const tempStats = {};
       let tempTotal = 0;
-      this.selectedProfile.knowledge.forEach(kn => {
-        const code = kn.slice(1, 3);
+      this.selectedProfile.commonConcepts.forEach(kn => {
+        const code = kn.slice(0, 2);
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
         tempTotal++;
       });
@@ -80,5 +83,13 @@ export class DetailComponent implements OnInit {
         this.statistics.push({ code: nameKA, value: Math.round(tempStats[k] * 100 / tempTotal) });
       });
     }
+  }
+  downloadResource(url: string) {
+    let ref = this.storage.ref(url);
+    this.profileUrl = ref.getDownloadURL();
+    this.profileUrl.subscribe(response => {
+      window.open( response, '_blank');
+    });
+
   }
 }

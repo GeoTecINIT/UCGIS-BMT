@@ -2,10 +2,12 @@ import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { NgForOf } from '@angular/common';
 import { Observable, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { Match,  Resource} from '../../model/resources.model';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User, UserService } from '../../services/user.service';
 import { OrganizationService } from '../../services/organization.service';
+import {MatchService} from '../../services/match.service';
 
 @Component({
   selector: 'app-list',
@@ -13,13 +15,11 @@ import { OrganizationService } from '../../services/organization.service';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
-/*   occupationalProfiles: OcupationalProfile[];
- */  advancedSearch = false;
-  filteredOccuProfiles: any[];
+  matches: Match[];
+  advancedSearch = false;
+  filteredMatches: any[];
   searchText: string;
   knowledgeFilter: Boolean = true;
-  skillFilter: Boolean = true;
-  competencesFilter: Boolean = true;
   isAnonymous = null;
   currentUser: User = new User();
   @ViewChild('dangerModal') public dangerModal: ModalDirective;
@@ -27,40 +27,41 @@ export class ListComponent implements OnInit {
   constructor(
     private userService: UserService,
     public organizationService: OrganizationService,
+    private matchService: MatchService,
     public afAuth: AngularFireAuth) {
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
         this.isAnonymous = user.isAnonymous;
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
-          /* this.occuprofilesService
-          .subscribeToOccupationalProfiles()
-          .subscribe(occuProfiles => {
-            this.occupationalProfiles = [];
-            occuProfiles.forEach(op => {
-              if (op.isPublic) {
-                this.occupationalProfiles.push(op);
-              } else if (this.currentUser && this.currentUser.organizations && this.currentUser.organizations.indexOf(op.orgId) > -1) {
-                this.occupationalProfiles.push(op);
+           this.matchService
+          .subscribeToMatches()
+          .subscribe(matches => {
+            this.matches = [];
+            matches.forEach(ma => {
+              if (ma.isPublic) {
+                this.matches.push(ma);
+              } else if (this.currentUser && this.currentUser.organizations && this.currentUser.organizations.indexOf(ma.orgId) > -1) {
+                this.matches.push(ma);
               }
             });
-            this.filteredOccuProfiles = this.occupationalProfiles;
-          }); */
+            this.filteredMatches = this.matches;
+          });
         });
       } else {
         this.isAnonymous = true;
       }
-/*       this.occuprofilesService
-        .subscribeToOccupationalProfiles()
+       this.matchService
+        .subscribeToMatches()
         .subscribe(occuProfiles => {
-          this.occupationalProfiles = [];
+          this.matches = [];
           occuProfiles.forEach(op => {
             if (op.isPublic) {
-              this.occupationalProfiles.push(op);
+              this.matches.push(op);
             }
           });
-          this.filteredOccuProfiles = this.occupationalProfiles;
-        }); */
+          this.filteredMatches = this.matches;
+        });
     });
   }
 
@@ -74,51 +75,33 @@ export class ListComponent implements OnInit {
   }
 
   removeOccuProfile(id: string) {
-/*     this.occuprofilesService.removeOccuProfile(id);
- */  }
+     this.matchService.removeMatch(id);
+   }
 
   filter() {
-/*     const search = this.searchText.toLowerCase();
-    this.filteredOccuProfiles = [];
-    this.filteredOccuProfiles = this.occupationalProfiles.filter(
+    const search = this.searchText.toLowerCase();
+    this.filteredMatches = [];
+    this.filteredMatches = this.matches.filter(
       it =>
         it.title.toLowerCase().includes(search) ||
         it.description.toLowerCase().includes(search)
     );
     if (this.advancedSearch) {
       this.applyFilters();
-    } */
+    }
   }
 
   applyFilters() {
-  /*   this.occupationalProfiles.forEach(occ => {
+     this.matches.forEach(mat => {
       if (this.knowledgeFilter) {
-        occ.knowledge.forEach(know => {
+        mat.commonConcepts.forEach(know => {
           if (know.toLowerCase().includes(this.searchText.toLowerCase())) {
-            if (this.filteredOccuProfiles.indexOf(occ) === -1) {
-              this.filteredOccuProfiles.push(occ);
+            if (this.filteredMatches.indexOf(mat) === -1) {
+              this.filteredMatches.push(mat);
             }
           }
         });
       }
-      if (this.skillFilter) {
-        occ.skills.forEach(ski => {
-          if (ski.toLowerCase().includes(this.searchText.toLowerCase())) {
-            if (this.filteredOccuProfiles.indexOf(occ) === -1) {
-              this.filteredOccuProfiles.push(occ);
-            }
-          }
-        });
-      }
-      if (this.competencesFilter) {
-        occ.competences.forEach(comp => {
-          if (comp.preferredLabel.toLowerCase().includes(this.searchText.toLowerCase())) {
-            if (this.filteredOccuProfiles.indexOf(occ) === -1) {
-              this.filteredOccuProfiles.push(occ);
-            }
-          }
-        });
-      }
-    });*/
+    });
   }
 }

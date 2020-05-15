@@ -4,21 +4,24 @@
       <i class="fa fa-link fa-lg mt-4"></i>
     </button>
   </div>
-  <!-- <div class="col-sm-4 col-md-4">
-    <button type="button" class="btn btn-block btn-link" (click)="generatePDF(); poppdf.show()" tooltip="Download PDF">
+  <div class="col-sm-4 col-md-4">
+    <button type="button" class="btn btn-block btn-link" (click)="poppdf.show()" tooltip="Download PDF">
       <i class="fa fa-file-pdf-o fa-lg mt-4"></i>
     </button>
   </div>
   <div class="col-sm-4 col-md-4">
-    <button type="button" class="btn btn-block btn-link" (click)="generateRDF(); popxml.show()" tooltip="Download XML">
+    <button type="button" class="btn btn-block btn-link" (click)="popxml.show()" tooltip="Download XML">
       <i class="fa fa-file-code-o fa-lg mt-4"></i>
     </button>
-  </div> -->
+  </div>
 </div>
 <span tooltip="Copied to clipboard!" triggers="click" #pop="bs-tooltip">
 </span>
-<span tooltip="Check your downloads folder!" triggers="click" #poppdf="bs-tooltip">
-</span>
+<!--span tooltip="Check your downloads folder!" triggers="click" #poppdf="bs-tooltip">
+</span-->
 <span tooltip="This is under developement, try to download a PDF or copy the link to share." triggers="click"
   #popxml="bs-tooltip">
+</span>
+<span tooltip="This is under developement, try to download a PDF or copy the link to share." triggers="click"
+      #poppdf="bs-tooltip">
 </span>
