@@ -130,7 +130,9 @@
                         Type: {{ file1.type }} - Size: {{ file1.size / 1048576 | number}} Mb </h6>
                     </div>
 
-                    <div *ngIf="filteredResources1.length > 1" class="col-md-12">
+                    <div class="col-md-12">
+                      <br>
+                      <h5 *ngIf="resource1 != null">{{resource1.name}}</h5>
                       <div class="row mb-2 mt-4">
                         <!-- Filter by type -->
                         <div class="col-md-12">
@@ -140,8 +142,8 @@
                               (click)="showResource1=-1; filterByType(1, -1)">All</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
                               [ngClass]="{'active': showResource1==0}"
-                              (click)="showResource1=0; filterByType(1, 0)">Learning
-                              Content</button>
+                              (click)="showResource1=0; filterByType(1, 0)">Educational
+                              Offers</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
                               [ngClass]="{'active': showResource1==1}"
                               (click)="showResource1=1; filterByType(1, 1)">Occupational
@@ -294,7 +296,9 @@
                         Type: {{ file2.type }} - Size: {{ file2.size / 1048576 | number}} Mb </h6>
                     </div>
 
-                    <div *ngIf="filteredResources2.length > 1" class="col-md-12">
+                    <div class="col-md-12">
+                      <br>
+                      <h5 *ngIf="resource2 != null">{{resource2.name}}</h5>
                       <div class="row mb-2 mt-4">
                         <!-- Filter by type -->
                         <div class="col-md-12">
@@ -304,8 +308,8 @@
                               (click)="showResource2=-1; filterByType(2, -1)">All</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
                               [ngClass]="{'active': showResource2==0}"
-                              (click)="showResource2=0; filterByType(2, 0)">Learning
-                              Content</button>
+                              (click)="showResource2=0; filterByType(2, 0)">Educational
+                              Offers</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
                               [ngClass]="{'active': showResource2==1}"
                               (click)="showResource2=1; filterByType(2, 1)">Occupational

@@ -136,6 +136,8 @@ export class NewmatchComponent implements OnInit {
                   if (org.isPublic) { // if Any of the organizations the user belongs if public, can make public profiles
                     this.canMakePublicProfiles = true;
                   }
+                  this.filteredResources1 =  this.resourceService.allResources;
+                  this.filteredResources2 =  this.resourceService.allResources;
                 }
               });
             });
@@ -227,8 +229,8 @@ export class NewmatchComponent implements OnInit {
     const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       [this.file1] = event.target.files;
-      console.log('onFileChange2');
-      console.log(this.file2);
+      // console.log('onFileChange2');
+      // console.log(this.file2);
       // upload file to firebase storage to be able to get metadata
       this.uploadFile1(this.file1);
       reader.readAsDataURL(this.file1);
@@ -246,8 +248,8 @@ export class NewmatchComponent implements OnInit {
     const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       [this.file2] = event.target.files;
-      console.log('onFileChange2');
-      console.log(this.file2);
+      // console.log('onFileChange2');
+      // console.log(this.file2);
       // upload file to firebase storage to be able to get metadata
       this.uploadFile2(this.file2);
       reader.readAsDataURL(this.file2);
