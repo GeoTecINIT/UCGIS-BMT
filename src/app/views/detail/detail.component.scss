@@ -1,6 +1,9 @@
 .btn-pill {
   margin: 2px;
-  pointer-events: none;
+}
+
+.btn-pill a {
+  color: #faf9f8 !important;
 }
 
 .progress {

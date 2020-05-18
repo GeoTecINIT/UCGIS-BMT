@@ -394,7 +394,8 @@
                   <div class="row text-center ma">
                     <button *ngFor="let mk of notMatchConcepts1" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                      {{ mk }}
+                      <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                        {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                     </button>
                   </div>
                 </div>
@@ -411,7 +412,8 @@
                   <div class="row  text-center ma">
                     <button *ngFor="let mk of notMatchConcepts2" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                      {{ mk }}
+                      <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                        {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                     </button>
 
                   </div>
