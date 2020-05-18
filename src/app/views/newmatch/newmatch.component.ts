@@ -96,11 +96,17 @@ export class NewmatchComponent implements OnInit {
     WB: 'Web-based GI',
   };
 
-  @ViewChild('textBoK') textBoK: ElementRef;
-
   formGroup = this.fb.group({
     file: [null, Validators.required]
   });
+
+  public LIMIT_PER_PAGE = 6;
+  public paginationLimitFrom1 = 0;
+  public paginationLimitFrom2 = 0;
+  public paginationLimitTo1 = this.LIMIT_PER_PAGE;
+  public paginationLimitTo2 = this.LIMIT_PER_PAGE;
+  public currentPage1 = 0;
+  public currentPage2 = 0;
 
   constructor(
     private matchService: MatchService,
@@ -192,6 +198,10 @@ export class NewmatchComponent implements OnInit {
   }
 
   filter1() {
+    this.paginationLimitFrom1 = 0;
+    this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
+    this.currentPage1 = 0;
+
     this.filteredResources1 = this.resourceService.allResources;
     this.filteredResources1 = this.filteredResources1.filter(
       it =>
@@ -201,6 +211,10 @@ export class NewmatchComponent implements OnInit {
   }
 
   filter2() {
+    this.paginationLimitFrom2 = 0;
+    this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
+    this.currentPage2 = 0;
+
     this.filteredResources2 = this.resourceService.allResources;
     this.filteredResources2 = this.filteredResources2.filter(
       it =>
@@ -404,6 +418,75 @@ export class NewmatchComponent implements OnInit {
         const nameKA = k + ' - ' + this.kaCodes[k];
         this.statistics.push({ code: nameKA, value: Math.round(tempStats[k] * 100 / tempTotal) });
       });
+    }
+  }
+
+  range(size, startAt = 0) {
+    size = Math.ceil(size);
+    if (size === 0) {
+      size = 1;
+    }
+    return [...Array(size).keys()].map(i => i + startAt);
+  }
+
+  nextPage1() {
+    if (this.currentPage1 + 1 < this.filteredResources1.length / this.LIMIT_PER_PAGE) {
+      this.paginationLimitFrom1 = this.paginationLimitFrom1 + this.LIMIT_PER_PAGE;
+      this.paginationLimitTo1 = this.paginationLimitTo1 + this.LIMIT_PER_PAGE;
+      this.currentPage1++;
+    }
+  }
+
+  previousPage1() {
+    if (this.currentPage1 > 0) {
+      this.paginationLimitFrom1 = this.paginationLimitFrom1 - this.LIMIT_PER_PAGE;
+      this.paginationLimitTo1 = this.paginationLimitTo1 - this.LIMIT_PER_PAGE;
+      this.currentPage1--;
+    }
+  }
+  nextPage2() {
+    if (this.currentPage2 + 1 < this.filteredResources1.length / this.LIMIT_PER_PAGE) {
+      this.paginationLimitFrom2 = this.paginationLimitFrom2 + this.LIMIT_PER_PAGE;
+      this.paginationLimitTo2 = this.paginationLimitTo2 + this.LIMIT_PER_PAGE;
+      this.currentPage2++;
+    }
+  }
+
+  previousPage2() {
+    if (this.currentPage2 > 0) {
+      this.paginationLimitFrom2 = this.paginationLimitFrom2 - this.LIMIT_PER_PAGE;
+      this.paginationLimitTo2 = this.paginationLimitTo2 - this.LIMIT_PER_PAGE;
+      this.currentPage2--;
+    }
+  }
+
+  filterByType(array, type) {
+    if (array === 1) {
+      this.paginationLimitFrom1 = 0;
+      this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
+      this.currentPage1 = 0;
+      this.filteredResources1 = [];
+      if (type === -1) {
+        this.filteredResources1 = this.resourceService.allResources;
+      } else {
+        this.filteredResources1 = this.resourceService.allResources.filter(
+          it =>
+            it.type === type
+        );
+      }
+    } else {
+      this.paginationLimitFrom2 = 0;
+      this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
+      this.currentPage2 = 0;
+      this.filteredResources2 = [];
+      if (type === -1) {
+        this.filteredResources2 = this.resourceService.allResources;
+      } else {
+        this.filteredResources2 = this.resourceService.allResources.filter(
+          it =>
+            it.type === type
+        );
+      }
     }
   }
 
