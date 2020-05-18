@@ -231,7 +231,7 @@
                               <li *ngFor="let page of range(this.filteredResources1.length/LIMIT_PER_PAGE, 0)"
                                 class="page-item" [ngClass]="currentPage1 == page? 'active': ''">
                                 <a class="page-link" href="javascript:;"
-                                  (click)="currentPage=page; paginationLimitFrom1=page*LIMIT_PER_PAGE; paginationLimitTo1=page*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">{{page+1}}
+                                  (click)="currentPage1=page; paginationLimitFrom1=page*LIMIT_PER_PAGE; paginationLimitTo1=page*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">{{page+1}}
                                   <span *ngIf="currentPage1 == page" class="sr-only">(current)</span>
                                 </a></li>
 
