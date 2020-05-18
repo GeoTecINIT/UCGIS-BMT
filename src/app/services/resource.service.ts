@@ -99,5 +99,22 @@ export class ResourceService {
         });
         opSubs.unsubscribe();
       });
+
+    // get Other
+    const otSubs = this.db
+      .collection<Resource>(collectionOT)
+      .valueChanges().subscribe(rs => {
+        rs.forEach(r => {
+          r.collection = collectionOT;
+          r.collectionDisplay = collectionOT;
+          r.concepts = r.knowledge;
+          r.name = r.title;
+          r.url = urlOPT + r._id;
+          r.type = 3;
+          r.description = r.description.slice(0, 100) + '[...]'; // truncate description
+          this.allResources.push(r);
+        });
+        otSubs.unsubscribe();
+      });
   }
 }

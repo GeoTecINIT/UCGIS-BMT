@@ -132,7 +132,7 @@
 
                     <div class="col-md-12">
                       <br>
-                      <h5 *ngIf="resource1 != null">{{resource1.name}}</h5>
+                      <h5 *ngIf="resource1 != null && file1 == null ">{{resource1.name}}</h5>
                       <div class="row mb-2 mt-4">
                         <!-- Filter by type -->
                         <div class="col-md-12">
@@ -298,7 +298,7 @@
 
                     <div class="col-md-12">
                       <br>
-                      <h5 *ngIf="resource2 != null">{{resource2.name}}</h5>
+                      <h5 *ngIf="resource2 != null && file2 == null">{{resource2.name}}</h5>
                       <div class="row mb-2 mt-4">
                         <!-- Filter by type -->
                         <div class="col-md-12">
