@@ -10,7 +10,12 @@
 .ma {
     margin: auto;
 }
+
 .row {
-  margin-left: inherit;
-  margin-right: inherit;
+    margin-left: inherit;
+    margin-right: inherit;
+}
+
+.btn-pill a {
+    color: #faf9f8 !important;
 }
