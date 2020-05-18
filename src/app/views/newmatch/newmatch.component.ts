@@ -1,6 +1,6 @@
 
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { Match } from '../../model/resources.model';
+import { Match,  Resource} from '../../model/resources.model';
 import { MatchService } from '../../services/match.service';
 import { Organization, OrganizationService } from '../../services/organization.service';
 import { FieldsService, Field } from '../../services/fields.service';
@@ -31,7 +31,7 @@ import * as pdfjs from 'pdfjs-dist';
 })
 export class NewmatchComponent implements OnInit {
 
-  model = new Match('', '', '', '', '', '', true, null, null);
+  model = new Match('', '', '', '', '', '', true, null, null, null, null, null );
 
   selectedMatch: Match;
   _id: string;
@@ -67,9 +67,29 @@ export class NewmatchComponent implements OnInit {
   bokConcepts1 = [];
   bokConcepts2 = [];
   commonBokConcepts = [];
+  notMatchConcepts1 = [];
+  notMatchConcepts2 = [];
+
+  resource1 = null;
+  resource2 = null;
 
   uploadPercent1 = null;
   uploadPercent2 = null;
+
+  statistics = [];
+
+  kaCodes = {
+    GC: 'Geocomputation',
+    WB: 'Web-based GI',
+    GS: 'GI and Society',
+    DA: 'Design and Setup of GI Systems',
+    CV: 'Cartography and Visualization',
+    OI: 'Organizational and Institutional Aspects',
+    GD: 'Geospatial Data',
+    CF: 'Conceptual Foundations',
+    DM: 'Data Modeling, Storage and Exploitation',
+    AM: 'Analytical Methods'
+  };
 
   @ViewChild('textBoK') textBoK: ElementRef;
 
@@ -94,7 +114,7 @@ export class NewmatchComponent implements OnInit {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
-          /*     if (this.currentUser.organizations && this.currentUser.organizations.length > 0) {
+               if (this.currentUser.organizations && this.currentUser.organizations.length > 0) {
                 this.currentUser.organizations.forEach(orgId => {
                   this.organizationService.getOrganizationById(orgId).subscribe(org => {
                     if (org) {
@@ -106,7 +126,7 @@ export class NewmatchComponent implements OnInit {
                     }
                   });
                 });
-              } */
+              }
         });
       }
     });
@@ -121,10 +141,14 @@ export class NewmatchComponent implements OnInit {
       this.matchService.updateMatch(this._id, this.model);
     } else {
       this.model.userId = this.afAuth.auth.currentUser.uid;
-      //  this.model.orgId = this.saveOrg._id;
-      //  this.model.orgName = this.saveOrg.name;
-      //  this.model.isPublic = this.saveOrg.isPublic ? this.model.isPublic : false;
       this.model.isPublic = true;
+      this.model.commonConcepts = this.commonBokConcepts;
+      this.model.notMatchConcepts1 = this.notMatchConcepts1;
+      this.model.notMatchConcepts2 = this.notMatchConcepts2;
+      this.model.resource1 = this.resource1;
+      this.model.resource2 = this.resource2;
+      this.model.orgId = this.saveOrg._id;
+      this.model.orgName = this.saveOrg.name;
       this.matchService.addNewMatch(this.model);
     }
   }
@@ -216,12 +240,16 @@ export class NewmatchComponent implements OnInit {
 
   selectResource1(res) {
     this.bokConcepts1 = this.getBokConceptsFromResource(res);
-    //  this.match();
+    this.notMatchConcepts1 = this.bokConcepts1;
+    this.resource1 = res;
+    this.match();
   }
 
   selectResource2(res) {
     this.bokConcepts2 = this.getBokConceptsFromResource(res);
-    //  this.match();
+    this.notMatchConcepts2 = this.bokConcepts2;
+    this.resource2 = res;
+      this.match();
   }
 
   uploadFile1(file) {
@@ -245,6 +273,9 @@ export class NewmatchComponent implements OnInit {
               this.meta1 = metadataObject;
               // save in bokconcepts the concetps from pdf metadata
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
+              this.notMatchConcepts1 = this.bokConcepts1;
+                this.resource1 = new Resource(null, filePath, '', '', '', '', '', true, this.meta1.info['Title'], this.meta1.info['Title'],
+                 '', this.bokConcepts1, null,   null, null, null, null );
               // do the matching
               this.match();
               console.log(this.meta1); // Metadata object here
@@ -277,6 +308,9 @@ export class NewmatchComponent implements OnInit {
               this.meta2 = metadataObject;
               console.log(this.meta2); // Metadata object here
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
+              this.notMatchConcepts2 = this.bokConcepts2;
+              this.resource2 = new Resource(null, filePath, '', '', '', '', '', true, this.meta2.info['Title'], this.meta2.info['Title'],
+                '', this.bokConcepts2, null,   null, null, null, null );
               this.match();
             }).catch(function (err) {
               console.log('Error getting meta data');
@@ -326,20 +360,41 @@ export class NewmatchComponent implements OnInit {
   match() {
     this.commonBokConcepts = [];
     if (this.bokConcepts1.length > 0 && this.bokConcepts2.length > 0) {
+      this.notMatchConcepts1 = [];
+      this.notMatchConcepts2 = [];
       this.bokConcepts1.forEach(bok1 => {
-        if (this.bokConcepts2.indexOf(bok1 !== -1)) {
+        if (this.bokConcepts2.indexOf(bok1) !== -1) {
           this.commonBokConcepts.push(bok1);
+        } else {
+          this.notMatchConcepts1.push(bok1);
         }
       });
-      this.commonBokConcepts.forEach(bok => {
-        const index1 = this.bokConcepts1.indexOf(bok);
-        this.bokConcepts1.splice(index1, 1);
-        const index2 = this.bokConcepts2.indexOf(bok);
-        this.bokConcepts2.splice(index2, 1);
+      this.bokConcepts2.forEach(bok => {
+        if (this.commonBokConcepts.indexOf(bok) < 0) {
+          this.notMatchConcepts2.push(bok);
+        }
       });
-      this.bokConcepts1.sort();
-      this.bokConcepts2.sort();
+      this.notMatchConcepts1.sort();
+      this.notMatchConcepts2.sort();
       this.commonBokConcepts.sort();
+      this.calculateStatistics();
+    }
+  }
+
+  calculateStatistics() {
+    this.statistics = [];
+    if (this.commonBokConcepts) {
+      const tempStats = {};
+      let tempTotal = 0;
+      this.commonBokConcepts.forEach(kn => {
+        const code = kn.slice(0, 2);
+        tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
+        tempTotal++;
+      });
+      Object.keys(tempStats).forEach(k => {
+        const nameKA = k + ' - ' + this.kaCodes[k];
+        this.statistics.push({ code: nameKA, value: Math.round(tempStats[k] * 100 / tempTotal) });
+      });
     }
   }
 

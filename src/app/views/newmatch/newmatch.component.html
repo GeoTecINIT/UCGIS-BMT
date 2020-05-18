@@ -6,7 +6,7 @@
 
         <div class="card-header">
           <div class="row">
-            <!--             <div class="col-sm-4 col-md-4">
+            <div class="col-sm-4 col-md-4">
               <p *ngIf="userOrgs.length > 0" class="text-primary text-right">Save under organization </p>
             </div>
             <div class="col-sm-4 col-md-4">
@@ -21,7 +21,7 @@
                 &nbsp;You need to join or create an organization before you can save an occupational profile.
               </button>
 
-            </div> -->
+            </div>
             <div class="col-sm-12 col-md-12 text-right">
               <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
                 *ngIf="model.title != '' && model.description != '' ">
@@ -44,7 +44,7 @@
               <div class="card-header">
                 General Information
                 <span
-                  tooltip="The occupational profile knowledge represent the comprehensive awareness in certain areas/domains, which complete the list of theoretical capacity learning."
+                  tooltip=" BoK Matching tool can compare two resources and discover common knowledge. Add a title and a description to be able to save it."
                   class="badge badge-primary badge-pill">i</span>
               </div>
               <div class="card-body" style="background-color: #faf9f8">
@@ -88,7 +88,7 @@
                 <div class="card-header">
                   Browse or select resource
                   <small>Browse or select resource to see the matching</small>
-                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource." class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <!-- Browse or search -->
@@ -97,7 +97,7 @@
                       <div class="custom-file">
                         <input type="file" class="custom-file-input primary" id="customFile1"
                           (change)="onFileChange1($event)">
-                        <label class="custom-file-label" for="customFile">Upload resource</label>
+                        <label class="custom-file-label" for="customFile1">Upload resource</label>
                       </div>
                     </div>
                     <div class="col-md-1 text-center">
@@ -224,7 +224,7 @@
                 <div class="card-header">
                   Browse or select resource
                   <small>Browse or select resource to see the matching</small>
-                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource." class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <!-- Browse or search -->
@@ -233,7 +233,7 @@
                       <div class="custom-file">
                         <input type="file" class="custom-file-input primary" id="customFile2"
                           (change)="onFileChange2($event)">
-                        <label class="custom-file-label" for="customFile">Upload resource</label>
+                        <label class="custom-file-label" for="customFile2">Upload resource</label>
                       </div>
                     </div>
                     <div class="col-md-1 text-center">
@@ -353,10 +353,10 @@
                 <div class="card-header">
                   Matching BoK concepts
                   <small>BoK concepts present in both resources</small>
-                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="This is common knowledge shared between the two resources" class="badge badge-primary badge-pill">i</span>
                 </div>
-                <div class="card-body" style="background-color: #faf9f8">
-                  <div class="row text-center ma">
+                <div class="row card-body" style="background-color: #faf9f8">
+                  <div class="text-left ma">
                     <div *ngIf="commonBokConcepts.length == 0">Select a resource or upload a file to see the matching
                     </div>
                     <button *ngFor="let mk of commonBokConcepts" type="button" class="btn btn-pill"
@@ -364,6 +364,22 @@
                       {{ mk }}
                     </button>
                   </div>
+                  <div class="col-md-4">
+                    <p><small class="text-muted"> Matching distribution </small></p>
+                    <div *ngFor="let k of statistics" class="row">
+                      <div class="col-md-7">
+                        <div class="float-left">
+                          <small class="text-muted"> {{k.code}} {{k.value}}% </small>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="progress progress-xs">
+                          <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar" aria-valuenow="k.value"
+                               [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -372,11 +388,11 @@
                 <div class="card-header">
                   Not matching BoK concepts
                   <small>BoK concepts present in one resource</small>
-                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="This is knowledge only present in the above resource" class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <div class="row text-center ma">
-                    <button *ngFor="let mk of bokConcepts1" type="button" class="btn btn-pill"
+                    <button *ngFor="let mk of notMatchConcepts1" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
                       {{ mk }}
                     </button>
@@ -389,11 +405,11 @@
                 <div class="card-header">
                   Not matching BoK concepts
                   <small>BoK concepts present in one resource</small>
-                  <span tooltip="" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="This is knowledge only present in the above resource" class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <div class="row  text-center ma">
-                    <button *ngFor="let mk of bokConcepts2" type="button" class="btn btn-pill"
+                    <button *ngFor="let mk of notMatchConcepts2" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
                       {{ mk }}
                     </button>
@@ -403,7 +419,7 @@
               </div>
             </div>
 
-            <!-- 
+            <!--
             <div class="row">
               <div *ngIf="meta1" class="col-md-6">
                 {{meta1.info.Subject}}
@@ -440,3 +456,4 @@
     </div>
     <!--/.row-->
   </div>
+</div>
