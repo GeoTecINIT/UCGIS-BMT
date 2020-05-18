@@ -7,6 +7,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { UserService, User } from '../../services/user.service';
 import {MatchService} from '../../services/match.service';
 import { AngularFireStorage } from '@angular/fire/storage';
+import {BokService} from '../../services/bok.service';
 
 @Component({
   selector: 'app-detail',
@@ -19,16 +20,20 @@ export class DetailComponent implements OnInit {
   isAnonymous = null;
 
   kaCodes = {
-    GC: 'Geocomputation',
-    WB: 'Web-based GI',
-    GS: 'GI and Society',
-    DA: 'Design and Setup of GI Systems',
-    CV: 'Cartography and Visualization',
-    OI: 'Organizational and Institutional Aspects',
-    GD: 'Geospatial Data',
+    AM: 'Analytical Methods',
     CF: 'Conceptual Foundations',
+    CV: 'Cartography and Visualization',
+    DA: 'Design and Setup of Geographic Information Systems',
     DM: 'Data Modeling, Storage and Exploitation',
-    AM: 'Analytical Methods'
+    GC: 'Geocomputation',
+    GD: 'Geospatial Data',
+    GS: 'GI and Society',
+    IP: 'Image processing and analysis',
+    OI: 'Organizational and Institutional Aspects',
+    PP: 'Physical principles',
+    PS: 'Platforms, sensors and digital imagery',
+    TA: 'Thematic and application domains',
+    WB: 'Web-based GI',
   };
 
   selectedProfile: Match;
@@ -42,7 +47,8 @@ export class DetailComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private storage: AngularFireStorage,
-    public afAuth: AngularFireAuth
+    public afAuth: AngularFireAuth,
+    public bokService: BokService,
   ) {
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {

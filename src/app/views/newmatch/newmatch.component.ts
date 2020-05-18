@@ -1,6 +1,6 @@
 
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { Match,  Resource} from '../../model/resources.model';
+import { Match, Resource } from '../../model/resources.model';
 import { MatchService } from '../../services/match.service';
 import { Organization, OrganizationService } from '../../services/organization.service';
 import { FieldsService, Field } from '../../services/fields.service';
@@ -23,6 +23,7 @@ import { finalize } from 'rxjs/operators';
 // import * as jspdf from 'parse-pdf';
 
 import * as pdfjs from 'pdfjs-dist';
+import { BokService } from '../../services/bok.service';
 
 @Component({
   selector: 'app-newmatch',
@@ -31,7 +32,7 @@ import * as pdfjs from 'pdfjs-dist';
 })
 export class NewmatchComponent implements OnInit {
 
-  model = new Match('', '', '', '', '', '', true, null, null, null, null, null );
+  model = new Match('', '', '', '', '', '', true, null, null, null, null, null);
 
   selectedMatch: Match;
   _id: string;
@@ -79,16 +80,20 @@ export class NewmatchComponent implements OnInit {
   statistics = [];
 
   kaCodes = {
-    GC: 'Geocomputation',
-    WB: 'Web-based GI',
-    GS: 'GI and Society',
-    DA: 'Design and Setup of GI Systems',
-    CV: 'Cartography and Visualization',
-    OI: 'Organizational and Institutional Aspects',
-    GD: 'Geospatial Data',
+    AM: 'Analytical Methods',
     CF: 'Conceptual Foundations',
+    CV: 'Cartography and Visualization',
+    DA: 'Design and Setup of Geographic Information Systems',
     DM: 'Data Modeling, Storage and Exploitation',
-    AM: 'Analytical Methods'
+    GC: 'Geocomputation',
+    GD: 'Geospatial Data',
+    GS: 'GI and Society',
+    IP: 'Image processing and analysis',
+    OI: 'Organizational and Institutional Aspects',
+    PP: 'Physical principles',
+    PS: 'Platforms, sensors and digital imagery',
+    TA: 'Thematic and application domains',
+    WB: 'Web-based GI',
   };
 
   @ViewChild('textBoK') textBoK: ElementRef;
@@ -108,25 +113,27 @@ export class NewmatchComponent implements OnInit {
     private afAuth: AngularFireAuth,
     private fb: FormBuilder,
     // private cd: ChangeDetectorRef,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    public bokService: BokService
+
   ) {
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
-               if (this.currentUser.organizations && this.currentUser.organizations.length > 0) {
-                this.currentUser.organizations.forEach(orgId => {
-                  this.organizationService.getOrganizationById(orgId).subscribe(org => {
-                    if (org) {
-                      this.userOrgs.push(org);
-                      this.saveOrg = this.userOrgs[0];
-                      if (org.isPublic) { // if Any of the organizations the user belongs if public, can make public profiles
-                        this.canMakePublicProfiles = true;
-                      }
-                    }
-                  });
-                });
-              }
+          if (this.currentUser.organizations && this.currentUser.organizations.length > 0) {
+            this.currentUser.organizations.forEach(orgId => {
+              this.organizationService.getOrganizationById(orgId).subscribe(org => {
+                if (org) {
+                  this.userOrgs.push(org);
+                  this.saveOrg = this.userOrgs[0];
+                  if (org.isPublic) { // if Any of the organizations the user belongs if public, can make public profiles
+                    this.canMakePublicProfiles = true;
+                  }
+                }
+              });
+            });
+          }
         });
       }
     });
@@ -249,7 +256,7 @@ export class NewmatchComponent implements OnInit {
     this.bokConcepts2 = this.getBokConceptsFromResource(res);
     this.notMatchConcepts2 = this.bokConcepts2;
     this.resource2 = res;
-      this.match();
+    this.match();
   }
 
   uploadFile1(file) {
@@ -274,8 +281,8 @@ export class NewmatchComponent implements OnInit {
               // save in bokconcepts the concetps from pdf metadata
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
               this.notMatchConcepts1 = this.bokConcepts1;
-                this.resource1 = new Resource(null, filePath, '', '', '', '', '', true, this.meta1.info['Title'], this.meta1.info['Title'],
-                 '', this.bokConcepts1, null,   null, null, null, null );
+              this.resource1 = new Resource(null, filePath, '', '', '', '', '', true, this.meta1.info['Title'], this.meta1.info['Title'],
+                '', this.bokConcepts1, null, null, null, null, null);
               // do the matching
               this.match();
               console.log(this.meta1); // Metadata object here
@@ -310,7 +317,7 @@ export class NewmatchComponent implements OnInit {
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
               this.notMatchConcepts2 = this.bokConcepts2;
               this.resource2 = new Resource(null, filePath, '', '', '', '', '', true, this.meta2.info['Title'], this.meta2.info['Title'],
-                '', this.bokConcepts2, null,   null, null, null, null );
+                '', this.bokConcepts2, null, null, null, null, null);
               this.match();
             }).catch(function (err) {
               console.log('Error getting meta data');

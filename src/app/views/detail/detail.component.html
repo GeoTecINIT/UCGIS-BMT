@@ -60,21 +60,24 @@
               <div class="col-sm-6 col-md-6">
                 <div class="row">
                   <div class="col-md-12" [ngSwitch]="selectedProfile.resource1.type">
-                      <a *ngIf="selectedProfile.resource1._id !== null" href="{{selectedProfile.resource1.url}}" target="_blank">
-                        {{selectedProfile.resource1.title}}
-                      </a>
-                      <a *ngIf="selectedProfile.resource1._id === null && !isAnonymous" href="javascript:void(0);"  (click)="downloadResource(selectedProfile.resource1.url)">
-                        {{selectedProfile.resource1.title}}
-                      </a>
-                      <a *ngIf="selectedProfile.resource1._id === null && isAnonymous" tooltip="Login to download the file">
-                        {{selectedProfile.resource1.title}}
-                      </a>
+                    <a *ngIf="selectedProfile.resource1._id !== null" href="{{selectedProfile.resource1.url}}"
+                      target="_blank">
+                      {{selectedProfile.resource1.title}}
+                    </a>
+                    <a *ngIf="selectedProfile.resource1._id === null && !isAnonymous" href="javascript:void(0);"
+                      (click)="downloadResource(selectedProfile.resource1.url)">
+                      {{selectedProfile.resource1.title}}
+                    </a>
+                    <a *ngIf="selectedProfile.resource1._id === null && isAnonymous"
+                      tooltip="Login to download the file">
+                      {{selectedProfile.resource1.title}}
+                    </a>
                     <p *ngSwitchCase="0"><b>Study Program</b></p>
-                      <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
-                      <p *ngSwitchCase="2"><b>Job Offer</b></p>
-                      <p *ngSwitchCase="null"><b>PDF</b></p>
-                      <p>{{selectedProfile.resource1.description.slice(0, 100)}}
-                      </p>
+                    <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
+                    <p *ngSwitchCase="2"><b>Job Offer</b></p>
+                    <p *ngSwitchCase="null"><b>PDF</b></p>
+                    <p>{{selectedProfile.resource1.description.slice(0, 100)}}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -82,26 +85,28 @@
               </div>
               <div class="col-sm-5 col-md-5">
                 <div class="col-md-12" [ngSwitch]="selectedProfile.resource2.type">
-                    <a *ngIf="selectedProfile.resource2._id !== null" href="{{selectedProfile.resource2.url}}" target="_blank">
-                      {{selectedProfile.resource2.title}}
-                    </a>
-                    <a *ngIf="selectedProfile.resource2._id === null && !isAnonymous" href="javascript:void(0);" (click)="downloadResource(selectedProfile.resource2.url)">
-                      {{selectedProfile.resource2.title}}
-                    </a>
-                    <a *ngIf="selectedProfile.resource2._id === null && isAnonymous" tooltip="Login to download the file">
-                      {{selectedProfile.resource2.title}}
-                    </a>
-                    <p *ngSwitchCase="0"><b>Study Program</b></p>
-                    <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
-                    <p *ngSwitchCase="2"><b>Job Offer</b></p>
-                    <p *ngSwitchCase="null"><b>PDF</b></p>
-                    <p>{{selectedProfile.resource2.description.slice(0, 100)}}
-                    </p>
+                  <a *ngIf="selectedProfile.resource2._id !== null" href="{{selectedProfile.resource2.url}}"
+                    target="_blank">
+                    {{selectedProfile.resource2.title}}
+                  </a>
+                  <a *ngIf="selectedProfile.resource2._id === null && !isAnonymous" href="javascript:void(0);"
+                    (click)="downloadResource(selectedProfile.resource2.url)">
+                    {{selectedProfile.resource2.title}}
+                  </a>
+                  <a *ngIf="selectedProfile.resource2._id === null && isAnonymous" tooltip="Login to download the file">
+                    {{selectedProfile.resource2.title}}
+                  </a>
+                  <p *ngSwitchCase="0"><b>Study Program</b></p>
+                  <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
+                  <p *ngSwitchCase="2"><b>Job Offer</b></p>
+                  <p *ngSwitchCase="null"><b>PDF</b></p>
+                  <p>{{selectedProfile.resource2.description.slice(0, 100)}}
+                  </p>
                 </div>
               </div>
             </div>
-            <hr/>
-            <div class="row">
+            <hr />
+            <div *ngIf="this.bokService && this.bokService.concepts && this.bokService.concepts.length > 0" class="row">
               <div class="col-sm-12 col-md-12">
                 <div class="row">
                   <div class="col-md-4">
@@ -112,7 +117,8 @@
                   <div class="col-md-8 text-center">
                     <button *ngFor="let mk of selectedProfile.commonConcepts" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                      {{ mk }}
+                      <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                        {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                     </button>
                   </div>
                   <div class="col-md-4">
@@ -125,15 +131,18 @@
                       </div>
                       <div class="col-md-5">
                         <div class="progress progress-xs">
-                          <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar" aria-valuenow="k.value"
-                               [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar"
+                            aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100">
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-sm-12 col-md-12"><hr/></div>
+              <div class="col-sm-12 col-md-12">
+                <hr />
+              </div>
               <div class="col-sm-6 col-md-6">
                 <div class="row">
                   <div class="col-md-12">
@@ -144,10 +153,11 @@
                   <div class="col-md-12 text-center">
                     <div *ngIf="selectedProfile.notMatchConcepts1.length > 0">
                       <button *ngFor="let mk of selectedProfile.notMatchConcepts1" type="button" class="btn btn-pill"
-                              [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                        {{ mk }}
+                        [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                        <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                          {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                       </button>
-                  </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -159,8 +169,9 @@
                   <div class="col-md-12 text-center">
                     <div *ngIf="selectedProfile.notMatchConcepts2.length > 0">
                       <button *ngFor="let mk of selectedProfile.notMatchConcepts2" type="button" class="btn btn-pill"
-                              [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                        {{ mk }}
+                        [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                        <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                          {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                       </button>
                     </div>
                   </div>
