@@ -88,7 +88,8 @@
                 <div class="card-header">
                   Browse or select resource
                   <small>Browse or select resource to see the matching</small>
-                  <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource." class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource."
+                    class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <!-- Browse or search -->
@@ -135,17 +136,22 @@
                         <div class="col-md-12">
                           <div class="text-center">
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource1==-1}" (click)="showResource1=-1">All</button>
+                              [ngClass]="{'active': showResource1==-1}"
+                              (click)="showResource1=-1; filterByType(1, -1)">All</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource1==0}" (click)="showResource1=0">Learning
+                              [ngClass]="{'active': showResource1==0}"
+                              (click)="showResource1=0; filterByType(1, 0)">Learning
                               Content</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource1==1}" (click)="showResource1=1">Occupational
+                              [ngClass]="{'active': showResource1==1}"
+                              (click)="showResource1=1; filterByType(1, 1)">Occupational
                               Profiles</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource1==2}" (click)="showResource1=2">Job Offers</button>
+                              [ngClass]="{'active': showResource1==2}" (click)="showResource1=2; filterByType(1, 2)">Job
+                              Offers</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource1==3}" (click)="showResource1=3">Others</button>
+                              [ngClass]="{'active': showResource1==3}"
+                              (click)="showResource1=3; filterByType(1, 3)">Others</button>
                           </div>
                         </div>
                         <!--                  <div class="col-md-2">
@@ -181,7 +187,8 @@
                         </ng-container> -->
                       </div>
 
-                      <div *ngFor="let resource of filteredResources1; index as i">
+                      <div
+                        *ngFor="let resource of filteredResources1 | slice:paginationLimitFrom1:paginationLimitTo1; let i=index">
                         <div *ngIf="showResource1==-1 || showResource1 == resource.type" class="row">
                           <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
                           <div class="col-md-12">
@@ -212,6 +219,27 @@
                           </div>
                         </div>
                       </div>
+                      <div *ngIf="this.filteredResources1" class="row">
+                        <div class="col-md-6 ml-auto mr-auto">
+                          <nav aria-label="pagination">
+                            <ul class="pagination justify-content-center">
+                              <li class="page-item">
+                                <a class="page-link" href="javascript:;" (click)="previousPage1()">Previous</a>
+                              </li>
+                              <li *ngFor="let page of range(this.filteredResources1.length/LIMIT_PER_PAGE, 0)"
+                                class="page-item" [ngClass]="currentPage1 == page? 'active': ''">
+                                <a class="page-link" href="javascript:;"
+                                  (click)="currentPage=page; paginationLimitFrom1=page*LIMIT_PER_PAGE; paginationLimitTo1=page*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">{{page+1}}
+                                  <span *ngIf="currentPage1 == page" class="sr-only">(current)</span>
+                                </a></li>
+
+                              <li class="page-item">
+                                <a class="page-link" href="javascript:;" (click)="nextPage1()">Next</a>
+                              </li>
+                            </ul>
+                          </nav>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -224,7 +252,8 @@
                 <div class="card-header">
                   Browse or select resource
                   <small>Browse or select resource to see the matching</small>
-                  <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource." class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource."
+                    class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <!-- Browse or search -->
@@ -271,17 +300,22 @@
                         <div class="col-md-12">
                           <div class="text-center">
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource2==-1}" (click)="showResource2=-1">All</button>
+                              [ngClass]="{'active': showResource2==-1}"
+                              (click)="showResource2=-1; filterByType(2, -1)">All</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource2==0}" (click)="showResource2=0">Learning
+                              [ngClass]="{'active': showResource2==0}"
+                              (click)="showResource2=0; filterByType(2, 0)">Learning
                               Content</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource2==1}" (click)="showResource2=1">Occupational
+                              [ngClass]="{'active': showResource2==1}"
+                              (click)="showResource2=1; filterByType(2, 1)">Occupational
                               Profiles</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource2==2}" (click)="showResource2=2">Job Offers</button>
+                              [ngClass]="{'active': showResource2==2}" (click)="showResource2=2; filterByType(2, 2)">Job
+                              Offers</button>
                             <button class="btn btn-pill btn-outline-primary mr-2"
-                              [ngClass]="{'active': showResource2==3}" (click)="showResource2=3">Others</button>
+                              [ngClass]="{'active': showResource2==3}"
+                              (click)="showResource2=3; filterByType(2, 3)">Others</button>
                           </div>
                         </div>
                         <!--     <div class="col-md-2">
@@ -317,7 +351,8 @@
                         </ng-container> -->
                       </div>
 
-                      <div *ngFor="let resource of filteredResources2; index as i ">
+                      <div
+                        *ngFor="let resource of filteredResources2 | slice:paginationLimitFrom2:paginationLimitTo2; let i=index ">
                         <div *ngIf="showResource2==-1 || showResource2 == resource.type" class="row">
                           <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
                           <div class="col-md-12">
@@ -343,6 +378,27 @@
                           </div>
                         </div>
                       </div>
+                      <div *ngIf="this.filteredResources2" class="row">
+                        <div class="col-md-6 ml-auto mr-auto">
+                          <nav aria-label="pagination">
+                            <ul class="pagination justify-content-center">
+                              <li class="page-item">
+                                <a class="page-link" href="javascript:;" (click)="previousPage2()">Previous</a>
+                              </li>
+                              <li *ngFor="let page of range(this.filteredResources2.length/LIMIT_PER_PAGE, 0)"
+                                class="page-item" [ngClass]="currentPage2 == page? 'active': ''">
+                                <a class="page-link" href="javascript:;"
+                                  (click)="currentPage2=page; paginationLimitFrom2=page*LIMIT_PER_PAGE; paginationLimitTo2=page*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">{{page+1}}
+                                  <span *ngIf="currentPage2 == page" class="sr-only">(current)</span>
+                                </a></li>
+
+                              <li class="page-item">
+                                <a class="page-link" href="javascript:;" (click)="nextPage2()">Next</a>
+                              </li>
+                            </ul>
+                          </nav>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -353,7 +409,8 @@
                 <div class="card-header">
                   Matching BoK concepts
                   <small>BoK concepts present in both resources</small>
-                  <span tooltip="This is common knowledge shared between the two resources" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="This is common knowledge shared between the two resources"
+                    class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="row card-body" style="background-color: #faf9f8">
                   <div class="text-left ma">
@@ -361,7 +418,8 @@
                     </div>
                     <button *ngFor="let mk of commonBokConcepts" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                      {{ mk }}
+                      <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                        {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                     </button>
                   </div>
                   <div class="col-md-4">
@@ -374,8 +432,9 @@
                       </div>
                       <div class="col-md-5">
                         <div class="progress progress-xs">
-                          <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar" aria-valuenow="k.value"
-                               [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar"
+                            aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100">
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -388,7 +447,8 @@
                 <div class="card-header">
                   Not matching BoK concepts
                   <small>BoK concepts present in one resource</small>
-                  <span tooltip="This is knowledge only present in the above resource" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="This is knowledge only present in the above resource"
+                    class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <div class="row text-center ma">
@@ -406,7 +466,8 @@
                 <div class="card-header">
                   Not matching BoK concepts
                   <small>BoK concepts present in one resource</small>
-                  <span tooltip="This is knowledge only present in the above resource" class="badge badge-primary badge-pill">i</span>
+                  <span tooltip="This is knowledge only present in the above resource"
+                    class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <div class="row  text-center ma">
