@@ -68,7 +68,9 @@ export class Match extends Object {
     public resource2: Resource,
     public commonConcepts: any [],
     public notMatchConcepts1: any [],
-    public notMatchConcepts2: any []
+    public notMatchConcepts2: any [],
+    public updatedAt: any,
+    public createdAt: any
   ) {
     super();
   }

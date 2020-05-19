@@ -109,7 +109,7 @@ export class ResourceService {
           r.collectionDisplay = collectionOT;
           r.concepts = r.knowledge;
           r.name = r.title;
-          r.url = urlOPT + r._id;
+          r.url = r.url;
           r.type = 3;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);

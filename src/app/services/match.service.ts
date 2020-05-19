@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Match } from '../model/resources.model';
+import * as firebase from 'firebase';
 
 const collection = 'Matches';
 
@@ -29,6 +30,9 @@ export class MatchService {
   addNewMatch(newMatch: Match) {
     const id = this.db.createId();
     newMatch._id = id;
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+    newMatch.updatedAt = timestamp;
+    newMatch.createdAt = timestamp;
     this.db
       .collection(collection)
       .doc(id)

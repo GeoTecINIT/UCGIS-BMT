@@ -139,8 +139,8 @@ export class NewmatchComponent implements OnInit {
                   if (org.isPublic) { // if Any of the organizations the user belongs if public, can make public profiles
                     this.canMakePublicProfiles = true;
                   }
-                  this.filteredResources1 =  this.resourceService.allResources;
-                  this.filteredResources2 =  this.resourceService.allResources;
+                  this.filteredResources1 = this.resourceService.allResources;
+                  this.filteredResources2 = this.resourceService.allResources;
                 }
               });
             });
@@ -167,15 +167,15 @@ export class NewmatchComponent implements OnInit {
       this.model.resource2 = this.resource2;
       this.model.orgId = this.saveOrg._id;
       this.model.orgName = this.saveOrg.name;
-      if ( this.model.resource1._id == null) {
+      if (this.model.resource1._id == null) {
         this.model.resource1.type = 3;
         this.otherService.addNewOther(this.model.resource1);
       }
-      if ( this.model.resource2._id == null) {
+      if (this.model.resource2._id == null) {
         this.model.resource2.type = 3;
         this.otherService.addNewOther(this.model.resource2);
       }
-       this.matchService.addNewMatch(this.model);
+      this.matchService.addNewMatch(this.model);
     }
   }
 
@@ -308,7 +308,7 @@ export class NewmatchComponent implements OnInit {
               // save in bokconcepts the concetps from pdf metadata
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
               this.notMatchConcepts1 = this.bokConcepts1;
-              this.resource1 = new Resource(null, filePath, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
+              this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
                 this.bokConcepts1, null, null, null, null, 3);
               // do the matching
@@ -344,7 +344,7 @@ export class NewmatchComponent implements OnInit {
               console.log(this.meta2); // Metadata object here
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
               this.notMatchConcepts2 = this.bokConcepts2;
-              this.resource2 = new Resource(null, filePath, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
+              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3);
               this.match();
@@ -386,10 +386,12 @@ export class NewmatchComponent implements OnInit {
   getBokConceptsFromResource(res) {
     // get concepts from resource in our database
     const concepts = [];
-    res.concepts.forEach(c => {
-      const rel = c.split(']');
-      concepts.push(rel[0].slice(1));
-    });
+    if (res && res.concepts && res.concepts.length > 0) {
+      res.concepts.forEach(c => {
+        const rel = c.split(']');
+        concepts.push(rel[0].slice(1));
+      });
+    }
     return concepts;
   }
 
