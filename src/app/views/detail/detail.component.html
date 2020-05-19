@@ -9,7 +9,7 @@
             </div>
             <div class="col-sm-4 offset-md-4 col-md-5"></div>
             <div class="col-sm-4 col-md-1">
-              <div *ngIf="selectedProfile; else loading" class="row">
+              <div *ngIf="selectedMatch; else loading" class="row">
                 <div class="cols-xs-2 col-md-4 no-padding">
                   <button type="button" class="btn btn-block btn-link" [popover]="popTemplate" tooltip="Share"
                     popoverTitle="Copy link, export to PDF or XML" placement="top" [outsideClick]="true">
@@ -19,22 +19,22 @@
                 <!--div class="cols-xs-2 col-md-3 no-padding"
                   tooltip="{{isAnonymous? 'Login to be able to duplicate' : 'Duplicate'}}">
                   <button type="button" class="btn btn-block btn-link" tooltip="Duplicate"
-                    routerLink="/newmatch/duplicate/{{ selectedProfile._id }}" [disabled]="isAnonymous">
+                    routerLink="/newmatch/duplicate/{{ selectedMatch._id }}" [disabled]="isAnonymous">
                     <i class="fa fa-copy fa-lg"></i>
                   </button>
                 </div-->
                 <!--div class="cols-xs-2 col-md-3 no-padding"
-                  tooltip="{{isAnonymous? 'Login to be able to edit' : selectedProfile.userId==afAuth.auth.currentUser?.uid?  'Edit' : 'You can edit only your own matches'}}">
+                  tooltip="{{isAnonymous? 'Login to be able to edit' : selectedMatch.userId==afAuth.auth.currentUser?.uid?  'Edit' : 'You can edit only your own matches'}}">
                   <button type="button" class="btn btn-block btn-link"
-                    routerLink="/newmatch/copy/{{ selectedProfile._id }}"
-                    [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(selectedProfile.orgId) == -1)">
+                    routerLink="/newmatch/copy/{{ selectedMatch._id }}"
+                    [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(selectedMatch.orgId) == -1)">
                     <i class="fa fa-edit fa-lg"></i>
                   </button>
                 </div-->
                 <div class="cols-xs-2 col-md-5 no-padding"
-                  tooltip="{{isAnonymous? 'Login to be able to remove' : selectedProfile.userId==afAuth.auth.currentUser?.uid?  'Remove' : 'You can remove only your own matches'}}">
+                  tooltip="{{isAnonymous? 'Login to be able to remove' : selectedMatch.userId==afAuth.auth.currentUser?.uid?  'Remove' : 'You can remove only your own matches'}}">
                   <button type="button" class="btn btn-block btn-link" data-toggle="modal" (click)="dangerModal.show()"
-                    [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(selectedProfile.orgId) == -1)">
+                    [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(selectedMatch.orgId) == -1)">
                     <i class="fa fa-trash-o fa-lg"></i>
                   </button>
                 </div>
@@ -43,40 +43,40 @@
           </div>
         </div>
         <div class="card-body">
-          <ng-container *ngIf="selectedProfile; else loading">
+          <ng-container *ngIf="selectedMatch; else loading">
             <div class="row">
               <div class="col-md-6">
-                <h1>{{ selectedProfile.title }}</h1>
+                <h1>{{ selectedMatch.title }}</h1>
               </div>
               <!--div class="col-md-4 offset-md-1">
-                <h5 *ngFor="let f of selectedProfile.fields">
+                <h5 *ngFor="let f of selectedMatch.fields">
                   {{ f.name }} ({{ f.grandparent }})
                 </h5>
               </div-->
             </div>
-            <p>{{ selectedProfile.description }}</p>
+            <p>{{ selectedMatch.description }}</p>
             <hr />
             <div class="row">
               <div class="col-sm-6 col-md-6">
                 <div class="row">
-                  <div class="col-md-12" [ngSwitch]="selectedProfile.resource1.type">
-                    <a *ngIf="selectedProfile.resource1._id !== null" href="{{selectedProfile.resource1.url}}"
+                  <div class="col-md-12" [ngSwitch]="selectedMatch.resource1.type">
+                    <a *ngIf="selectedMatch.resource1._id !== null" href="{{selectedMatch.resource1.url}}"
                       target="_blank">
-                      {{selectedProfile.resource1.title}}
+                      {{selectedMatch.resource1.title}}
                     </a>
-                    <a *ngIf="selectedProfile.resource1._id === null && !isAnonymous" href="javascript:void(0);"
-                      (click)="downloadResource(selectedProfile.resource1.url)">
-                      {{selectedProfile.resource1.title}}
+                    <a *ngIf="selectedMatch.resource1._id === null && !isAnonymous" href="javascript:void(0);"
+                      (click)="downloadResource(selectedMatch.resource1.url)">
+                      {{selectedMatch.resource1.title}}
                     </a>
-                    <a *ngIf="selectedProfile.resource1._id === null && isAnonymous"
+                    <a *ngIf="selectedMatch.resource1._id === null && isAnonymous"
                       tooltip="Login to download the file">
-                      {{selectedProfile.resource1.title}}
+                      {{selectedMatch.resource1.title}}
                     </a>
                     <p *ngSwitchCase="0"><b>Study Program</b></p>
                     <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                     <p *ngSwitchCase="2"><b>Job Offer</b></p>
                     <p *ngSwitchCase="null"><b>PDF</b></p>
-                    <p>{{selectedProfile.resource1.description.slice(0, 100)}}
+                    <p>{{selectedMatch.resource1.description.slice(0, 100)}}
                     </p>
                   </div>
                 </div>
@@ -84,23 +84,23 @@
               <div style="border-left: 1px solid #e5e5e5;">
               </div>
               <div class="col-sm-5 col-md-5">
-                <div class="col-md-12" [ngSwitch]="selectedProfile.resource2.type">
-                  <a *ngIf="selectedProfile.resource2._id !== null" href="{{selectedProfile.resource2.url}}"
+                <div class="col-md-12" [ngSwitch]="selectedMatch.resource2.type">
+                  <a *ngIf="selectedMatch.resource2._id !== null" href="{{selectedMatch.resource2.url}}"
                     target="_blank">
-                    {{selectedProfile.resource2.title}}
+                    {{selectedMatch.resource2.title}}
                   </a>
-                  <a *ngIf="selectedProfile.resource2._id === null && !isAnonymous" href="javascript:void(0);"
-                    (click)="downloadResource(selectedProfile.resource2.url)">
-                    {{selectedProfile.resource2.title}}
+                  <a *ngIf="selectedMatch.resource2._id === null && !isAnonymous" href="javascript:void(0);"
+                    (click)="downloadResource(selectedMatch.resource2.url)">
+                    {{selectedMatch.resource2.title}}
                   </a>
-                  <a *ngIf="selectedProfile.resource2._id === null && isAnonymous" tooltip="Login to download the file">
-                    {{selectedProfile.resource2.title}}
+                  <a *ngIf="selectedMatch.resource2._id === null && isAnonymous" tooltip="Login to download the file">
+                    {{selectedMatch.resource2.title}}
                   </a>
                   <p *ngSwitchCase="0"><b>Study Program</b></p>
                   <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                   <p *ngSwitchCase="2"><b>Job Offer</b></p>
                   <p *ngSwitchCase="null"><b>PDF</b></p>
-                  <p>{{selectedProfile.resource2.description.slice(0, 100)}}
+                  <p>{{selectedMatch.resource2.description.slice(0, 100)}}
                   </p>
                 </div>
               </div>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="row">
                   <div class="col-md-8 text-center">
-                    <button *ngFor="let mk of selectedProfile.commonConcepts" type="button" class="btn btn-pill"
+                    <button *ngFor="let mk of selectedMatch.commonConcepts" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
                       <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
                         {{this.bokService.getConceptInfoByCode(mk).name}} </a>
@@ -151,8 +151,8 @@
                 </div>
                 <div class="row">
                   <div class="col-md-12 text-center">
-                    <div *ngIf="selectedProfile.notMatchConcepts1.length > 0">
-                      <button *ngFor="let mk of selectedProfile.notMatchConcepts1" type="button" class="btn btn-pill"
+                    <div *ngIf="selectedMatch.notMatchConcepts1.length > 0">
+                      <button *ngFor="let mk of selectedMatch.notMatchConcepts1" type="button" class="btn btn-pill"
                         [ngClass]="'bok-' + ( mk | slice:0:2 )">
                         <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
                           {{this.bokService.getConceptInfoByCode(mk).name}} </a>
@@ -167,8 +167,8 @@
                 </div>
                 <div class="row">
                   <div class="col-md-12 text-center">
-                    <div *ngIf="selectedProfile.notMatchConcepts2.length > 0">
-                      <button *ngFor="let mk of selectedProfile.notMatchConcepts2" type="button" class="btn btn-pill"
+                    <div *ngIf="selectedMatch.notMatchConcepts2.length > 0">
+                      <button *ngFor="let mk of selectedMatch.notMatchConcepts2" type="button" class="btn btn-pill"
                         [ngClass]="'bok-' + ( mk | slice:0:2 )">
                         <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
                           {{this.bokService.getConceptInfoByCode(mk).name}} </a>
@@ -190,7 +190,7 @@
   <!--/.row-->
 </div>
 <ng-template #popTemplate>
-  <app-popup idOP="{{selectedProfile._id}}"></app-popup>
+  <app-popup idOP="{{selectedMatch._id}}"></app-popup>
 </ng-template>
 <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
@@ -207,8 +207,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="dangerModal.hide()">Close</button>
-        <!-- <button type="button" class="btn btn-danger"
-          (click)="occuprofilesService.removeOccuProfile(selectedProfile._id)" routerLink="/list">Delete</button> -->
+        <button type="button" class="btn btn-danger" (click)="removeMatch(selectedMatch._id)" routerLink="/list">Delete</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

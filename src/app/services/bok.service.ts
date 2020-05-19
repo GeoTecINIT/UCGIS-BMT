@@ -35,7 +35,6 @@ export class BokService {
         concepts.push(c);
       });
     }
-    console.log(concepts);
     return concepts;
   }
 

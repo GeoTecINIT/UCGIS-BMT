@@ -107,7 +107,7 @@ export class ResourceService {
         rs.forEach(r => {
           r.collection = collectionOT;
           r.collectionDisplay = collectionOT;
-          r.concepts = r.knowledge;
+          r.concepts = r.concepts;
           r.name = r.title;
           r.url = r.url;
           r.type = 3;

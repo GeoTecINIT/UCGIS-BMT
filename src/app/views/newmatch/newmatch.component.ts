@@ -140,7 +140,9 @@ export class NewmatchComponent implements OnInit {
                     this.canMakePublicProfiles = true;
                   }
                   this.filteredResources1 = this.resourceService.allResources;
-                  this.filteredResources2 = this.resourceService.allResources;
+                  // Sort by name
+                  this.filteredResources1.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ?  1 : -1);
+                  this.filteredResources2 = this.filteredResources1;
                 }
               });
             });
@@ -389,7 +391,7 @@ export class NewmatchComponent implements OnInit {
     if (res && res.concepts && res.concepts.length > 0) {
       res.concepts.forEach(c => {
         const rel = c.split(']');
-        concepts.push(rel[0].slice(1));
+        rel[0][0] === '[' ? concepts.push(rel[0].slice(1)) : concepts.push(rel[0]);
       });
     }
     return concepts;

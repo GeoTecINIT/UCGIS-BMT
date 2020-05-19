@@ -37,7 +37,7 @@ export class DetailComponent implements OnInit {
     GI: 'Geographic Information Science and Technology'
   };
 
-  selectedProfile: Match;
+  selectedMatch: Match;
   currentUser: User = new User();
 
   profileUrl: Observable<any>;
@@ -72,15 +72,15 @@ export class DetailComponent implements OnInit {
      this.matchService
       .getMatchById(_id)
       .subscribe(profile => {
-        this.selectedProfile = profile;
+        this.selectedMatch = profile;
         this.calculateStatistics();
       });
   }
   calculateStatistics() {
-    if (this.selectedProfile) {
+    if (this.selectedMatch) {
       const tempStats = {};
       let tempTotal = 0;
-      this.selectedProfile.commonConcepts.forEach(kn => {
+      this.selectedMatch.commonConcepts.forEach(kn => {
         const code = kn.slice(0, 2);
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
         tempTotal++;
@@ -97,6 +97,9 @@ export class DetailComponent implements OnInit {
     this.profileUrl.subscribe(response => {
       window.open( response, '_blank');
     });
+  }
 
+  removeMatch(id: string) {
+    this.matchService.removeMatch(id);
   }
 }
