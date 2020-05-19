@@ -7,7 +7,7 @@ const collectionOP = 'OcuProfiles';
 const collectionSP = 'StudyPrograms';
 const collectionJODisplay = 'Job Offer';
 const collectionOPDisplay = 'Occupational Profile';
-const collectionSPDisplay = 'Learning Content';
+const collectionSPDisplay = 'Educational Offer';
 const collectionOT = 'Other';
 const urlJOT = 'https://eo4geo-jot.web.app/#/detail/';
 const urlCDT = 'https://eo4geo-cdt.web.app/detail/';
@@ -98,6 +98,23 @@ export class ResourceService {
           this.allResources.push(r);
         });
         opSubs.unsubscribe();
+      });
+
+    // get Other
+    const otSubs = this.db
+      .collection<Resource>(collectionOT)
+      .valueChanges().subscribe(rs => {
+        rs.forEach(r => {
+          r.collection = collectionOT;
+          r.collectionDisplay = collectionOT;
+          r.concepts = r.concepts;
+          r.name = r.title;
+          r.url = r.url;
+          r.type = 3;
+          r.description = r.description.slice(0, 100) + '[...]'; // truncate description
+          this.allResources.push(r);
+        });
+        otSubs.unsubscribe();
       });
   }
 }

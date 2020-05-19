@@ -68,7 +68,9 @@ export class Match extends Object {
     public resource2: Resource,
     public commonConcepts: any [],
     public notMatchConcepts1: any [],
-    public notMatchConcepts2: any []
+    public notMatchConcepts2: any [],
+    public updatedAt: any,
+    public createdAt: any
   ) {
     super();
   }
@@ -93,6 +95,26 @@ export class Resource extends Object {
     public children: Resource[], // SP have their knowledge in children
     public occuProf: OcupationalProfile, // JO have some data in the OP
     public knowledge: string[],
+    public type: number,
+  ) {
+    super();
+  }
+}
+
+export class Other extends Object {
+  constructor(
+    public _id: string,
+    public url: string,
+    public userId: string,
+    public orgId: string,
+    public orgName: string,
+    public collection: string,
+    public collectionDisplay: string,
+    public isPublic: boolean = false,
+    public name: string,
+    public title: string,
+    public description: string,
+    public concepts: any[],
     public type: number,
   ) {
     super();

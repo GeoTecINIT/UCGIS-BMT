@@ -2,6 +2,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Match, Resource } from '../../model/resources.model';
 import { MatchService } from '../../services/match.service';
+import { OtherService } from '../../services/other.service';
 import { Organization, OrganizationService } from '../../services/organization.service';
 import { FieldsService, Field } from '../../services/fields.service';
 import { EscoCompetenceService } from '../../services/esco-competence.service';
@@ -32,7 +33,7 @@ import { BokService } from '../../services/bok.service';
 })
 export class NewmatchComponent implements OnInit {
 
-  model = new Match('', '', '', '', '', '', true, null, null, null, null, null);
+  model = new Match('', '', '', '', '', '', true, null, null, null, null, null, null, null);
 
   selectedMatch: Match;
   _id: string;
@@ -94,6 +95,7 @@ export class NewmatchComponent implements OnInit {
     PS: 'Platforms, sensors and digital imagery',
     TA: 'Thematic and application domains',
     WB: 'Web-based GI',
+    GI: 'Geographic Information Science and Technology'
   };
 
   formGroup = this.fb.group({
@@ -107,9 +109,10 @@ export class NewmatchComponent implements OnInit {
   public paginationLimitTo2 = this.LIMIT_PER_PAGE;
   public currentPage1 = 0;
   public currentPage2 = 0;
-
+  public collectionOT = 'Other';
   constructor(
     private matchService: MatchService,
+    private otherService: OtherService,
     private organizationService: OrganizationService,
     private userService: UserService,
     public fieldsService: FieldsService,
@@ -136,8 +139,10 @@ export class NewmatchComponent implements OnInit {
                   if (org.isPublic) { // if Any of the organizations the user belongs if public, can make public profiles
                     this.canMakePublicProfiles = true;
                   }
-                  this.filteredResources1 =  this.resourceService.allResources;
-                  this.filteredResources2 =  this.resourceService.allResources;
+                  this.filteredResources1 = this.resourceService.allResources;
+                  // Sort by name
+                  this.filteredResources1.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ?  1 : -1);
+                  this.filteredResources2 = this.filteredResources1;
                 }
               });
             });
@@ -164,6 +169,14 @@ export class NewmatchComponent implements OnInit {
       this.model.resource2 = this.resource2;
       this.model.orgId = this.saveOrg._id;
       this.model.orgName = this.saveOrg.name;
+      if (this.model.resource1._id == null) {
+        this.model.resource1.type = 3;
+        this.otherService.addNewOther(this.model.resource1);
+      }
+      if (this.model.resource2._id == null) {
+        this.model.resource2.type = 3;
+        this.otherService.addNewOther(this.model.resource2);
+      }
       this.matchService.addNewMatch(this.model);
     }
   }
@@ -205,8 +218,8 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources1 = this.resourceService.allResources;
     this.filteredResources1 = this.filteredResources1.filter(
       it =>
-        it.name.toLowerCase().includes(this.searchText1) ||
-        it.description.toLowerCase().includes(this.searchText1)
+        it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+        it.description.toLowerCase().includes(this.searchText1.toLowerCase())
     );
   }
 
@@ -218,8 +231,8 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources2 = this.resourceService.allResources;
     this.filteredResources2 = this.filteredResources2.filter(
       it =>
-        it.name.toLowerCase().includes(this.searchText2) ||
-        it.description.toLowerCase().includes(this.searchText2)
+        it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+        it.description.toLowerCase().includes(this.searchText2.toLowerCase())
     );
   }
 
@@ -297,8 +310,9 @@ export class NewmatchComponent implements OnInit {
               // save in bokconcepts the concetps from pdf metadata
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
               this.notMatchConcepts1 = this.bokConcepts1;
-              this.resource1 = new Resource(null, filePath, '', '', '', '', '', true, this.meta1.info['Title'], this.meta1.info['Title'],
-                '', this.bokConcepts1, null, null, null, null, null);
+              this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
+                this.collectionOT, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
+                this.bokConcepts1, null, null, null, null, 3);
               // do the matching
               this.match();
               console.log(this.meta1); // Metadata object here
@@ -332,8 +346,9 @@ export class NewmatchComponent implements OnInit {
               console.log(this.meta2); // Metadata object here
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
               this.notMatchConcepts2 = this.bokConcepts2;
-              this.resource2 = new Resource(null, filePath, '', '', '', '', '', true, this.meta2.info['Title'], this.meta2.info['Title'],
-                '', this.bokConcepts2, null, null, null, null, null);
+              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
+                this.collectionOT, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
+                this.bokConcepts2, null, null, null, null, 3);
               this.match();
             }).catch(function (err) {
               console.log('Error getting meta data');
@@ -373,10 +388,12 @@ export class NewmatchComponent implements OnInit {
   getBokConceptsFromResource(res) {
     // get concepts from resource in our database
     const concepts = [];
-    res.concepts.forEach(c => {
-      const rel = c.split(']');
-      concepts.push(rel[0].slice(1));
-    });
+    if (res && res.concepts && res.concepts.length > 0) {
+      res.concepts.forEach(c => {
+        const rel = c.split(']');
+        rel[0][0] === '[' ? concepts.push(rel[0].slice(1)) : concepts.push(rel[0]);
+      });
+    }
     return concepts;
   }
 

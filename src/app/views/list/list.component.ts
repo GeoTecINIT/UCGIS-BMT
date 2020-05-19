@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { NgForOf } from '@angular/common';
 import { Observable, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { Match,  Resource} from '../../model/resources.model';
+import { Match, Resource } from '../../model/resources.model';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User, UserService } from '../../services/user.service';
 import { OrganizationService } from '../../services/organization.service';
-import {MatchService} from '../../services/match.service';
+import { MatchService } from '../../services/match.service';
 
 @Component({
   selector: 'app-list',
@@ -34,34 +34,36 @@ export class ListComponent implements OnInit {
         this.isAnonymous = user.isAnonymous;
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
-           this.matchService
+          this.matchService
+            .subscribeToMatches()
+            .subscribe(matches => {
+              this.matches = [];
+              matches.forEach(ma => {
+                if (ma.isPublic) {
+                  this.matches.push(ma);
+                } else if (this.currentUser && this.currentUser.organizations && this.currentUser.organizations.indexOf(ma.orgId) > -1) {
+                  this.matches.push(ma);
+                }
+              });
+              // Sort by date
+              this.matches.sort((a, b) => (a.updatedAt > b.updatedAt) ? 1 : -1);
+              this.filteredMatches = this.matches;
+            });
+        });
+      } else {
+        this.isAnonymous = true;
+        this.matchService
           .subscribeToMatches()
-          .subscribe(matches => {
+          .subscribe(occuProfiles => {
             this.matches = [];
-            matches.forEach(ma => {
-              if (ma.isPublic) {
-                this.matches.push(ma);
-              } else if (this.currentUser && this.currentUser.organizations && this.currentUser.organizations.indexOf(ma.orgId) > -1) {
-                this.matches.push(ma);
+            occuProfiles.forEach(op => {
+              if (op.isPublic) {
+                this.matches.push(op);
               }
             });
             this.filteredMatches = this.matches;
           });
-        });
-      } else {
-        this.isAnonymous = true;
       }
-       this.matchService
-        .subscribeToMatches()
-        .subscribe(occuProfiles => {
-          this.matches = [];
-          occuProfiles.forEach(op => {
-            if (op.isPublic) {
-              this.matches.push(op);
-            }
-          });
-          this.filteredMatches = this.matches;
-        });
     });
   }
 
@@ -74,9 +76,9 @@ export class ListComponent implements OnInit {
        }); */
   }
 
-  removeOccuProfile(id: string) {
-     this.matchService.removeMatch(id);
-   }
+  removeMatch(id: string) {
+    this.matchService.removeMatch(id);
+  }
 
   filter() {
     const search = this.searchText.toLowerCase();
@@ -92,7 +94,7 @@ export class ListComponent implements OnInit {
   }
 
   applyFilters() {
-     this.matches.forEach(mat => {
+    this.matches.forEach(mat => {
       if (this.knowledgeFilter) {
         mat.commonConcepts.forEach(know => {
           if (know.toLowerCase().includes(this.searchText.toLowerCase())) {
