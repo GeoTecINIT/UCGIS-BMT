@@ -32,7 +32,7 @@
                   </button>
                 </div-->
                 <div class="cols-xs-2 col-md-5 no-padding"
-                  tooltip="{{isAnonymous? 'Login to be able to remove' : selectedMatch.userId==afAuth.auth.currentUser?.uid?  'Remove' : 'You can remove only your own matches'}}">
+                  tooltip="{{isAnonymous? 'Login to be able to remove' : (currentUser?.organizations?.indexOf(selectedMatch.orgId) != -1)?  'Remove' : 'You can remove only your own matches'}}">
                   <button type="button" class="btn btn-block btn-link" data-toggle="modal" (click)="dangerModal.show()"
                     [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(selectedMatch.orgId) == -1)">
                     <i class="fa fa-trash-o fa-lg"></i>
@@ -62,17 +62,17 @@
                   <div class="col-md-12" [ngSwitch]="selectedMatch.resource1.type">
                     <a *ngIf="selectedMatch.resource1._id !== null" href="{{selectedMatch.resource1.url}}"
                       target="_blank">
-                      {{selectedMatch.resource1.title}}
+                      {{selectedMatch.resource1.name}}
                     </a>
                     <a *ngIf="selectedMatch.resource1._id === null && !isAnonymous" href="javascript:void(0);"
                       (click)="downloadResource(selectedMatch.resource1.url)">
-                      {{selectedMatch.resource1.title}}
+                      {{selectedMatch.resource1.name}}
                     </a>
                     <a *ngIf="selectedMatch.resource1._id === null && isAnonymous"
                       tooltip="Login to download the file">
-                      {{selectedMatch.resource1.title}}
+                      {{selectedMatch.resource1.name}}
                     </a>
-                    <p *ngSwitchCase="0"><b>Study Program</b></p>
+                    <p *ngSwitchCase="0"><b>Educational Offers</b></p>
                     <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                     <p *ngSwitchCase="2"><b>Job Offer</b></p>
                     <p *ngSwitchCase="null"><b>PDF</b></p>
@@ -87,16 +87,16 @@
                 <div class="col-md-12" [ngSwitch]="selectedMatch.resource2.type">
                   <a *ngIf="selectedMatch.resource2._id !== null" href="{{selectedMatch.resource2.url}}"
                     target="_blank">
-                    {{selectedMatch.resource2.title}}
+                    {{selectedMatch.resource2.name}}
                   </a>
                   <a *ngIf="selectedMatch.resource2._id === null && !isAnonymous" href="javascript:void(0);"
                     (click)="downloadResource(selectedMatch.resource2.url)">
-                    {{selectedMatch.resource2.title}}
+                    {{selectedMatch.resource2.name}}
                   </a>
                   <a *ngIf="selectedMatch.resource2._id === null && isAnonymous" tooltip="Login to download the file">
-                    {{selectedMatch.resource2.title}}
+                    {{selectedMatch.resource2.name}}
                   </a>
-                  <p *ngSwitchCase="0"><b>Study Program</b></p>
+                  <p *ngSwitchCase="0"><b>Educational Offer</b></p>
                   <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                   <p *ngSwitchCase="2"><b>Job Offer</b></p>
                   <p *ngSwitchCase="null"><b>PDF</b></p>

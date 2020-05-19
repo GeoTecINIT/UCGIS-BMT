@@ -33,7 +33,7 @@ import { BokService } from '../../services/bok.service';
 })
 export class NewmatchComponent implements OnInit {
 
-  model = new Match('', '', '', '', '', '', true, null, null, null, null, null);
+  model = new Match('', '', '', '', '', '', true, null, null, null, null, null, null, null);
 
   selectedMatch: Match;
   _id: string;

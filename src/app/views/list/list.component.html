@@ -71,7 +71,9 @@
                   </span>
 
                   <p>{{ m.description }}</p>
-
+                  <span *ngIf="m.createdAt" class="text-lastupdated ">Created: 
+                    {{m.createdAt.toDate() | date:'dd-MMM-yyyy'}}
+                  </span>
                 </button>
               </div>
 
@@ -98,7 +100,7 @@
                     </button>
                   </div-->
                   <div class="col-3 col-sm-3 col-md-5 no-padding"
-                    tooltip="{{isAnonymous? 'Login to be able to remove' : m.userId==afAuth.auth.currentUser.uid ?  'Remove' : 'You can remove only your own matches'}}">
+                    tooltip="{{isAnonymous? 'Login to be able to remove' : currentUser?.organizations?.indexOf(m.orgId) != -1 ?  'Remove' : 'You can remove only your own matches'}}">
                     <button type="button" class="btn btn-block btn-link" data-toggle="modal"
                       (click)="dangerModal.show()" [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(m.orgId) == -1)">
                       <i class="fa fa-trash-o fa-lg mt-4"></i>
