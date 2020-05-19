@@ -194,7 +194,9 @@
                         <div *ngIf="showResource1==-1 || showResource1 == resource.type" class="row">
                           <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
                           <div class="col-md-12">
-                            <button type="button" class="btn text-justify" (click)="selectResource1(resource)">
+                            <button type="button" class="btn text-justify"
+                              [ngClass]="resource1==resource? 'btn-selected' : ''"
+                              (click)="selectResource1(resource)">
                               <!-- routerLink="/detail/{{ resource._id }}" -->
                               <span>
                                 <h4 style="display: inline;">{{ resource.name }}</h4>
@@ -360,7 +362,9 @@
                         <div *ngIf="showResource2==-1 || showResource2 == resource.type" class="row">
                           <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
                           <div class="col-md-12">
-                            <button type="button" class="btn text-justify" (click)="selectResource2(resource)">
+                            <button type="button" class="btn text-justify"
+                              [ngClass]="resource2==resource? 'btn-selected' : ''"
+                              (click)="selectResource2(resource)">
                               <!-- routerLink="/detail/{{ resource._id }}" -->
                               <span>
                                 <h4 style="display: inline;">{{ resource.name }}</h4>
@@ -426,7 +430,7 @@
                         {{this.bokService.getConceptInfoByCode(mk).name}} </a>
                     </button>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-8 ma">
                     <p><small class="text-muted"> Matching distribution </small></p>
                     <div *ngFor="let k of statistics" class="row">
                       <div class="col-md-7">
@@ -450,12 +454,13 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   Not matching BoK concepts
-                  <small>BoK concepts present in one resource</small>
-                  <span tooltip="This is knowledge only present in the above resource"
+                  <small>BoK concepts present in this resource</small>
+                  <span tooltip="This is knowledge only present in the above selected resource"
                     class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <div class="row text-center ma">
+                    <h5 *ngIf="resource1">{{resource1.name}}</h5>
                     <button *ngFor="let mk of notMatchConcepts1" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
                       <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
@@ -469,12 +474,13 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   Not matching BoK concepts
-                  <small>BoK concepts present in one resource</small>
-                  <span tooltip="This is knowledge only present in the above resource"
+                  <small>BoK concepts present in this resource</small>
+                  <span tooltip="This is knowledge only present in the above selected resource"
                     class="badge badge-primary badge-pill">i</span>
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <div class="row  text-center ma">
+                    <h5 *ngIf="resource2">{{resource2.name}}</h5>
                     <button *ngFor="let mk of notMatchConcepts2" type="button" class="btn btn-pill"
                       [ngClass]="'bok-' + ( mk | slice:0:2 )">
                       <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -

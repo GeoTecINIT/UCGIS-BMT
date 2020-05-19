@@ -34,6 +34,7 @@ export class DetailComponent implements OnInit {
     PS: 'Platforms, sensors and digital imagery',
     TA: 'Thematic and application domains',
     WB: 'Web-based GI',
+    GI: 'Geographic Information Science and Technology'
   };
 
   selectedProfile: Match;

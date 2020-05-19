@@ -95,6 +95,7 @@ export class NewmatchComponent implements OnInit {
     PS: 'Platforms, sensors and digital imagery',
     TA: 'Thematic and application domains',
     WB: 'Web-based GI',
+    GI: 'Geographic Information Science and Technology'
   };
 
   formGroup = this.fb.group({
@@ -215,8 +216,8 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources1 = this.resourceService.allResources;
     this.filteredResources1 = this.filteredResources1.filter(
       it =>
-        it.name.toLowerCase().includes(this.searchText1) ||
-        it.description.toLowerCase().includes(this.searchText1)
+        it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+        it.description.toLowerCase().includes(this.searchText1.toLowerCase())
     );
   }
 
@@ -228,8 +229,8 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources2 = this.resourceService.allResources;
     this.filteredResources2 = this.filteredResources2.filter(
       it =>
-        it.name.toLowerCase().includes(this.searchText2) ||
-        it.description.toLowerCase().includes(this.searchText2)
+        it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+        it.description.toLowerCase().includes(this.searchText2.toLowerCase())
     );
   }
 
