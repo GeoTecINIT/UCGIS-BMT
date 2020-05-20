@@ -38,6 +38,10 @@ import { ListComponent } from './views/list/list.component';
 
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { ReleaseNotesComponent } from './components/release-notes/release-notes.component';
+import { FaqComponent } from './components/faq/faq.component';
+
+
 const APP_CONTAINERS = [DefaultLayoutComponent];
 
 import {
@@ -115,7 +119,9 @@ import { NewmatchComponent } from './views/newmatch/newmatch.component';
     PopupComponent,
     Eo4geoFooterComponent,
     Eo4geoHeaderComponent,
-    NewmatchComponent
+    NewmatchComponent,
+    ReleaseNotesComponent,
+    FaqComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

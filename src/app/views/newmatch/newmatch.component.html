@@ -93,18 +93,18 @@
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <!-- Browse or search -->
-                  <div class="row">
-                    <div class="col-md-5">
+                  <div class="row row-no-padding">
+                    <div class="col-md-10 pb-2">
                       <div class="custom-file">
                         <input type="file" class="custom-file-input primary" id="customFile1"
                           (change)="onFileChange1($event)">
-                        <label class="custom-file-label" for="customFile1">Upload resource</label>
+                        <label class="custom-file-label" for="customFile1">Upload resource (pdf)</label>
                       </div>
                     </div>
-                    <div class="col-md-1 text-center">
+                    <div class="col-md-2 text-center">
                       or
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                       <div class="input-group">
                         <span class="input-group-prepend">
                           <button class="btn btn-primary" type="button" (click)="filter1()">
@@ -122,7 +122,7 @@
                       Progress: {{uploadPercent1  | async | number:'3.0-0'}}
                     </div>
                   </div>
-                  <div class="row text-left">
+                  <div class="row row-no-padding text-left">
                     <div *ngIf="file1 != null" class="col-md-12">
                       <br>
                       <h4 style="display: inline;"> {{file1.name}}</h4>
@@ -134,7 +134,7 @@
                       <br>
                       <h5 *ngIf="resource1 != null && file1 == null ">{{resource1.name}}</h5>
                       <br>
-                      <div class="row mb-2 mt-4">
+                      <div class="row mb-2">
                         <!-- Filter by type -->
                         <div class="col-md-12">
                           <div class="text-center">
@@ -196,8 +196,7 @@
                           <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
                           <div class="col-md-12">
                             <button type="button" class="btn text-justify"
-                              [ngClass]="resource1==resource? 'btn-selected' : ''"
-                              (click)="selectResource1(resource)">
+                              [ngClass]="resource1==resource? 'btn-selected' : ''" (click)="selectResource1(resource)">
                               <!-- routerLink="/detail/{{ resource._id }}" -->
                               <span>
                                 <h4 style="display: inline;">{{ resource.name }}</h4>
@@ -262,18 +261,18 @@
                 </div>
                 <div class="card-body" style="background-color: #faf9f8">
                   <!-- Browse or search -->
-                  <div class="row">
-                    <div class="col-md-5">
+                  <div class="row row-no-padding">
+                    <div class="col-md-10 mb-2">
                       <div class="custom-file">
                         <input type="file" class="custom-file-input primary" id="customFile2"
                           (change)="onFileChange2($event)">
-                        <label class="custom-file-label" for="customFile2">Upload resource</label>
+                        <label class="custom-file-label" for="customFile2">Upload resource (pdf)</label>
                       </div>
                     </div>
-                    <div class="col-md-1 text-center">
+                    <div class="col-md-2 text-center">
                       or
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                       <div class="input-group">
                         <span class="input-group-prepend">
                           <button class="btn btn-primary" type="button" (click)="filter2()">
@@ -291,7 +290,7 @@
                       Progress: {{uploadPercent2  | async | number:'3.0-0'}}
                     </div>
                   </div>
-                  <div class="row text-left">
+                  <div class="row row-no-padding text-left">
                     <div *ngIf="file2 != null" class="col-md-12">
                       <br>
                       <h4 style="display: inline;"> {{file2.name}}</h4>
@@ -303,7 +302,7 @@
                       <br>
                       <h5 *ngIf="resource2 != null && file2 == null">{{resource2.name}}</h5>
                       <br>
-                      <div class="row mb-2 mt-4">
+                      <div class="row mb-2">
                         <!-- Filter by type -->
                         <div class="col-md-12">
                           <div class="text-center">
@@ -365,8 +364,7 @@
                           <!--  *ngIf="o.isPublic || (currentUser?.organizations?.indexOf(o.orgId) > -1)"  -->
                           <div class="col-md-12">
                             <button type="button" class="btn text-justify"
-                              [ngClass]="resource2==resource? 'btn-selected' : ''"
-                              (click)="selectResource2(resource)">
+                              [ngClass]="resource2==resource? 'btn-selected' : ''" (click)="selectResource2(resource)">
                               <!-- routerLink="/detail/{{ resource._id }}" -->
                               <span>
                                 <h4 style="display: inline;">{{ resource.name }}</h4>

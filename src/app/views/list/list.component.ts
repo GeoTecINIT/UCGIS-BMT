@@ -3,11 +3,12 @@ import { NgForOf } from '@angular/common';
 import { Observable, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Match, Resource } from '../../model/resources.model';
-import { ModalDirective } from 'ngx-bootstrap/modal';
+import { ModalDirective, ModalOptions } from 'ngx-bootstrap/modal';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User, UserService } from '../../services/user.service';
 import { OrganizationService } from '../../services/organization.service';
 import { MatchService } from '../../services/match.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -23,11 +24,14 @@ export class ListComponent implements OnInit {
   isAnonymous = null;
   currentUser: User = new User();
   @ViewChild('dangerModal') public dangerModal: ModalDirective;
+  @ViewChild('releaseNotesModal') public releaseNotesModal: any;
+
 
   constructor(
     private userService: UserService,
     public organizationService: OrganizationService,
     private matchService: MatchService,
+    private route: ActivatedRoute,
     public afAuth: AngularFireAuth) {
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
@@ -68,12 +72,11 @@ export class ListComponent implements OnInit {
   }
 
   ngOnInit() {
-    /*  this.occuprofilesService
-       .subscribeToOccupationalProfiles()
-       .subscribe(occuProfiles => {
-         this.occupationalProfiles = occuProfiles;
-         this.filteredOccuProfiles = occuProfiles;
-       }); */
+       if (this.route.snapshot.url[0].path === 'release-notes') {
+        const config: ModalOptions = { backdrop: true, keyboard: true };
+        this.releaseNotesModal.basicModal.config = config;
+        this.releaseNotesModal.basicModal.show({});
+      }
   }
 
   removeMatch(id: string) {

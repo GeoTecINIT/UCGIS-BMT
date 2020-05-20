@@ -76,7 +76,7 @@
                     <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                     <p *ngSwitchCase="2"><b>Job Offer</b></p>
                     <p *ngSwitchCase="null"><b>PDF</b></p>
-                    <p>{{selectedMatch.resource1.description.slice(0, 100)}}
+                    <p>{{selectedMatch.resource1.description}} <br> Click on above link for complete information about this resource
                     </p>
                   </div>
                 </div>
@@ -100,7 +100,7 @@
                   <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                   <p *ngSwitchCase="2"><b>Job Offer</b></p>
                   <p *ngSwitchCase="null"><b>PDF</b></p>
-                  <p>{{selectedMatch.resource2.description.slice(0, 100)}}
+                  <p>{{selectedMatch.resource2.description}} <br> Click on above link for complete information about this resource
                   </p>
                 </div>
               </div>
