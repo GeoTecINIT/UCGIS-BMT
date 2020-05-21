@@ -40,7 +40,6 @@ export class NewmatchComponent implements OnInit {
   mode: string;
   title: string;
 
-  canMakePublicProfiles = false;
   userOrgs: Organization[] = [];
   saveOrg: Organization;
   currentUser: User;
@@ -136,13 +135,15 @@ export class NewmatchComponent implements OnInit {
                 if (org) {
                   this.userOrgs.push(org);
                   this.saveOrg = this.userOrgs[0];
-                  if (org.isPublic) { // if Any of the organizations the user belongs if public, can make public profiles
-                    this.canMakePublicProfiles = true;
-                  }
+                  // remove private not your org resources
+                  this.resourceService.allResources = this.resourceService.allResources.filter(
+                    it =>
+                      this.currentUser.organizations.includes(it.orgId) || it.isPublic
+                  );
+                  // sort resources by name
+                  this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
                   this.filteredResources1 = this.resourceService.allResources;
-                  // Sort by name
-                  this.filteredResources1.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ?  1 : -1);
-                  this.filteredResources2 = this.filteredResources1;
+                  this.filteredResources2 = this.resourceService.allResources;
                 }
               });
             });
