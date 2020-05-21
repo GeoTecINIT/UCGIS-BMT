@@ -15,6 +15,7 @@ import { AngularFireAuthGuard } from '@angular/fire/auth-guard';
 import { UserComponent } from './views/user/user.component';
 import { OrganizationComponent } from './views/organization/organization.component';
 import { NewmatchComponent } from './views/newmatch/newmatch.component';
+import { FaqComponent } from './components/faq/faq.component';
 
 export const routes: Routes = [
   {
@@ -63,6 +64,13 @@ export const routes: Routes = [
           title: 'List'
         },
         component: ListComponent
+      },
+      {
+        path: 'faq',
+        data: {
+          title: 'FAQ'
+        },
+        component: FaqComponent
       },
       {
         path: 'user',

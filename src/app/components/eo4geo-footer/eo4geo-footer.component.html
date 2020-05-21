@@ -2,9 +2,10 @@
   <span><a href="http://eo4geo.uji.es" target="_blank" class="btn btn-light-primary">EO4GEO Tools</a></span>
   <span><a href="http://www.eo4geo.eu" target="_blank" class="btn btn-light-primary">EO4GEO</a></span>
   <span class="ml-auto">
-<!--     <a href="assets/manual/OPT-Manual.pdf" target="_blank" class="btn">User Manual </a>
- -->    <!--  <a href="#">FAQ</a>  -->
- <a class="btn btn-light-primary" (click)="releaseNotesModal.open()"> Release Notes v0.1</a>
+    <!--     <a href="assets/manual/OPT-Manual.pdf" target="_blank" class="btn">User Manual </a>
+ -->
+    <a href="#" routerLink="/faq">FAQ</a>
+    <a class="btn btn-light-primary" (click)="releaseNotesModal.open()"> Release Notes v0.1</a>
     <a href="mailto:eo4geo@gmail.com?subject=EO4GEO Tools Contact" class="btn"> Contact</a>
   </span>
   <app-release-notes #releaseNotesModal></app-release-notes>
