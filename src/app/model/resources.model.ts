@@ -66,9 +66,9 @@ export class Match extends Object {
     public isPublic: boolean = false,
     public resource1: Resource,
     public resource2: Resource,
-    public commonConcepts: any [],
-    public notMatchConcepts1: any [],
-    public notMatchConcepts2: any [],
+    public commonConcepts: any[],
+    public notMatchConcepts1: any[],
+    public notMatchConcepts2: any[],
     public updatedAt: any,
     public createdAt: any
   ) {
@@ -86,12 +86,13 @@ export class Resource extends Object {
     public collection: string,
     public collectionDisplay: string,
     public isPublic: boolean = false,
+    public levelPublic: boolean = false,
     public name: string,
     public title: string, // OP have title instead of name
     public description: string,
     public concepts: any[],
     public skills: any,
-    //public fields: Field[],
+    // public fields: Field[],
     public children: Resource[], // SP have their knowledge in children
     public occuProf: OcupationalProfile, // JO have some data in the OP
     public knowledge: string[],
