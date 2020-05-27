@@ -312,7 +312,7 @@ export class NewmatchComponent implements OnInit {
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
               this.notMatchConcepts1 = this.bokConcepts1;
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
-                this.collectionOT, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
+                this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
                 this.bokConcepts1, null, null, null, null, 3);
               // do the matching
               this.match();
@@ -348,7 +348,7 @@ export class NewmatchComponent implements OnInit {
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
               this.notMatchConcepts2 = this.bokConcepts2;
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
-                this.collectionOT, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
+                this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3);
               this.match();
             }).catch(function (err) {
