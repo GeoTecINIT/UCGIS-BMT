@@ -36,7 +36,7 @@ export class ResourceService {
           r.collectionDisplay = collectionJODisplay;
           r.concepts = r.occuProf.knowledge;
           r.skills = r.occuProf.skills;
-          //r.fields = r.occuProf.fields;
+          // r.fields = r.occuProf.fields;
           r.name = r.occuProf.title;
           r.url = urlJOT + r._id;
           r.type = 2;
