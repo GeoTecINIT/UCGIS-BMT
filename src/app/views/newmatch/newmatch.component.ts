@@ -162,7 +162,6 @@ export class NewmatchComponent implements OnInit {
       this.matchService.updateMatch(this._id, this.model);
     } else {
       this.model.userId = this.afAuth.auth.currentUser.uid;
-      this.model.isPublic = true;
       this.model.commonConcepts = this.commonBokConcepts;
       this.model.notMatchConcepts1 = this.notMatchConcepts1;
       this.model.notMatchConcepts2 = this.notMatchConcepts2;
