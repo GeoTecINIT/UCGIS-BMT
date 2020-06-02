@@ -44,6 +44,8 @@ export class DefaultLayoutComponent implements OnDestroy {
         this.username = user.email;
         this.userId = user.uid;
         this.refreshPending();
+      } else {
+        this.isAnonymous = true;
       }
     });
   }
