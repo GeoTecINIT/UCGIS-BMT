@@ -19,8 +19,7 @@
       <div class="card card-accent-primary">
         <div class="card-header">
           <div class="row">
-            <div class="col-sm-4 col-md-2"
-              tooltip="{{isAnonymous? 'Login to be able to add matches' : ''}}">
+            <div class="col-sm-4 col-md-2" tooltip="{{isAnonymous? 'Login to be able to add matches' : ''}}">
               <button type="button" class="btn btn-block btn-outline-primary" routerLink="/newmatch/empty"
                 [disabled]="isAnonymous">
                 New Match
@@ -63,22 +62,22 @@
           </div>
         </div>
         <div class="card-body">
-           <div *ngFor="let m of filteredMatches">
-            <div class="row" *ngIf="m.isPublic || (currentUser?.organizations?.indexOf(m.orgId) > -1)" >
+          <div *ngFor="let m of filteredMatches">
+            <div class="row" *ngIf="m.isPublic || (currentUser?.organizations?.indexOf(m.orgId) > -1)">
               <div class="col-md-11">
                 <button type="button" class="btn text-justify" routerLink="/detail/{{ m._id }}">
                   <span>
                     <h1 style="display: inline;">{{ m.title }}</h1>
-                    <h6 *ngIf="m.isPublic" style="display: inline;" class="text-level">EO4GEO</h6>
-                    <h6 *ngIf="!m.isPublic" style="display: inline;" class="text-level text-secondary">{{ m.orgName }}</h6>
+                    <h6 *ngIf="!m.isPublic" style="display: inline;" class="text-level text-primary">Private</h6>
+                    <h6 style="display: inline;" class="text-level text-secondary">{{ m.orgName }}</h6>
                     <br>
                     {{ m.resource1.name }} |
-                    {{  m.resource2.name }} |
+                    {{ m.resource2.name }} |
                     {{ m.commonConcepts.length }} Common knowledge
                   </span>
 
                   <p>{{ m.description }}</p>
-                  <span *ngIf="m.createdAt" class="text-lastupdated ">Created: 
+                  <span *ngIf="m.createdAt" class="text-lastupdated ">Created:
                     {{m.createdAt.toDate() | date:'dd-MMM-yyyy'}}
                   </span>
                 </button>
@@ -109,7 +108,8 @@
                   <div class="col-3 col-sm-3 col-md-5 no-padding"
                     tooltip="{{isAnonymous? 'Login to be able to remove' : currentUser?.organizations?.indexOf(m.orgId) != -1 ?  'Remove' : 'You can remove only your own matches'}}">
                     <button type="button" class="btn btn-block btn-link" data-toggle="modal"
-                      (click)="dangerModal.show()" [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(m.orgId) == -1)">
+                      (click)="dangerModal.show()"
+                      [disabled]="isAnonymous || (currentUser?.organizations?.indexOf(m.orgId) == -1)">
                       <i class="fa fa-trash-o fa-lg mt-4"></i>
                     </button>
                   </div>
