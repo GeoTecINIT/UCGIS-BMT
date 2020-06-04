@@ -27,6 +27,7 @@ export class ResourceService {
   }
 
   getResources() {
+    this.allResources = [];
     // get Job Offers
     const joSubs = this.db
       .collection<Resource>(collectionJO)

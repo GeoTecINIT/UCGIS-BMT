@@ -26,4 +26,12 @@ export class OtherService {
       .doc(id)
       .set(newMatch);
   }
+
+  removeOther(otherId) {
+    this.db
+      .collection(collection)
+      .doc(otherId)
+      .delete();
+  }
+
 }

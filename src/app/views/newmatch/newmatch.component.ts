@@ -177,6 +177,8 @@ export class NewmatchComponent implements OnInit {
         this.model.resource2.type = 3;
         this.otherService.addNewOther(this.model.resource2);
       }
+      // reload resources
+      this.resourceService.getResources(); 
       this.matchService.addNewMatch(this.model);
     }
   }
@@ -505,6 +507,26 @@ export class NewmatchComponent implements OnInit {
         );
       }
     }
+  }
+
+  deleteOtherRes(idOther) {
+    this.otherService.removeOther(idOther);
+
+    console.log('delete other resource: ' + idOther);
+
+    this.resourceService.allResources = this.resourceService.allResources.filter(
+      it =>
+        it._id !== idOther
+    );
+    this.filteredResources1 = this.filteredResources1.filter(
+      it =>
+        it._id !== idOther
+    );
+    this.filteredResources2 = this.filteredResources2.filter(
+      it =>
+        it._id !== idOther
+    );
+
   }
 
 }
