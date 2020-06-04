@@ -77,6 +77,9 @@ export class NewmatchComponent implements OnInit {
   uploadPercent1 = null;
   uploadPercent2 = null;
 
+  errorFile1 = false;
+  errorFile2 = false;
+
   statistics = [];
 
   kaCodes = {
@@ -178,7 +181,7 @@ export class NewmatchComponent implements OnInit {
         this.otherService.addNewOther(this.model.resource2);
       }
       // reload resources
-      this.resourceService.getResources(); 
+      this.resourceService.getResources();
       this.matchService.addNewMatch(this.model);
     }
   }
@@ -311,6 +314,9 @@ export class NewmatchComponent implements OnInit {
               this.meta1 = metadataObject;
               // save in bokconcepts the concetps from pdf metadata
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
+              if (this.bokConcepts1.length === 0) {
+                this.errorFile1 = true;
+              }
               this.notMatchConcepts1 = this.bokConcepts1;
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
@@ -347,6 +353,9 @@ export class NewmatchComponent implements OnInit {
               this.meta2 = metadataObject;
               console.log(this.meta2); // Metadata object here
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
+              if (this.bokConcepts2.length === 0) {
+                this.errorFile2 = true;
+              }
               this.notMatchConcepts2 = this.bokConcepts2;
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
@@ -370,20 +379,23 @@ export class NewmatchComponent implements OnInit {
   getBokConceptsFromMeta(meta) {
     const concepts = [];
     // concepts are in Subject metadata
-    const rdf = meta.info.Subject.split(' ');
-    rdf.forEach(rdfEl => {
-      const rel = rdfEl.split(':');
-      // if it's a eo4geo concept save the code
-      if (rel[0] === 'eo4geo') {
-        if (rel[1] !== '') {
-          if (rel[1].endsWith(';')) {
-            concepts.push(rel[1].slice(0, -1));
-          } else {
-            concepts.push(rel[1]);
+    if (meta && meta.info && meta.info.Subject) {
+      const rdf = meta.info.Subject.split(' ');
+      rdf.forEach(rdfEl => {
+        const rel = rdfEl.split(':');
+        // if it's a eo4geo concept save the code
+        if (rel[0] === 'eo4geo') {
+          if (rel[1] !== '') {
+            if (rel[1].endsWith(';')) {
+              concepts.push(rel[1].slice(0, -1));
+            } else {
+              concepts.push(rel[1]);
+            }
           }
         }
-      }
-    });
+      });
+    }
+
     return concepts;
   }
 

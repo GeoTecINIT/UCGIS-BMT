@@ -119,7 +119,7 @@
                   </div>
                   <div class="row" *ngIf="uploadPercent1">
                     <div class="col-md-6">
-                      Progress: {{uploadPercent1  | async | number:'3.0-0'}}
+                      Progress: {{uploadPercent1  | async | number:'3.0-0'}} %
                     </div>
                   </div>
                   <div class="row row-no-padding text-left">
@@ -128,6 +128,11 @@
                       <h4 style="display: inline;"> {{file1.name}}</h4>
                       <h6 class="text-level text-secondary">
                         Type: {{ file1.type }} - Size: {{ file1.size / 1048576 | number}} Mb </h6>
+                      <h6 *ngIf="errorFile1" class="text-danger">
+                        Warning:
+                        It looks this file has malformed metadata or not metadata at all. See <a
+                          href="https://firebasestorage.googleapis.com/v0/b/eo4geo-uji.appspot.com/o/manuals%2FBoKAnnotationGuidelines-v1.pdf?alt=media&token=572418a8-5112-4a44-a242-25bb269d6a49"
+                          target="_blank"> guidelines </a> on how to annotate a PDF with eo4geo BoK.</h6>
                     </div>
 
                     <div class="col-md-12">
@@ -217,7 +222,8 @@
 
                               <p>{{ resource.description }}
                                 <a href={{resource.url}} target="_blank">More info</a>
-                                <a *ngIf="resource.type == 3 && resource.userId == currentUser._id " (click)="deleteOtherRes(resource._id)" target="_blank"
+                                <a *ngIf="resource.type == 3 && resource.userId == currentUser._id "
+                                  (click)="deleteOtherRes(resource._id)" target="_blank"
                                   tooltip="You can delete you annotated resource from this list"
                                   class="pl-1 text-danger">Delete</a>
                               </p>
@@ -289,7 +295,7 @@
                   </div>
                   <div class="row" *ngIf="uploadPercent2">
                     <div class="col-md-6">
-                      Progress: {{uploadPercent2  | async | number:'3.0-0'}}
+                      Progress: {{uploadPercent2  | async | number:'3.0-0'}} %
                     </div>
                   </div>
                   <div class="row row-no-padding text-left">
@@ -298,6 +304,12 @@
                       <h4 style="display: inline;"> {{file2.name}}</h4>
                       <h6 class="text-level text-secondary">
                         Type: {{ file2.type }} - Size: {{ file2.size / 1048576 | number}} Mb </h6>
+
+                      <h6 *ngIf="errorFile2" class="text-danger">
+                        Warning:
+                        It looks this file has malformed metadata or not metadata at all. See <a
+                          href="https://firebasestorage.googleapis.com/v0/b/eo4geo-uji.appspot.com/o/manuals%2FBoKAnnotationGuidelines-v1.pdf?alt=media&token=572418a8-5112-4a44-a242-25bb269d6a49"
+                          target="_blank"> guidelines </a> on how to annotate a PDF with eo4geo BoK.</h6>
                     </div>
 
                     <div class="col-md-12">
@@ -383,9 +395,10 @@
 
                               <p>{{ resource.description }}
                                 <a href="{{resource.url}}" target="_blank">More info</a>
-                                <a *ngIf="resource.type == 3 && resource.userId == currentUser._id " (click)="deleteOtherRes(resource._id)" target="_blank"
-                                tooltip="You can delete you annotated resource from this list"
-                                class="pl-1 text-danger">Delete</a>
+                                <a *ngIf="resource.type == 3 && resource.userId == currentUser._id "
+                                  (click)="deleteOtherRes(resource._id)" target="_blank"
+                                  tooltip="You can delete you annotated resource from this list"
+                                  class="pl-1 text-danger">Delete</a>
                               </p>
                             </button>
                           </div>
