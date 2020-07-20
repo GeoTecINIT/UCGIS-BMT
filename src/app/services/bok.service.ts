@@ -13,12 +13,18 @@ export interface BoKConcept {
   providedIn: 'root'
 })
 export class BokService {
-  concepts: any[];
+  public concepts: any[];
+  public relations: any[];
+  public allRelation: Observable<any>;
+  public allConcepts: Observable<any>;
   BOK_PERMALINK_PREFIX = 'https://bok.eo4geo.eu/';
 
   constructor(db: AngularFireDatabase) {
     db.list('current/concepts').valueChanges().subscribe(res => {
       this.concepts = this.parseConcepts(res);
+    });
+    db.list('current/relations').valueChanges().subscribe(res => {
+      this.getRelations(res);
     });
   }
 
@@ -53,6 +59,28 @@ export class BokService {
         permalink: this.BOK_PERMALINK_PREFIX
       };
     }
+  }
+
+  getRelations(res ) {
+    const relations = [];
+    this.concepts.forEach( con => {
+      const c = {
+        code: con.code,
+        name: con.name,
+        description: con.description,
+        children: [],
+        parent: []
+      };
+      relations.push(c);
+    });
+    res.forEach( rel => {
+     if ( rel.name === 'is subconcept of') {
+        relations[rel.target].children.push( relations[rel.source]);
+        relations[rel.source].parent = relations[rel.target];
+      }
+    });
+    this.relations = relations;
+    return this.relations;
   }
 
 }

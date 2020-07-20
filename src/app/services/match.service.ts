@@ -52,4 +52,5 @@ export class MatchService {
       .doc<Match>(matchId)
       .update(updatedMatch);
   }
+
 }

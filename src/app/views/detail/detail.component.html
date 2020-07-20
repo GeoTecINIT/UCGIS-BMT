@@ -72,7 +72,7 @@
                       tooltip="Login to download the file">
                       {{selectedMatch.resource1.name}}
                     </a>
-                    <p *ngSwitchCase="0"><b>Educational Offers</b></p>
+                    <p *ngSwitchCase="0"><b>Educational Offer</b></p>
                     <p *ngSwitchCase="1"><b>Occupational Profile</b></p>
                     <p *ngSwitchCase="2"><b>Job Offer</b></p>
                     <p *ngSwitchCase="null"><b>PDF</b></p>
@@ -106,74 +106,199 @@
               </div>
             </div>
             <hr />
+            <div class="col-sm-12 col-md-12">
+              <strong>EQF level comparison</strong>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6" *ngIf="(selectedMatch.resource1 !== null && selectedMatch.resource1.eqf  )">
+                  {{selectedMatch.resource1.name}}
+                  <button type="button" class="btn btn-default btn-secondary"
+                          placement="left">
+                    EQF {{selectedMatch.resource1.eqf }}
+                  </button>
+                </div>
+                <div class="col-sm-6 col-md-6" *ngIf="(selectedMatch.resource1 !== null && selectedMatch.resource1.type === 2  )">
+                  {{selectedMatch.resource1.name}}
+                  <button type="button" class="btn btn-default btn-secondary"
+                          placement="left">
+                    EQF {{selectedMatch.resource1.occuProf.eqf }}
+                  </button>
+                </div>
+              <div style="border-left: 1px solid #e5e5e5;">
+              </div>
+                <div class="col-sm-5 col-md-5" *ngIf="(selectedMatch.resource2 !== null &&  selectedMatch.resource2.eqf)">
+                  {{selectedMatch.resource2.name}}
+                  <button type="button" class="btn btn-default btn-secondary"
+                          placement="left">
+                    EQF {{selectedMatch.resource2.eqf }}
+                  </button>
+                </div>
+                <div class="col-sm-5 col-md-5" *ngIf="(selectedMatch.resource2 !== null && selectedMatch.resource2.type === 2  )">
+                  {{selectedMatch.resource2.name}}
+                  <button type="button" class="btn btn-default btn-secondary"
+                          placement="left">
+                    EQF {{selectedMatch.resource2.occuProf.eqf }}
+                  </button>
+                </div>
+             </div>
+            <hr />
             <div *ngIf="this.bokService && this.bokService.concepts && this.bokService.concepts.length > 0" class="row">
-              <div class="col-sm-12 col-md-12">
-                <div class="row">
-                  <div class="col-md-4">
-                    <label>Common BoK concepts:</label>
+              <div class="card-body">
+                <div class="card-title"><strong>Matching BoK concepts</strong></div>
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <h6 *ngIf="selectedMatch.commonConcepts.length == 0 "> It seems no BoK common concepts have been found </h6>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-8 text-center">
+                      <button *ngFor="let mk of selectedMatch.commonConcepts" type="button" class="btn btn-pill"
+                        [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                        <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                          {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                      </button>
+                    </div>
+                    <div class="col-md-4">
+                      <p><small class="text-muted"> Matching distribution </small></p>
+                      <canvas appChartConcepts width="800" height="450" style="height: 0" ></canvas>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-12 col-md-12">
+                    <hr/>
+                  </div>
+                  <div class="col-sm-12 col-md-12 row">
+                    <div class="col-sm-12 col-md-12"  style="text-align: center;"><h6><strong> Differing concepts </strong></h6><br/></div>
+
+                    <div class="col-sm-6 col-md-6">
+                          <div *ngIf="selectedMatch.notMatchConcepts1.length > 0">
+                            <button *ngFor="let mk of selectedMatch.notMatchConcepts1" type="button" class="btn btn-pill"
+                              [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                              <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                                {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                            </button>
+                          </div>
+                          <div class="row" style="margin-left: 5px;">
+                            <canvas appChartNotCommon1  width="800" height="200" style="height: 0"></canvas>
+                          </div>
+                    </div>
+                    <div style="border-left: 1px solid #e5e5e5;">
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                          <div *ngIf="selectedMatch.notMatchConcepts2.length > 0">
+                            <button *ngFor="let mk of selectedMatch.notMatchConcepts2" type="button" class="btn btn-pill"
+                              [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                              <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
+                                {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                            </button>
+                          </div>
+                      <div class="row" style="margin-left: 5px;">
+                        <canvas appChartNotCommon2 id="notMatch2"  width="800" height="200" style="height: 0"></canvas>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="card-body">
+                <div class="card-title"><strong>Matching BoK skills </strong></div>
                 <div class="row">
-                  <div class="col-md-8 text-center">
-                    <button *ngFor="let mk of selectedMatch.commonConcepts" type="button" class="btn btn-pill"
-                      [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                      <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
-                        {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                  <div class="col-md-4">
+                    <div *ngIf="skillsMatch.length == 0 "> No matching skills found
+                    </div>
+                    <button *ngFor="let mk of skillsMatch" type="button"
+                            class="btn btn-pill btn-light btn-list">
+                      {{ mk }}
                     </button>
                   </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                  <hr/>
+                </div>
+                <div class="col-sm-12 col-md-12 row">
+                  <div class="col-sm-12 col-md-12"  style="text-align: center;"><h6><strong> Differing skills </strong></h6><br/></div>
+                  <div class="col-sm-6 col-md-6">
+                    <button *ngFor="let mk of skillsNotMatch1" type="button"
+                            class="btn btn-pill btn-light btn-list skills">
+                      {{ mk }}
+                    </button>
+                  </div>
+                  <div style="border-left: 1px solid #e5e5e5;">
+                  </div>
+                  <div class="col-sm-5 col-md-5">
+                    <button *ngFor="let mk of skillsNotMatch2" type="button"
+                            class="btn btn-pill btn-light btn-list skills">
+                      {{ mk }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="card-body">
+                <div class="card-title"><strong>Matching BoK fields </strong></div>
+                <div class="row">
                   <div class="col-md-4">
-                    <p><small class="text-muted"> Knowledge distribution </small></p>
-                    <div *ngFor="let k of statistics" class="row">
-                      <div class="col-md-7">
-                        <div class="float-left">
-                          <small class="text-muted"> {{k.code}} {{k.value}}% </small>
-                        </div>
-                      </div>
-                      <div class="col-md-5">
-                        <div class="progress progress-xs">
-                          <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar"
-                            aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100">
-                          </div>
-                        </div>
-                      </div>
+                    <div *ngIf="fieldsMatch.length == 0 "> No matching fields found
                     </div>
+                    <button *ngFor="let mk of fieldsMatch" type="button" class="btn btn-pill btn-primary " >
+                      {{mk}}
+                    </button>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                  <hr/>
+                </div>
+                <div class="col-sm-12 col-md-12 row">
+                  <div class="col-sm-12 col-md-12"  style="text-align: center;"><h6><strong> Differing fields </strong></h6><br/></div>
+                  <div class="col-sm-6 col-md-6">
+                    <button *ngFor="let mk of fieldsNotMatch1" type="button" class="btn btn-pill btn-primary fields " >
+                      {{mk}}
+                    </button>
+                  </div>
+                  <div style="border-left: 1px solid #e5e5e5;">
+                  </div>
+                  <div class="col-sm-5 col-md-5">
+                    <button *ngFor="let mk of fieldsNotMatch2" type="button" class="btn btn-pill btn-primary fields " >
+                      {{mk}}
+                    </button>
                   </div>
                 </div>
               </div>
-              <div class="col-sm-12 col-md-12">
-                <hr />
-              </div>
-              <div class="col-sm-6 col-md-6">
+            </div>
+            <hr />
+            <div  class="row">
+              <div class="card-body">
+                <div class="card-title"><strong>Matching BoK transversal skills </strong></div>
                 <div class="row">
-                  <div class="col-md-12">
-                    <label>Not matching BoK concepts: </label>
+                  <div class="col-md-4">
+                    <div *ngIf="transvSkillsMatch.length == 0 "> No matching fields found
+                    </div>
+                    <button *ngFor="let mk of transvSkillsMatch" type="button" class="btn btn-pill btn-primary" >
+                      {{mk}}
+                    </button>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-12 text-center">
-                    <div *ngIf="selectedMatch.notMatchConcepts1.length > 0">
-                      <button *ngFor="let mk of selectedMatch.notMatchConcepts1" type="button" class="btn btn-pill"
-                        [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                        <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
-                          {{this.bokService.getConceptInfoByCode(mk).name}} </a>
-                      </button>
-                    </div>
+                <div class="col-sm-12 col-md-12">
+                  <hr/>
+                </div>
+                <div class="col-sm-12 col-md-12 row">
+                  <div class="col-sm-12 col-md-12"  style="text-align: center;"><h6><strong> Differing transversal skills </strong></h6><br/></div>
+                  <div class="col-sm-6 col-md-6">
+                    <button *ngFor="let mk of transvSkillsNotMatch1" type="button" class="btn btn-pill btn-primary fields " >
+                      {{mk}}
+                    </button>
                   </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-md-6">
-                <div class="col-md-12">
-                  <label>Not matching BoK concepts: </label>
-                </div>
-                <div class="row">
-                  <div class="col-md-12 text-center">
-                    <div *ngIf="selectedMatch.notMatchConcepts2.length > 0">
-                      <button *ngFor="let mk of selectedMatch.notMatchConcepts2" type="button" class="btn btn-pill"
-                        [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                        <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
-                          {{this.bokService.getConceptInfoByCode(mk).name}} </a>
-                      </button>
-                    </div>
+                  <div style="border-left: 1px solid #e5e5e5;">
+                  </div>
+                  <div class="col-sm-5 col-md-5">
+                    <button *ngFor="let mk of transvSkillsNotMatch2" type="button" class="btn btn-pill btn-primary fields " >
+                      {{mk}}
+                    </button>
                   </div>
                 </div>
               </div>

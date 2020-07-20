@@ -39,7 +39,7 @@
     "@eo4geo/bok-dataviz": "^4.7.0",
     "@ng-select/ng-select": "^2.20.0",
     "bootstrap": "^4.3.1",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.3",
     "core-js": "^2.6.5",
     "firebase": "^7.2.1",
     "font-awesome": "^4.7.0",
@@ -77,7 +77,11 @@
     "protractor": "^5.4.2",
     "ts-node": "^8.0.3",
     "tslint": "^5.14.0",
-    "typescript": "~3.2.4"
+    "typescript": "~3.2.4",
+    "pdfjs-dist": "^2.3.200",
+    "zone.js": "^0.8.29",
+    "acorn": "^6.0.0",
+    "acorn-dynamic-import": "^4.0.0"
   },
   "engines": {
     "node": ">= 8.9.4",

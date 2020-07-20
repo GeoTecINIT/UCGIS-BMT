@@ -20,7 +20,7 @@ import { FaqComponent } from './components/faq/faq.component';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'list',
+    redirectTo: '/newmatch/empty',
     pathMatch: 'full'
   },
   {
@@ -98,7 +98,6 @@ export const routes: Routes = [
         data: {
           title: 'New'
         },
-        canActivate: [AngularFireAuthGuard],
         component: NewmatchComponent
       },
       {

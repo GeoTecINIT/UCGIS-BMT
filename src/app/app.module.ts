@@ -74,6 +74,9 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { Eo4geoFooterComponent } from './components/eo4geo-footer/eo4geo-footer.component';
 import { Eo4geoHeaderComponent } from './components/eo4geo-header/eo4geo-header.component';
 import { NewmatchComponent } from './views/newmatch/newmatch.component';
+import { ChartConceptsDirective } from './views/detail/chart-concepts.directive';
+import { ChartNotCommon1Directive } from './views/detail/chart-not-common1.directive';
+import { ChartNotCommon2Directive } from './views/detail/chart-not-common2.directive';
 
 
 @NgModule({
@@ -121,7 +124,10 @@ import { NewmatchComponent } from './views/newmatch/newmatch.component';
     Eo4geoHeaderComponent,
     NewmatchComponent,
     ReleaseNotesComponent,
-    FaqComponent
+    FaqComponent,
+    ChartConceptsDirective,
+    ChartNotCommon1Directive,
+    ChartNotCommon2Directive
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

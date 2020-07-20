@@ -5,6 +5,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { User, UserService } from '../../services/user.service';
 import { OrganizationService } from '../../services/organization.service';
+import {LoginComponent} from '../../views/login/login.component';
+import {BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,6 +22,7 @@ export class DefaultLayoutComponent implements OnDestroy {
   userId = '';
   hasOrgs = true;
   numPending = 0;
+  modalRef: BsModalRef;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -27,6 +30,7 @@ export class DefaultLayoutComponent implements OnDestroy {
     private router: Router,
     private organizationService: OrganizationService,
     private userService: UserService,
+    private modalService: BsModalService,
     @Inject(DOCUMENT) _document?: any) {
 
     this.changes = new MutationObserver((mutations) => {
@@ -76,6 +80,11 @@ export class DefaultLayoutComponent implements OnDestroy {
 
   logOut() {
     this.afAuth.auth.signOut();
-    this.ngZone.run(() => this.router.navigateByUrl('/login')).then();
+    this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      return false;
+    };
+  }
+  openModal() {
+    this.modalRef = this.modalService.show(LoginComponent, {class: 'modal-lg'});
   }
 }

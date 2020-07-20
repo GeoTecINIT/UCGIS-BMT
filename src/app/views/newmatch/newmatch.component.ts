@@ -13,7 +13,8 @@ import { User, UserService } from '../../services/user.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
-
+import { BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
+import { Chart } from 'chart.js';
 
 // import * as fs from 'fs';
 // import * as parsePdf from 'parse-pdf';
@@ -25,6 +26,7 @@ import { finalize } from 'rxjs/operators';
 
 import * as pdfjs from 'pdfjs-dist';
 import { BokService } from '../../services/bok.service';
+import {LoginComponent} from '../login/login.component';
 
 @Component({
   selector: 'app-newmatch',
@@ -39,6 +41,7 @@ export class NewmatchComponent implements OnInit {
   _id: string;
   mode: string;
   title: string;
+  allConcepts = [];
 
   userOrgs: Organization[] = [];
   saveOrg: Organization;
@@ -60,6 +63,8 @@ export class NewmatchComponent implements OnInit {
 
   filteredResources1 = [];
   filteredResources2 = [];
+  filteredByType1 = [];
+  filteredByType2 = [];
   selectedResources = [];
 
   meta1 = null;
@@ -71,6 +76,28 @@ export class NewmatchComponent implements OnInit {
   notMatchConcepts1 = [];
   notMatchConcepts2 = [];
 
+  skills1 = [];
+  skills2 = [];
+  commonSkills = [];
+  conceptsName = [];
+  notMatchSkills1 = [];
+  notMatchSkills2 = [];
+
+  fields1 = [];
+  fields2 = [];
+  commonFields = [];
+  notMatchFields1 = [];
+  notMatchFields2 = [];
+
+  transversalSkills1 = [];
+  transversalSkills2 = [];
+  commonTransversalSkills = [];
+  notMatchTransversal1 = [];
+  notMatchTransversal2 = [];
+
+  numberOsConcepts1 = [];
+  numberOsConcepts2 = [];
+
   resource1 = null;
   resource2 = null;
 
@@ -80,8 +107,23 @@ export class NewmatchComponent implements OnInit {
   errorFile1 = false;
   errorFile2 = false;
 
-  statistics = [];
+  statisticsMatching = [];
+  statisticsNotMatching1 = [];
+  statisticsNotMatching2 = [];
+  statisticsSkills = [];
+  statisticsTransversalSkills = [];
+  statisticsFields = [];
 
+  statNumberOfConcepts1 = [];
+  statNumberOfConcepts2 = [];
+
+  modalRef: BsModalRef;
+  myChart = null;
+  notMatchChart1 = null;
+  notMatchChart2 = null;
+  isAnonymous = true;
+  type = -1;
+  type2 = -1;
   kaCodes = {
     AM: 'Analytical Methods',
     CF: 'Conceptual Foundations',
@@ -97,8 +139,12 @@ export class NewmatchComponent implements OnInit {
     PS: 'Platforms, sensors and digital imagery',
     TA: 'Thematic and application domains',
     WB: 'Web-based GI',
-    GI: 'Geographic Information Science and Technology'
+    GI: 'Geographic Information Science and Technology',
   };
+  kaChildrenCode = {
+    MD: 'AM',
+    DN: 'GS'
+  }
 
   formGroup = this.fb.group({
     file: [null, Validators.required]
@@ -112,6 +158,7 @@ export class NewmatchComponent implements OnInit {
   public currentPage1 = 0;
   public currentPage2 = 0;
   public collectionOT = 'Other';
+
   constructor(
     private matchService: MatchService,
     private otherService: OtherService,
@@ -125,10 +172,12 @@ export class NewmatchComponent implements OnInit {
     private fb: FormBuilder,
     // private cd: ChangeDetectorRef,
     private storage: AngularFireStorage,
-    public bokService: BokService
+    public bokService: BokService,
+    private modalService: BsModalService,
 
   ) {
-    this.afAuth.auth.onAuthStateChanged(user => {
+    this.isAnonymous = false;
+      this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
@@ -143,10 +192,7 @@ export class NewmatchComponent implements OnInit {
                     it =>
                       this.currentUser.organizations.includes(it.orgId) || it.isPublic
                   );
-                  // sort resources by name
-                  this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
-                  this.filteredResources1 = this.resourceService.allResources;
-                  this.filteredResources2 = this.resourceService.allResources;
+                  this.isAnonymous = true;
                 }
               });
             });
@@ -154,10 +200,15 @@ export class NewmatchComponent implements OnInit {
         });
       }
     });
+    // sort resources by name
+    this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
+    this.filteredResources1 = this.resourceService.allResources;
+    this.filteredResources2 = this.resourceService.allResources;
   }
 
   ngOnInit() {
     this.getMode();
+    this.allConcepts = this.bokService.relations;
   }
 
   saveMatch() {
@@ -198,7 +249,7 @@ export class NewmatchComponent implements OnInit {
       this.getMatchId();
       this.fillForm();
     } else {
-      this.title = 'Add New BoK Match';
+      this.title = 'Match two BoK resources';
     }
   }
 
@@ -219,9 +270,10 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitFrom1 = 0;
     this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
     this.currentPage1 = 0;
-
-    this.filteredResources1 = this.resourceService.allResources;
-    this.filteredResources1 = this.filteredResources1.filter(
+    if ( this.type === -1 ) {
+      this.filteredByType1 = this.resourceService.allResources;
+    }
+    this.filteredResources1 = this.filteredByType1.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
         it.description.toLowerCase().includes(this.searchText1.toLowerCase())
@@ -232,9 +284,10 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitFrom2 = 0;
     this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
     this.currentPage2 = 0;
-
-    this.filteredResources2 = this.resourceService.allResources;
-    this.filteredResources2 = this.filteredResources2.filter(
+    if ( this.type2 === -1 ) {
+      this.filteredByType2 = this.resourceService.allResources;
+    }
+    this.filteredResources2 = this.filteredByType2.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
         it.description.toLowerCase().includes(this.searchText2.toLowerCase())
@@ -280,15 +333,37 @@ export class NewmatchComponent implements OnInit {
   }
 
   selectResource1(res) {
+    this.notMatchConcepts1 = [];
+    this.conceptsName = [];
     this.bokConcepts1 = this.getBokConceptsFromResource(res);
-    this.notMatchConcepts1 = this.bokConcepts1;
+    this.skills1 = this.getSkillsFromResource(res);
+    this.fields1 = this.getFieldsFromResource(res);
+    this.transversalSkills1 = this.getTransversalSkillsFromResource(res);
+    this.bokConcepts1.forEach( k => {
+      this.notMatchConcepts1.push(k.code);
+      this.conceptsName[k.code] = k.name;
+    });
+    this.notMatchSkills1 = this.skills1;
+    this.notMatchFields1 = this.fields1;
+    this.notMatchTransversal1 = this.transversalSkills1;
     this.resource1 = res;
     this.match();
   }
 
   selectResource2(res) {
+    this.notMatchConcepts2 = [];
+    this.conceptsName = [];
     this.bokConcepts2 = this.getBokConceptsFromResource(res);
-    this.notMatchConcepts2 = this.bokConcepts2;
+    this.skills2 = this.getSkillsFromResource(res);
+    this.fields2 = this.getFieldsFromResource(res);
+    this.transversalSkills2 = this.getTransversalSkillsFromResource(res);
+    this.bokConcepts2.forEach( k => {
+      this.notMatchConcepts2.push(k.code);
+      this.conceptsName[k.code] = k.name;
+    });
+    this.notMatchSkills2 = this.skills2;
+    this.notMatchFields2 = this.fields2;
+    this.notMatchTransversal2 = this.transversalSkills2;
     this.resource2 = res;
     this.match();
   }
@@ -297,7 +372,7 @@ export class NewmatchComponent implements OnInit {
     const filePath = 'other/custom-' + encodeURI(file.name);
     // upload file to firebase storage
     const task = this.storage.upload(filePath, file);
-
+    this.errorFile1 = false;
     // observe percentage changes
     this.uploadPercent1 = task.percentageChanges();
     // get notified when the download URL is available
@@ -317,13 +392,16 @@ export class NewmatchComponent implements OnInit {
               if (this.bokConcepts1.length === 0) {
                 this.errorFile1 = true;
               }
-              this.notMatchConcepts1 = this.bokConcepts1;
+              this.bokConcepts1.forEach( k => {
+                this.notMatchConcepts1.push(k.code);
+              });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
                 this.bokConcepts1, null, null, null, null, 3);
               // do the matching
               this.match();
               console.log(this.meta1); // Metadata object here
+              console.log('EL EQF!!!!', this.resource1);
             }).catch(function (err) {
               console.log('Error getting meta data');
               console.log(err);
@@ -342,6 +420,7 @@ export class NewmatchComponent implements OnInit {
     const filePath = 'other/custom-' + encodeURI(file.name);
     const task = this.storage.upload(filePath, file);
 
+    this.errorFile2 = false;
     this.uploadPercent2 = task.percentageChanges();
     task.snapshotChanges().pipe(
       finalize(() => {
@@ -356,7 +435,9 @@ export class NewmatchComponent implements OnInit {
               if (this.bokConcepts2.length === 0) {
                 this.errorFile2 = true;
               }
-              this.notMatchConcepts2 = this.bokConcepts2;
+              this.bokConcepts2.forEach( k => {
+                this.notMatchConcepts2.push(k.code);
+              });
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3);
@@ -387,9 +468,9 @@ export class NewmatchComponent implements OnInit {
         if (rel[0] === 'eo4geo') {
           if (rel[1] !== '') {
             if (rel[1].endsWith(';')) {
-              concepts.push(rel[1].slice(0, -1));
+              concepts.push({code: rel[1].slice(0, -1), name: rdfEl});
             } else {
-              concepts.push(rel[1]);
+              concepts.push({code: rel[1], name: rdfEl});
             }
           }
         }
@@ -402,41 +483,170 @@ export class NewmatchComponent implements OnInit {
   getBokConceptsFromResource(res) {
     // get concepts from resource in our database
     const concepts = [];
+    const codConcepts = [];
     if (res && res.concepts && res.concepts.length > 0) {
       res.concepts.forEach(c => {
         const rel = c.split(']');
-        rel[0][0] === '[' ? concepts.push(rel[0].slice(1)) : concepts.push(rel[0]);
+        if (  rel[0][0] === '['  ) {
+          const concept = rel[0].slice(1);
+          if (codConcepts.indexOf(concept) === -1) {
+            concepts.push({code: rel[0].slice(1), name: c});
+            codConcepts.push(rel[0].slice(1));
+          }
+        } else {
+          concepts.push({code: rel[0], name: c });
+          codConcepts.push(rel[0]);
+        }
       });
     }
     return concepts;
   }
+  getSkillsFromResource(res) {
+    // get skills from resource in our database
+    const skills = [];
+    if (res && res.skills && res.skills.length > 0) {
+      res.skills.forEach(c => {
+        skills.push(c);
+      });
+    }
+    return skills;
+  }
 
+  getFieldsFromResource(res) {
+    // get fields from resource in our database
+    const fields = [];
+    if (res && res.fields && res.fields.length > 0) {
+      res.fields.forEach(c => {
+        fields.push(c.name);
+      });
+    } else if (!res.fields && res.occuProf && res.occuProf.fields) {
+      res.occuProf.fields.forEach(c => {
+        fields.push(c.name);
+      });
+    } else if (!res.fields && res.occuProf ) {
+      fields.push(res.occuProf.field.name);
+    }  else if (!res.fields && res.field ) {
+      fields.push(res.field.name);
+    }
+    return fields;
+  }
+
+  getTransversalSkillsFromResource(res) {
+    // get Transversal Skills from resource in our database
+    const transversalSkills = [];
+    if (res && res.competences && res.competences.length > 0) {
+      res.competences.forEach(c => {
+        transversalSkills.push(c.preferredLabel);
+      });
+    } else if (!res.competences && res.occuProf && res.occuProf.competences) {
+      res.occuProf.competences.forEach(c => {
+        transversalSkills.push(c.preferredLabel);
+      });
+    } else if (res.competences && res.competences.preferredLabel && !res.occuProf ) {
+      transversalSkills.push(res.occuProf.competences.preferredLabel);
+    }
+    return transversalSkills;
+  }
   match() {
     this.commonBokConcepts = [];
     if (this.bokConcepts1.length > 0 && this.bokConcepts2.length > 0) {
       this.notMatchConcepts1 = [];
       this.notMatchConcepts2 = [];
+      this.conceptsName = [];
+      console.log('El match!!! ', this.bokConcepts1,  this.bokConcepts2);
       this.bokConcepts1.forEach(bok1 => {
-        if (this.bokConcepts2.indexOf(bok1) !== -1) {
-          this.commonBokConcepts.push(bok1);
-        } else {
-          this.notMatchConcepts1.push(bok1);
+        let found = false;
+        this.bokConcepts2.forEach(bok2 => {
+          if (bok1.code === bok2.code) {
+            this.commonBokConcepts.push(bok1.code);
+            this.conceptsName[bok1.code] = bok1.name;
+            found = true;
+          }
+        });
+        if (!found ) {
+          this.notMatchConcepts1.push(bok1.code);
+          this.conceptsName[bok1.code] = bok1.name;
         }
       });
       this.bokConcepts2.forEach(bok => {
-        if (this.commonBokConcepts.indexOf(bok) < 0) {
-          this.notMatchConcepts2.push(bok);
+        let found = false;
+        this.bokConcepts1.forEach(bok2 => {
+          if (bok.code === bok2.code) {
+            found = true;
+          }
+        });
+        if (!found ) {
+          this.conceptsName[bok.code] = bok.name;
+          this.notMatchConcepts2.push(bok.code);
         }
       });
       this.notMatchConcepts1.sort();
       this.notMatchConcepts2.sort();
       this.commonBokConcepts.sort();
-      this.calculateStatistics();
     }
+    this.commonSkills = [];
+    if (this.skills1.length > 0 && this.skills2.length > 0 ) {
+      this.notMatchSkills1 = [];
+      this.notMatchSkills2 = [];
+      this.skills1.forEach(bok1 => {
+        if (this.skills2.indexOf(bok1) !== -1) {
+          this.commonSkills.push(bok1);
+        } else {
+          this.notMatchSkills1.push(bok1);
+        }
+      });
+      this.skills2.forEach(bok => {
+        if (this.commonSkills.indexOf(bok) < 0) {
+          this.notMatchSkills2.push(bok);
+        }
+      });
+      this.commonSkills.sort();
+    }
+
+    this.commonFields = [];
+    if (this.fields1.length > 0 && this.fields2.length > 0 ) {
+      this.notMatchFields1 = [];
+      this.notMatchFields2 = [];
+      this.fields1.forEach(bok1 => {
+        if (this.fields2.indexOf(bok1) !== -1) {
+          this.commonFields.push(bok1);
+        } else {
+          this.notMatchFields1.push(bok1);
+        }
+      });
+      this.fields2.forEach(bok => {
+        if (this.commonFields.indexOf(bok) < 0) {
+          this.notMatchFields2.push(bok);
+        }
+      });
+      this.commonFields.sort();
+    }
+
+    this.commonTransversalSkills = [];
+    if (this.transversalSkills1.length > 0 && this.transversalSkills2.length > 0 ) {
+      this.notMatchTransversal1 = [];
+      this.notMatchTransversal2 = [];
+      this.transversalSkills1.forEach(bok1 => {
+        if (this.transversalSkills2.indexOf(bok1) !== -1) {
+          this.commonTransversalSkills.push(bok1);
+        } else {
+          this.notMatchTransversal1.push(bok1);
+        }
+      });
+      this.transversalSkills2.forEach(bok => {
+        if (this.commonTransversalSkills.indexOf(bok) < 0) {
+          this.notMatchTransversal2.push(bok);
+        }
+      });
+      this.commonTransversalSkills.sort();
+    }
+
+    this.calculateStatistics();
+    this.getStatisticsNumberOfConcepts();
   }
 
   calculateStatistics() {
-    this.statistics = [];
+    this.statisticsMatching = [];
     if (this.commonBokConcepts) {
       const tempStats = {};
       let tempTotal = 0;
@@ -447,11 +657,90 @@ export class NewmatchComponent implements OnInit {
       });
       Object.keys(tempStats).forEach(k => {
         const nameKA = k + ' - ' + this.kaCodes[k];
-        this.statistics.push({ code: nameKA, value: Math.round(tempStats[k] * 100 / tempTotal) });
+        this.statisticsMatching.push({ code: nameKA, value: Math.round(tempStats[k] * 100 / tempTotal), count: tempStats[k] });
       });
+      this.graphStatistics(this.statisticsMatching, 'myChart');
+      this.calculateNotmatchingStatistics();
+      this.calculateSkillsStatistics();
+      this.calculateFieldsStatistics();
     }
   }
 
+  calculateNotmatchingStatistics() {
+    this.statisticsNotMatching1 = [];
+    this.statisticsNotMatching2 = [];
+    if (this.commonBokConcepts) {
+      const tempStats2 = {};
+      let tempTotal2 = 0;
+      this.notMatchConcepts1.forEach( nc => {
+        const code = nc.slice(0, 2);
+        tempStats2[code] !== undefined ? tempStats2[code]++ : tempStats2[code] = 1;
+        tempTotal2++;
+      });
+      Object.keys(tempStats2).forEach(k => {
+        let nameKA = '';
+        if (  this.kaCodes[k] !== undefined ) {
+           nameKA = k + ' - ' + this.kaCodes[k];
+        } else {
+          const nameConcept = this.conceptsName[k];
+          nameKA = k + ' - ' + nameConcept.split(']')[1];
+        }
+        this.statisticsNotMatching1.push({ code: nameKA, value: Math.round(tempStats2[k] * 100 / tempTotal2), count: tempStats2[k]  });
+      });
+      const tempStats3 = {};
+      let tempTotal3 = 0;
+      this.notMatchConcepts2.forEach( nc => {
+        const code = nc.slice(0, 2);
+        tempStats3[code] !== undefined ? tempStats3[code]++ : tempStats3[code] = 1;
+        tempTotal3++;
+      });
+      Object.keys(tempStats3).forEach(k => {
+        let nameKA = '';
+        if (  this.kaCodes[k] !== undefined ) {
+          nameKA = k + ' - ' + this.kaCodes[k];
+        } else if (this.conceptsName[k] !== undefined) {
+          const nameConcept = this.conceptsName[k];
+          nameKA = k + ' - ' + nameConcept.split(']')[1];
+        } else {
+          nameKA = k + ' - ' + this.kaCodes[this.kaChildrenCode[k]];
+        }
+        this.statisticsNotMatching2.push({ code: nameKA, value: Math.round(tempStats3[k] * 100 / tempTotal3), count: tempStats3[k]  });
+      });
+    }
+    this.graphStatisticsNotMatch1(this.statisticsNotMatching1, 'notMatch1');
+    this.graphStatisticsNotMatch2(this.statisticsNotMatching2, 'notMatch2');
+  }
+  calculateSkillsStatistics () {
+    this.statisticsSkills = [];
+    if (this.commonSkills) {
+      const tempStats = {};
+      let tempTotal = 0;
+      this.commonSkills.forEach( nc => {
+        const code = nc.slice(0, 2);
+        tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
+        tempTotal++;
+      });
+      Object.keys(tempStats).forEach(k => {
+        const nameKA = k + ' - ' + this.kaCodes[k];
+        this.statisticsSkills.push({ code: nameKA, value: Math.round(tempStats[k] * 100 / tempTotal) });
+      });
+    }
+  }
+  calculateFieldsStatistics () {
+    this.statisticsFields = [];
+    if (this.commonFields) {
+      const tempStats = {};
+      let tempTotal = 0;
+      this.commonFields.forEach( nc => {
+        const code = nc;
+        tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
+        tempTotal++;
+      });
+      Object.keys(tempStats).forEach(k => {
+        this.statisticsFields.push({ code: k, value: Math.round(tempStats[k] * 100 / tempTotal) });
+      });
+    }
+  }
   range(size, startAt = 0) {
     size = Math.ceil(size);
     if (size === 0) {
@@ -504,7 +793,9 @@ export class NewmatchComponent implements OnInit {
           it =>
             it.type === type
         );
+        this.filteredByType1 = this.filteredResources1;
       }
+      this.type = type;
     } else {
       this.paginationLimitFrom2 = 0;
       this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
@@ -517,7 +808,9 @@ export class NewmatchComponent implements OnInit {
           it =>
             it.type === type
         );
+        this.filteredByType2 = this.filteredResources2;
       }
+      this.type2 = type;
     }
   }
 
@@ -540,5 +833,152 @@ export class NewmatchComponent implements OnInit {
     );
 
   }
+  openModal() {
+    this.modalRef = this.modalService.show(LoginComponent, {class: 'modal-lg'});
+  }
 
+  graphStatistics(statistics, chartId) {
+      if (this.myChart !== null) {
+        this.myChart.destroy();
+      }
+      const ctx = document.getElementById(chartId);
+      const dataToGraph = [];
+      const labelsToGraph = [];
+      const colorsToGraph = [];
+      statistics.forEach( st => {
+        dataToGraph.push(st.count);
+        labelsToGraph.push(st.code);
+        colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
+      });
+      this.myChart  = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: dataToGraph,
+            backgroundColor: colorsToGraph
+          }],
+          labels: labelsToGraph
+        },
+        options: {
+        }
+      });
+  }
+
+  graphStatisticsNotMatch1(statistics, chartId) {
+    if (this.notMatchChart1 !== null) {
+      this.notMatchChart1 .destroy();
+    }
+    const ctx = document.getElementById(chartId);
+    const dataToGraph = [];
+    const labelsToGraph = [];
+    const colorsToGraph = [];
+    statistics.forEach( st => {
+      dataToGraph.push(st.count);
+      labelsToGraph.push(st.code);
+      colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
+    });
+    this.notMatchChart1  = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: dataToGraph,
+          backgroundColor: colorsToGraph
+        }],
+        labels: labelsToGraph
+      },
+      options: {
+      }
+    });
+  }
+  graphStatisticsNotMatch2(statistics, chartId) {
+    if (this.notMatchChart2 !== null) {
+      this.notMatchChart2 .destroy();
+    }
+    const ctx = document.getElementById(chartId);
+    const dataToGraph = [];
+    const labelsToGraph = [];
+    const colorsToGraph = [];
+    statistics.forEach( st => {
+      dataToGraph.push(st.count);
+      labelsToGraph.push(st.code);
+      colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
+    });
+    this.notMatchChart2  = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: dataToGraph,
+          backgroundColor: colorsToGraph
+        }],
+        labels: labelsToGraph
+      },
+      options: {
+      }
+    });
+  }
+  getColor(code) {
+    const colors = {
+      'bok-GI' : '#40e0d0',
+      'bok-IP' : '#1f77b4',
+      'bok-CF' : '#aec7e8',
+      'bok-CV' : '#ff7f0e',
+      'bok-DA' : '#ffbb78',
+      'bok-DM' : '#2ca02c',
+      'bok-DN' : '#98df8a',
+      'bok-PS' : '#d62728',
+      'bok-GD' : '#cc5b59',
+      'bok-GS' : '#9467bd',
+      'bok-AM' : '#8c564b',
+      'bok-MD' : '#8c564b',
+      'bok-OI' : '#c49c94',
+      'bok-GC' : '#e377c2',
+      'bok-PP' : '#f7b6d2',
+      'bok-SD' : '#7f7f7f',
+      'bok-SH' : '#c7c7c7',
+      'bok-TA' : '#bcbd22',
+      'bok-WB' : '#07561e',
+      'bok-no' : '#17becf',
+    };
+    return colors['bok-' + code];
+  }
+
+  getStatisticsNumberOfConcepts() {
+    this.numberOsConcepts1 = this.getNumberOfConcepts( this.bokConcepts1);
+    this.numberOsConcepts2 = this.getNumberOfConcepts( this.bokConcepts2);
+    let numberCommonConcepts = [];
+    numberCommonConcepts = this.getNumberOfConcepts( this.commonBokConcepts);
+    this.statNumberOfConcepts1 = [];
+    this.statNumberOfConcepts2 = [];
+    let percentage1 = 0;
+    let percentage2 = 0;
+    Object.keys(numberCommonConcepts).forEach( bokConcept => {
+      percentage1 = ( Math.round((numberCommonConcepts[bokConcept] * 100)   / this.numberOsConcepts1[bokConcept]));
+      this.statNumberOfConcepts1.push({ code: bokConcept, value: percentage1, numberCommon: numberCommonConcepts[bokConcept],
+        numberCon: this.numberOsConcepts1[bokConcept] });
+
+      percentage2 = ( Math.round((numberCommonConcepts[bokConcept] * 100 )  / this.numberOsConcepts2[bokConcept]));
+      this.statNumberOfConcepts2.push({ code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
+        numberCon: this.numberOsConcepts2[bokConcept] });
+    });
+  }
+  getNumberOfConcepts( conceptsToAnalize ) {
+    const numConcepts = [];
+    let i = 0;
+    conceptsToAnalize.forEach(bok1 => {
+      let concept = '';
+      if ( bok1.code ) {
+         concept = bok1.code.slice(0, 2);
+      } else {
+         concept = bok1.slice(0, 2);
+      }
+      if ( this.kaCodes[concept] !== undefined) {
+        i = numConcepts[concept] !== undefined ? numConcepts[concept] + 1 : 1;
+        numConcepts[concept] = i ;
+      } else if ( this.kaChildrenCode[concept] !== undefined) {
+        i = numConcepts[this.kaChildrenCode[concept]] !== undefined ? numConcepts[this.kaChildrenCode[concept]] + 1 : 1;
+        numConcepts[this.kaChildrenCode[concept]] = i ;
+      }
+    });
+    return numConcepts;
+  }
 }

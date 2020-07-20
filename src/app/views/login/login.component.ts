@@ -1,11 +1,14 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, TemplateRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import {UserService} from '../../services/user.service';
+import { DefaultLayoutComponent } from '../../containers/default-layout';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: 'login.component.html'
+  templateUrl: 'login.component.html',
 })
 export class LoginComponent implements OnInit {
 
@@ -23,7 +26,8 @@ export class LoginComponent implements OnInit {
     private afAuth: AngularFireAuth,
     private ngZone: NgZone,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: BsModalService,
   ) {
     this.email = '';
     this.pwd = '';
@@ -35,7 +39,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => this.return = params['return'] || '/list');
+    this.route.queryParams.subscribe(params => this.return = params['return'] || '/newmatch/empty');
     if (this.afAuth.auth.currentUser && !this.afAuth.auth.currentUser.isAnonymous) {
       this.ngZone.run(() => this.router.navigateByUrl(this.return)).then();
     }
@@ -50,6 +54,15 @@ export class LoginComponent implements OnInit {
         this.errorLogin = errorMessage;
         console.log(errorCode + ' - ' + errorMessage);
       });
+    this.route.queryParams.subscribe(params => this.return = params['return'] || '/newmatch/empty');
+    if (this.afAuth.auth.currentUser && !this.afAuth.auth.currentUser.isAnonymous) {
+      this.ngZone.run(() => this.router.navigateByUrl(this.return)).then();
+    }
+      for (let i = 1; i <= this.modalService.getModalsCount(); i++) {
+        this.modalService.hide(i);
+      }
+    const element = document.getElementsByTagName('body');
+    element[0].classList.remove('modal-open');
   }
 
   loginWithGoogle() {
@@ -113,5 +126,6 @@ export class LoginComponent implements OnInit {
         console.log(errorCode + ' - ' + errorMessage);
       });
   }
+
 }
 
