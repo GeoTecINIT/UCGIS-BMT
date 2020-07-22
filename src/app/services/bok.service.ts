@@ -24,7 +24,7 @@ export class BokService {
       this.concepts = this.parseConcepts(res);
     });
     db.list('current/relations').valueChanges().subscribe(res => {
-      this.getRelations(res);
+      this.relations = res;
     });
   }
 
@@ -61,9 +61,15 @@ export class BokService {
     }
   }
 
-  getRelations(res ) {
+  getConcepts () {
+    return this.concepts;
+  }
+  getRelations () {
+    return this.relations;
+  }
+  getRelationsPrent( res, concepts ) {
     const relations = [];
-    this.concepts.forEach( con => {
+    concepts.forEach( con => {
       const c = {
         code: con.code,
         name: con.name,
@@ -79,8 +85,7 @@ export class BokService {
         relations[rel.source].parent = relations[rel.target];
       }
     });
-    this.relations = relations;
-    return this.relations;
+    return relations;
   }
 
 }
