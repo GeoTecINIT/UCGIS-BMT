@@ -417,28 +417,28 @@
                 (resource2 !== null &&  resource2.occuProf.eqf !==null) || (resource1 !== null && resource1.occuProf.eqf!==null )">
                   <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.eqf  )">
                     {{resource1.name}}
-                    <button type="button" class="btn btn-default btn-secondary"
+                    <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                             placement="left">
                       EQF {{resource1.eqf }}
                     </button>
                   </div>
                   <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.type === 2  )">
                     {{resource1.name}}
-                    <button type="button" class="btn btn-default btn-secondary"
+                    <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                             placement="left">
                       EQF {{resource1.occuProf.eqf }}
                     </button>
                   </div>
                   <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
                     {{resource2.name}}
-                    <button type="button" class="btn btn-default btn-secondary"
+                    <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                             placement="left">
                       EQF {{resource2.eqf }}
                     </button>
                   </div>
                   <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null && resource2.type === 2  )">
                     {{resource2.name}}
-                    <button type="button" class="btn btn-default btn-secondary"
+                    <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                             placement="left">
                       EQF {{resource2.occuProf.eqf }}
                     </button>
@@ -525,8 +525,6 @@
                   </div>
                 </div>
 
-
-
                 <div class="card-header" >
                   <h5><strong> Differing concepts </strong>
                   <span tooltip="BoK concepts that are only present in one resource: this is knowledge that is not shared between the two resources."
@@ -548,7 +546,6 @@
                         </div>
                       </div>
                       <div class="row card-body" style="background-color: #faf9f8; margin-left: 5px;">
-
                           <p *ngIf="notMatchConcepts1.length > 0"> Not Matching distribution</p>
                           <canvas id="notMatch1"  width="800" height="200" style="height: 0"></canvas>
 
@@ -595,7 +592,7 @@
                     commonSkills.length == 0 "> No matching skills found
                     </div>
                     <button *ngFor="let mk of commonSkills" type="button"
-                            class="btn btn-pill btn-light btn-list">
+                            class="btn btn-pill btn-light btn-list text-left" style="pointer-events: none;">
                       {{ mk }}
                     </button>
                   </div>
@@ -614,7 +611,7 @@
                       <div class="row card-body" style="background-color: #faf9f8">
                         <div class="col-md-12 text-left ma">
                           <button *ngFor="let mk of notMatchSkills1" type="button"
-                                  class="btn btn-pill btn-light btn-list skills">
+                                  class="btn btn-pill btn-light btn-list skills text-left">
                             {{ mk }}
                           </button>
                         </div>
@@ -629,7 +626,7 @@
                       <div class="row card-body" style="background-color: #faf9f8">
                         <div class="col-md-12 text-left ma">
                           <button *ngFor="let mk of notMatchSkills2" type="button"
-                                  class="btn btn-pill btn-light btn-list skills">
+                                  class="btn btn-pill btn-light btn-list skills text-left">
                             {{ mk }}
                           </button>
                         </div>

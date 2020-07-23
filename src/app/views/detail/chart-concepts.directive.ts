@@ -4,6 +4,7 @@ import {UserService} from '../../services/user.service';
 import {ActivatedRoute} from '@angular/router';
 import {Match} from '../../model/resources.model';
 import { Chart } from 'chart.js';
+import {BokService} from '../../services/bok.service';
 
 @Directive({
   selector: '[appChartConcepts]',
@@ -31,6 +32,7 @@ export class ChartConceptsDirective implements OnInit {
     WB: 'Web-based GI',
     GI: 'Geographic Information Science and Technology'
   };
+
   constructor( private el: ElementRef, private matchService: MatchService,
   private userService: UserService,
   private route: ActivatedRoute) {

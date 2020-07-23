@@ -12,7 +12,6 @@
 
 .btn-list {
   display: list-item;
-  text-align: left !important;
 }
 
 .no-padding {
@@ -27,4 +26,12 @@
   margin: 2px;
   pointer-events: none;
   display: block;
+}
+
+.row {
+  margin-left: inherit;
+  margin-right: inherit;
+}
+.ma {
+  margin: auto;
 }

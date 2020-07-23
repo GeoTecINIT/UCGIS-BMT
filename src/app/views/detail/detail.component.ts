@@ -53,7 +53,17 @@ export class DetailComponent implements OnInit {
   transvSkillsNotMatch1: any[] = [];
   transvSkillsNotMatch2: any[] = [];
 
+
+  allConcepts = [];
+
+  numberOfConcepts1 = [];
+  numberOfConcepts2 = [];
+  statNumberOfConcepts1 = [];
+  statNumberOfConcepts2 = [];
+
   profileUrl: Observable<any>;
+
+
   @ViewChild('dangerModal') public dangerModal: ModalDirective;
   constructor(
     private matchService: MatchService,
@@ -77,7 +87,10 @@ export class DetailComponent implements OnInit {
 
   ngOnInit() {
     this.getMatchId();
-
+    setTimeout(() => {
+      this.getRelations();
+      this.getStatisticsNumberOfConcepts();
+    }, 2000);
   }
   getMatchId(): void {
     const _id = this.route.snapshot.paramMap.get('name');
@@ -200,5 +213,69 @@ export class DetailComponent implements OnInit {
       transversalSkills.push(res.occuProf.competences.preferredLabel);
     }
     return transversalSkills;
+  }
+
+  getRelations() {
+    const allConcepts = this.bokService.getConcepts();
+    const allRelations = this.bokService.getRelations();
+    this.allConcepts = this.bokService.getRelationsPrent(allRelations, allConcepts);
+  }
+
+  getParent( concept ) {
+    let parentCode = '';
+    let parentNode = [];
+    let res = '';
+    this.allConcepts.forEach( con => {
+      if ( con.code === concept ) {
+        parentNode = con;
+        while ( parentCode !== 'GIST' && parentNode['code'] !== 'GIST' ) {
+          parentNode = parentNode['parent'];
+          parentCode = parentNode['parent']['code'];
+        }
+      }
+    });
+    res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
+    return res;
+  }
+
+  getStatisticsNumberOfConcepts() {
+    this.numberOfConcepts1 = this.getNumberOfConcepts( this.selectedMatch.resource1.concepts);
+    this.numberOfConcepts2 = this.getNumberOfConcepts( this.selectedMatch.resource2.concepts);
+    let numberCommonConcepts = [];
+    numberCommonConcepts = this.getNumberOfConcepts( this.selectedMatch.commonConcepts );
+    this.statNumberOfConcepts1 = [];
+    this.statNumberOfConcepts2 = [];
+    let percentage1 = 0;
+    let percentage2 = 0;
+    Object.keys(numberCommonConcepts).forEach( bokConcept => {
+
+      percentage1 = ( Math.round((numberCommonConcepts[bokConcept] * 100)   / this.numberOfConcepts1[bokConcept]));
+      this.statNumberOfConcepts1.push({ code: bokConcept, value: percentage1, numberCommon: numberCommonConcepts[bokConcept],
+        numberCon: this.numberOfConcepts1[bokConcept] });
+
+      percentage2 = ( Math.round((numberCommonConcepts[bokConcept] * 100 )  / this.numberOfConcepts2[bokConcept]));
+      this.statNumberOfConcepts2.push({ code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
+        numberCon: this.numberOfConcepts2[bokConcept] });
+
+    });
+  }
+  getNumberOfConcepts( conceptsToAnalize ) {
+    const numConcepts = [];
+    let i = 0;
+
+    conceptsToAnalize.forEach(bok1 => {
+      let parent = '';
+      const conc = bok1.split(']');
+      if ( conc[0][0] === '[' ) {
+        parent = this.getParent(conc[0].slice(1));
+      } else {
+        parent = this.getParent(bok1);
+      }
+      if ( this.kaCodes[parent] !== undefined) {
+        i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+        numConcepts[parent] = i ;
+      }
+    });
+    return numConcepts;
   }
 }

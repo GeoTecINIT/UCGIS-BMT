@@ -96,8 +96,8 @@ export class NewmatchComponent implements OnInit {
   notMatchTransversal1 = [];
   notMatchTransversal2 = [];
 
-  numberOsConcepts1 = [];
-  numberOsConcepts2 = [];
+  numberOfConcepts1 = [];
+  numberOfConcepts2 = [];
 
   resource1 = null;
   resource2 = null;
@@ -170,8 +170,7 @@ export class NewmatchComponent implements OnInit {
     // private cd: ChangeDetectorRef,
     private storage: AngularFireStorage,
     public bokService: BokService,
-    private modalService: BsModalService,
-    private dbRealTime: AngularFireDatabase
+    private modalService: BsModalService
 
   ) {
     this.isAnonymous = false;
@@ -401,8 +400,6 @@ export class NewmatchComponent implements OnInit {
                 this.bokConcepts1, null, null, null, null, 3);
               // do the matching
               this.match();
-              console.log(this.meta1); // Metadata object here
-              console.log('EL EQF!!!!', this.resource1);
             }).catch(function (err) {
               console.log('Error getting meta data');
               console.log(err);
@@ -925,7 +922,6 @@ export class NewmatchComponent implements OnInit {
     if (this.notMatchChart2 !== null) {
       this.notMatchChart2 .destroy();
     }
-    console.log('Estadisticas!!!', statistics);
     const ctx = document.getElementById(chartId);
     const dataToGraph = [];
     const labelsToGraph = [];
@@ -983,6 +979,7 @@ export class NewmatchComponent implements OnInit {
   getParent( concept ) {
     let parentCode = '';
     let parentNode = [];
+    let res = '';
     this.allConcepts.forEach( con => {
       if ( con.code === concept ) {
         parentNode = con;
@@ -992,12 +989,13 @@ export class NewmatchComponent implements OnInit {
         }
       }
     });
-    return parentNode['code'];
+    res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
+    return res;
   }
 
   getStatisticsNumberOfConcepts() {
-    this.numberOsConcepts1 = this.getNumberOfConcepts( this.bokConcepts1);
-    this.numberOsConcepts2 = this.getNumberOfConcepts( this.bokConcepts2);
+    this.numberOfConcepts1 = this.getNumberOfConcepts( this.bokConcepts1);
+    this.numberOfConcepts2 = this.getNumberOfConcepts( this.bokConcepts2);
     let numberCommonConcepts = [];
     numberCommonConcepts = this.getNumberOfConcepts( this.commonBokConcepts);
     this.statNumberOfConcepts1 = [];
@@ -1006,15 +1004,15 @@ export class NewmatchComponent implements OnInit {
     let percentage2 = 0;
     Object.keys(numberCommonConcepts).forEach( bokConcept => {
 
-      percentage1 = ( Math.round((numberCommonConcepts[bokConcept] * 100)   / this.numberOsConcepts1[bokConcept]));
+      percentage1 = ( Math.round((numberCommonConcepts[bokConcept] * 100)   / this.numberOfConcepts1[bokConcept]));
       this.statNumberOfConcepts1.push({ code: bokConcept, value: percentage1, numberCommon: numberCommonConcepts[bokConcept],
-        numberCon: this.numberOsConcepts1[bokConcept] });
+        numberCon: this.numberOfConcepts1[bokConcept] });
 
-      percentage2 = ( Math.round((numberCommonConcepts[bokConcept] * 100 )  / this.numberOsConcepts2[bokConcept]));
+      percentage2 = ( Math.round((numberCommonConcepts[bokConcept] * 100 )  / this.numberOfConcepts2[bokConcept]));
       this.statNumberOfConcepts2.push({ code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
-        numberCon: this.numberOsConcepts2[bokConcept] });
-    });
+        numberCon: this.numberOfConcepts2[bokConcept] });
 
+    });
   }
   getNumberOfConcepts( conceptsToAnalize ) {
     const numConcepts = [];
