@@ -6,7 +6,15 @@
 .btn-pill {
     margin: 5px;
 }
-
+.btn-pill.fields {
+  margin: 2px;
+  pointer-events: none;
+}
+.btn-pill.skills{
+  margin: 2px;
+  pointer-events: none;
+  display: block;
+}
 .ma {
     margin: auto;
 }
@@ -19,7 +27,6 @@
 .btn-pill a {
     color: #faf9f8 !important;
 }
-
 .pagination>.page-item>.page-link,
 .pagination>.page-item>span {
     border: 0;
@@ -73,3 +80,7 @@
       padding-right: 0 !important;
     }
   }
+h5 strong {
+  font-size: 1rem;
+}
+

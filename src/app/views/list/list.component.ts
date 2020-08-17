@@ -43,9 +43,7 @@ export class ListComponent implements OnInit {
             .subscribe(matches => {
               this.matches = [];
               matches.forEach(ma => {
-                if (ma.isPublic) {
-                  this.matches.push(ma);
-                } else if (this.currentUser && this.currentUser.organizations && this.currentUser.organizations.indexOf(ma.orgId) > -1) {
+                if (ma.userId === this.currentUser._id ) {
                   this.matches.push(ma);
                 }
               });
@@ -60,11 +58,11 @@ export class ListComponent implements OnInit {
           .subscribeToMatches()
           .subscribe(occuProfiles => {
             this.matches = [];
-            occuProfiles.forEach(op => {
+            /*occuProfiles.forEach(op => {
               if (op.isPublic) {
                 this.matches.push(op);
               }
-            });
+            });*/
             this.filteredMatches = this.matches;
           });
       }

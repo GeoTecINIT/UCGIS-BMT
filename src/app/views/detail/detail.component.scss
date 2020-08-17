@@ -12,10 +12,26 @@
 
 .btn-list {
   display: list-item;
-  text-align: left !important;
 }
 
 .no-padding {
   padding-left: 0 !important;
   padding-right: 0 !important;
+}
+.btn-pill.fields {
+  margin: 2px;
+  pointer-events: none;
+}
+.btn-pill.skills{
+  margin: 2px;
+  pointer-events: none;
+  display: block;
+}
+
+.row {
+  margin-left: inherit;
+  margin-right: inherit;
+}
+.ma {
+  margin: auto;
 }
