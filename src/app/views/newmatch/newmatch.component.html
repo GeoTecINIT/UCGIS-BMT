@@ -16,23 +16,22 @@
                   {{item.name}}
                 </ng-template>
               </ng-select>
-              <button *ngIf="isAnonymous && userOrgs.length == 0" type="button" class="btn btn-block btn-link text-secondary"
-                routerLink="/organization">
+              <button *ngIf="isAnonymous && userOrgs.length == 0" type="button"
+                class="btn btn-block btn-link text-secondary" routerLink="/organization">
                 &nbsp;You need to join or create an organization before you can save an occupational profile.
               </button>
             </div>
             <div class="col-sm-12 col-md-12 text-right">
               <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
-                      *ngIf="isAnonymous && (model.title != '' && model.description != '' )">
+                *ngIf="isAnonymous && (model.title != '' && model.description != '' )">
                 Save
               </button>
               <button type="submit" class="btn btn-pill btn-primary"
-                      *ngIf="isAnonymous && (model.title == '' || model.description == '' )"
-                      tooltip="Add a title and a description to save your Match." [disabled]="!saveOrg">
+                *ngIf="isAnonymous && (model.title == '' || model.description == '' )"
+                tooltip="Add a title and a description to save your Match." [disabled]="!saveOrg">
                 Save
               </button>
-              <button type="submit" class="btn btn-pill btn-primary" (click)="openModal()"
-                *ngIf="!isAnonymous">
+              <button type="submit" class="btn btn-pill btn-primary" (click)="openModal()" *ngIf="!isAnonymous">
                 Login to save
               </button>
             </div>
@@ -93,7 +92,7 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   <strong> Browse or select resource
-                  <small>To explore the matching possibilities</small> </strong>
+                    <small>To explore the matching possibilities</small> </strong>
                   <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource."
                     class="badge badge-primary badge-pill">i</span>
                 </div>
@@ -102,7 +101,7 @@
                   <div class="row row-no-padding">
                     <div class="col-md-10 pb-2">
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input primary" id="customFile1"
+                        <input type="file" class="custom-file-input primary" id="customFile1" accept="application/pdf"
                           (change)="onFileChange1($event)">
                         <label class="custom-file-label" for="customFile1">Upload resource (pdf)</label>
                       </div>
@@ -143,7 +142,8 @@
 
                     <div class="col-md-12">
                       <br>
-                      <h5 *ngIf="resource1 != null && file1 == null "> Currently selected resource: {{resource1.name}}</h5>
+                      <h5 *ngIf="resource1 != null && file1 == null "> Currently selected resource: {{resource1.name}}
+                      </h5>
                       <h5 *ngIf="resource1 == null && file1 == null "> Currently selected resource: none </h5>
                       <br>
                       <div class="row mb-2">
@@ -229,8 +229,7 @@
 
                               <p>{{ resource.description }}
                                 <a href={{resource.url}} target="_blank">More info</a>
-                                <a *ngIf="resource.type == 3 "
-                                  (click)="deleteOtherRes(resource._id)" target="_blank"
+                                <a *ngIf="resource.type == 3 " (click)="deleteOtherRes(resource._id)" target="_blank"
                                   tooltip="You can delete you annotated resource from this list"
                                   class="pl-1 text-danger">Delete</a>
                               </p>
@@ -245,13 +244,28 @@
                               <li class="page-item">
                                 <a class="page-link" href="javascript:;" (click)="previousPage1()">Previous</a>
                               </li>
+                              <li class="page-item">
+                                <a *ngIf="this.filteredResources1.length/LIMIT_PER_PAGE > 10 && currentPage1 > 2 "
+                                  class="page-link" href="javascript:;"
+                                  (click)="currentPage1=0; paginationLimitFrom1=0; paginationLimitTo1=LIMIT_PER_PAGE ">
+                                  ...
+                                </a>
+                              </li>
                               <li *ngFor="let page of range(this.filteredResources1.length/LIMIT_PER_PAGE, 0)"
                                 class="page-item" [ngClass]="currentPage1 == page? 'active': ''">
-                                <a class="page-link" href="javascript:;"
+                                <a *ngIf="this.filteredResources1.length/LIMIT_PER_PAGE < 10 || ((currentPage1-page) | abs) < 3 "
+                                  class="page-link" href="javascript:;"
                                   (click)="currentPage1=page; paginationLimitFrom1=page*LIMIT_PER_PAGE; paginationLimitTo1=page*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">{{page+1}}
                                   <span *ngIf="currentPage1 == page" class="sr-only">(current)</span>
-                                </a></li>
-
+                                </a>
+                              </li>
+                              <li class="page-item">
+                                <a *ngIf="this.filteredResources1.length/LIMIT_PER_PAGE > 10 && currentPage1 <= this.filteredResources1.length/LIMIT_PER_PAGE - 3 "
+                                  class="page-link" href="javascript:;"
+                                  (click)="currentPage1=int(this.filteredResources1.length/LIMIT_PER_PAGE); paginationLimitFrom1=int(this.filteredResources1.length/LIMIT_PER_PAGE)*LIMIT_PER_PAGE; paginationLimitTo1=int(this.filteredResources1.length/LIMIT_PER_PAGE)*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">
+                                  ...
+                                </a>
+                              </li>
                               <li class="page-item">
                                 <a class="page-link" href="javascript:;" (click)="nextPage1()">Next</a>
                               </li>
@@ -270,7 +284,7 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   <strong> Browse or select resource
-                  <small>To explore the matching possibilities</small> </strong>
+                    <small>To explore the matching possibilities</small> </strong>
                   <span tooltip="Upload a BoK annotated resource or search an EO4GEO resource."
                     class="badge badge-primary badge-pill">i</span>
                 </div>
@@ -279,7 +293,7 @@
                   <div class="row row-no-padding">
                     <div class="col-md-10 mb-2">
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input primary" id="customFile2"
+                        <input type="file" class="custom-file-input primary" id="customFile2" accept="application/pdf"
                           (change)="onFileChange2($event)">
                         <label class="custom-file-label" for="customFile2">Upload resource (pdf)</label>
                       </div>
@@ -321,7 +335,8 @@
 
                     <div class="col-md-12">
                       <br>
-                      <h5 *ngIf="resource2 != null && file2 == null">Currently selected resource:  {{resource2.name}}</h5>
+                      <h5 *ngIf="resource2 != null && file2 == null">Currently selected resource: {{resource2.name}}
+                      </h5>
                       <h5 *ngIf="resource2 == null && file2 == null "> Currently selected resource: none </h5>
                       <br>
                       <div class="row mb-2">
@@ -372,8 +387,7 @@
 
                               <p>{{ resource.description }}
                                 <a href="{{resource.url}}" target="_blank">More info</a>
-                                <a *ngIf="resource.type == 3"
-                                  (click)="deleteOtherRes(resource._id)" target="_blank"
+                                <a *ngIf="resource.type == 3" (click)="deleteOtherRes(resource._id)" target="_blank"
                                   tooltip="You can delete you annotated resource from this list"
                                   class="pl-1 text-danger">Delete</a>
                               </p>
@@ -388,12 +402,28 @@
                               <li class="page-item">
                                 <a class="page-link" href="javascript:;" (click)="previousPage2()">Previous</a>
                               </li>
+                              <li class="page-item">
+                                <a *ngIf="this.filteredResources2.length/LIMIT_PER_PAGE > 10 && currentPage2 > 2 "
+                                  class="page-link" href="javascript:;"
+                                  (click)="currentPage2=0; paginationLimitFrom2=0; paginationLimitTo2=LIMIT_PER_PAGE ">
+                                  ...
+                                </a>
+                              </li>
                               <li *ngFor="let page of range(this.filteredResources2.length/LIMIT_PER_PAGE, 0)"
                                 class="page-item" [ngClass]="currentPage2 == page? 'active': ''">
-                                <a class="page-link" href="javascript:;"
+                                <a *ngIf="this.filteredResources2.length/LIMIT_PER_PAGE < 10 || ((currentPage2-page) | abs) < 3 "
+                                  class="page-link" href="javascript:;"
                                   (click)="currentPage2=page; paginationLimitFrom2=page*LIMIT_PER_PAGE; paginationLimitTo2=page*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">{{page+1}}
                                   <span *ngIf="currentPage2 == page" class="sr-only">(current)</span>
-                                </a></li>
+                                </a>
+                              </li>
+                              <li class="page-item">
+                                <a *ngIf="this.filteredResources2.length/LIMIT_PER_PAGE > 10 && currentPage2 <= this.filteredResources2.length/LIMIT_PER_PAGE - 3 "
+                                  class="page-link" href="javascript:;"
+                                  (click)="currentPage2=int(this.filteredResources2.length/LIMIT_PER_PAGE); paginationLimitFrom2=int(this.filteredResources2.length/LIMIT_PER_PAGE)*LIMIT_PER_PAGE; paginationLimitTo2=int(this.filteredResources2.length/LIMIT_PER_PAGE)*LIMIT_PER_PAGE+LIMIT_PER_PAGE ">
+                                  ...
+                                </a>
+                              </li>
 
                               <li class="page-item">
                                 <a class="page-link" href="javascript:;" (click)="nextPage2()">Next</a>
@@ -410,36 +440,37 @@
             <div class="col-sm-12 col-md-12">
               <!-- EQF COMPARISON -->
               <div class="card card-accent-secondary">
-                  <div class="card-header" >
-                    <h5><strong>EQF level comparison</strong></h5>
+                <div class="card-header">
+                  <h5><strong>EQF level comparison</strong></h5>
                 </div>
-                <div class="row card-body" style="background-color: #faf9f8" *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null ) ||
+                <div class="row card-body" style="background-color: #faf9f8"
+                  *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null ) ||
                 (resource2 !== null &&  resource2.occuProf.eqf !==null) || (resource1 !== null && resource1.occuProf.eqf!==null )">
                   <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.eqf  )">
                     {{resource1.name}}
                     <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
-                            placement="left">
+                      placement="left">
                       EQF {{resource1.eqf }}
                     </button>
                   </div>
                   <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.type === 2  )">
                     {{resource1.name}}
                     <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
-                            placement="left">
+                      placement="left">
                       EQF {{resource1.occuProf.eqf }}
                     </button>
                   </div>
                   <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
                     {{resource2.name}}
                     <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
-                            placement="left">
+                      placement="left">
                       EQF {{resource2.eqf }}
                     </button>
                   </div>
                   <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null && resource2.type === 2  )">
                     {{resource2.name}}
                     <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
-                            placement="left">
+                      placement="left">
                       EQF {{resource2.occuProf.eqf }}
                     </button>
                   </div>
@@ -449,12 +480,14 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   <h5><strong>Matching BoK concepts</strong>
-                  <span tooltip="BoK concepts present in both resources: This is common knowledge shared between the two resources"
-                    class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="BoK concepts present in both resources: This is common knowledge shared between the two resources"
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="row card-body" style="background-color: #faf9f8">
                   <div class="col-md-8 text-left ma">
-                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file to see the matching
+                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file
+                      to see the matching
                     </div>
                     <div *ngIf="(bokConcepts1.length > 0 || bokConcepts2.length > 0) &&
                     commonBokConcepts.length == 0 "> No matching concepts found
@@ -467,12 +500,15 @@
                   </div>
                   <div class="col-md-4 ma">
                     <p *ngIf="commonBokConcepts.length > 0 ">Matching distribution
-                    <span tooltip="The overall distribution of matching concepts, ordered by knowledge area." class="badge badge-primary badge-pill">i</span></p>
-                    <canvas id="myChart"  width="800" height="450" style="height: 0"></canvas>
+                      <span tooltip="The overall distribution of matching concepts, ordered by knowledge area."
+                        class="badge badge-primary badge-pill">i</span></p>
+                    <canvas id="myChart" width="800" height="450" style="height: 0"></canvas>
 
                   </div>
                   <div *ngIf="bokConcepts1.length > 0 && bokConcepts2.length > 0">
-                    <p>Percentage of BoK concepts covered <span tooltip="The percentage, per knowledge area, of BoK concepts covered by the other resource." class="badge badge-primary badge-pill">i</span></p>
+                    <p>Percentage of BoK concepts covered <span
+                        tooltip="The percentage, per knowledge area, of BoK concepts covered by the other resource."
+                        class="badge badge-primary badge-pill">i</span></p>
                   </div>
                   <div *ngIf="bokConcepts1.length > 0 && bokConcepts2.length > 0" class="container row col-md-12">
                     <div class="col-md-6">
@@ -483,14 +519,16 @@
                         <div class="card-body" style="background-color: #faf9f8">
                           <div *ngFor="let k of statNumberOfConcepts1" class="row">
                             <div class="col-md-4">
-                              <div >
-                                <small class="text-muted">{{k.code}}: {{k.value}}%  ( {{k.numberCommon}} / {{k.numberCon}}  )</small>
+                              <div>
+                                <small class="text-muted">{{k.code}}: {{k.value}}% ( {{k.numberCommon}} /
+                                  {{k.numberCon}} )</small>
                               </div>
                             </div>
                             <div class="col-md-5" style="padding-top: 10px;">
                               <div class="progress progress-xs">
                                 <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar"
-                                     aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100">
+                                  aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0"
+                                  aria-valuemax="100">
                                 </div>
                               </div>
                             </div>
@@ -507,13 +545,15 @@
                           <div *ngFor="let k of statNumberOfConcepts2" class="row">
                             <div class="col-md-4">
                               <div>
-                                <small class="text-muted">{{k.code}}: {{k.value}}%  ( {{k.numberCommon}} / {{k.numberCon}} )</small>
+                                <small class="text-muted">{{k.code}}: {{k.value}}% ( {{k.numberCommon}} /
+                                  {{k.numberCon}} )</small>
                               </div>
                             </div>
                             <div class="col-md-6" style="padding-top: 10px;">
                               <div class="progress progress-xs">
                                 <div class="progress-bar" [ngClass]="'bok-' + k.code" role="progressbar"
-                                     aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0" aria-valuemax="100">
+                                  aria-valuenow="k.value" [style.width.%]="k.value" aria-valuemin="0"
+                                  aria-valuemax="100">
                                 </div>
 
                               </div>
@@ -525,10 +565,11 @@
                   </div>
                 </div>
 
-                <div class="card-header" >
+                <div class="card-header">
                   <h5><strong> Differing concepts </strong>
-                  <span tooltip="BoK concepts that are only present in one resource: this is knowledge that is not shared between the two resources."
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="BoK concepts that are only present in one resource: this is knowledge that is not shared between the two resources."
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="container row col-md-12">
                   <div class="col-sm-6 col-md-6">
@@ -539,18 +580,18 @@
                       <div class="card-body" style="background-color: #faf9f8">
                         <div class="row text-center ma">
                           <button *ngFor="let mk of notMatchConcepts1" type="button" class="btn btn-pill"
-                                  [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                            [ngClass]="'bok-' + ( mk | slice:0:2 )">
                             <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank">
                               {{conceptsName[mk]}} </a>
                           </button>
                         </div>
                       </div>
                       <div class="row card-body" style="background-color: #faf9f8; margin-left: 5px;">
-                          <p *ngIf="notMatchConcepts1.length > 0"> Not Matching distribution</p>
-                          <canvas id="notMatch1"  width="800" height="200" style="height: 0"></canvas>
+                        <p *ngIf="notMatchConcepts1.length > 0"> Not Matching distribution</p>
+                        <canvas id="notMatch1" width="800" height="200" style="height: 0"></canvas>
 
+                      </div>
                     </div>
-                  </div>
                   </div>
                   <div class="col-sm-6 col-md-6">
                     <div class="card card-accent-secondary">
@@ -561,7 +602,7 @@
                         <div class="row  text-center ma">
 
                           <button *ngFor="let mk of notMatchConcepts2" type="button" class="btn btn-pill"
-                                  [ngClass]="'bok-' + ( mk | slice:0:2 )">
+                            [ngClass]="'bok-' + ( mk | slice:0:2 )">
                             <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank">
                               {{conceptsName[mk]}} </a>
                           </button>
@@ -569,38 +610,41 @@
                         </div>
                       </div>
                       <div class="row card-body" style="background-color: #faf9f8; margin-left: 5px;">
-                          <p *ngIf="notMatchConcepts2.length > 0 ">Not Matching distribution</p>
-                          <canvas id="notMatch2"  width="800" height="200" style="height: 0"></canvas>
+                        <p *ngIf="notMatchConcepts2.length > 0 ">Not Matching distribution</p>
+                        <canvas id="notMatch2" width="800" height="200" style="height: 0"></canvas>
 
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-             </div>
               <!-- Skills section-->
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   <h5><strong> Matching BoK skills </strong>
-                  <span tooltip="Skills present in both resources: These are common skills shared between the two resources"
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="Skills present in both resources: These are common skills shared between the two resources"
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="row card-body" style="background-color: #faf9f8">
                   <div class="col-md-12">
-                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file to see the matching
+                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file
+                      to see the matching
                     </div>
                     <div *ngIf="(bokConcepts1.length > 0 || bokConcepts2.length > 0) &&
                     commonSkills.length == 0 "> No matching skills found
                     </div>
                     <button *ngFor="let mk of commonSkills" type="button"
-                            class="btn btn-pill btn-light btn-list text-left" style="pointer-events: none;">
+                      class="btn btn-pill btn-light btn-list text-left" style="pointer-events: none;">
                       {{ mk }}
                     </button>
                   </div>
                 </div>
-                <div class="card-header" >
+                <div class="card-header">
                   <h5><strong> Differing skills </strong>
-                  <span tooltip="Skills that are only present in one resource: These are skills that are not shared between the two resources."
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="Skills that are only present in one resource: These are skills that are not shared between the two resources."
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="container row col-md-12">
                   <div class="col-sm-6 col-md-6">
@@ -611,7 +655,7 @@
                       <div class="row card-body" style="background-color: #faf9f8">
                         <div class="col-md-12 text-left ma">
                           <button *ngFor="let mk of notMatchSkills1" type="button"
-                                  class="btn btn-pill btn-light btn-list skills text-left">
+                            class="btn btn-pill btn-light btn-list skills text-left">
                             {{ mk }}
                           </button>
                         </div>
@@ -626,7 +670,7 @@
                       <div class="row card-body" style="background-color: #faf9f8">
                         <div class="col-md-12 text-left ma">
                           <button *ngFor="let mk of notMatchSkills2" type="button"
-                                  class="btn btn-pill btn-light btn-list skills text-left">
+                            class="btn btn-pill btn-light btn-list skills text-left">
                             {{ mk }}
                           </button>
                         </div>
@@ -639,25 +683,28 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   <h5><strong> Matching BoK fields </strong>
-                  <span tooltip="Fields present in both resources: These are common fields shared between the two resources"
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="Fields present in both resources: These are common fields shared between the two resources"
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="row card-body text-left" style="background-color: #faf9f8">
                   <div class="col-md-12 ma">
-                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file to see the matching
+                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file
+                      to see the matching
                     </div>
                     <div *ngIf="(bokConcepts1.length > 0 || bokConcepts2.length > 0) &&
                     commonFields.length == 0 "> No matching fields found
                     </div>
-                    <button *ngFor="let mk of commonFields" type="button" class="btn btn-pill btn-primary " >
+                    <button *ngFor="let mk of commonFields" type="button" class="btn btn-pill btn-primary ">
                       {{mk}}
                     </button>
                   </div>
                 </div>
                 <div class="card-header">
                   <h5><strong> Differing fields </strong>
-                  <span tooltip="Fields that are only present in one resource: These are fields that are not shared between the two resources."
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="Fields that are only present in one resource: These are fields that are not shared between the two resources."
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="container row col-md-12">
                   <div class="col-sm-6 col-md-6">
@@ -666,7 +713,8 @@
                         <h6 *ngIf="resource1">{{resource1.name}}</h6>
                       </div>
                       <div class="row card-body" style="background-color: #faf9f8">
-                        <button *ngFor="let mk of notMatchFields1" type="button" class="btn btn-pill btn-primary fields " >
+                        <button *ngFor="let mk of notMatchFields1" type="button"
+                          class="btn btn-pill btn-primary fields ">
                           {{mk}}
                         </button>
                       </div>
@@ -678,7 +726,8 @@
                         <h6 *ngIf="resource2">{{resource2.name}}</h6>
                       </div>
                       <div class="row card-body ma" style="background-color: #faf9f8">
-                        <button *ngFor="let mk of notMatchFields2" type="button" class="btn btn-pill btn-primary fields " >
+                        <button *ngFor="let mk of notMatchFields2" type="button"
+                          class="btn btn-pill btn-primary fields ">
                           {{mk}}
                         </button>
                       </div>
@@ -690,34 +739,38 @@
               <div class="card card-accent-secondary">
                 <div class="card-header">
                   <h5><strong> Matching BoK Transversal skills </strong>
-                  <span tooltip="Transversal skills present in both resources: These are common transversal skills shared between the two resources"
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="Transversal skills present in both resources: These are common transversal skills shared between the two resources"
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="row card-body text-left" style="background-color: #faf9f8">
                   <div class="col-md-12 ma">
-                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file to see the matching
+                    <div *ngIf="bokConcepts1.length == 0 && bokConcepts2.length == 0">Select a resource or upload a file
+                      to see the matching
                     </div>
                     <div *ngIf="(bokConcepts1.length > 0 || bokConcepts2.length > 0) &&
                     commonTransversalSkills.length == 0 "> No matching transversal skills found
                     </div>
-                    <button *ngFor="let mk of commonTransversalSkills" type="button" class="btn btn-pill btn-primary" >
+                    <button *ngFor="let mk of commonTransversalSkills" type="button" class="btn btn-pill btn-primary">
                       {{mk}}
                     </button>
                   </div>
                 </div>
-                <div class="card-header" >
+                <div class="card-header">
                   <h5><strong> Differing Transversal skills </strong>
-                  <span tooltip="Transversal skills that are only present in one resource: These are transversal skills that are not shared between the two resources."
-                        class="badge badge-primary badge-pill">i</span></h5>
+                    <span
+                      tooltip="Transversal skills that are only present in one resource: These are transversal skills that are not shared between the two resources."
+                      class="badge badge-primary badge-pill">i</span></h5>
                 </div>
                 <div class="container row col-md-12">
                   <div class="col-sm-6 col-md-6">
-                    <div class="card card-accent-secondary" >
+                    <div class="card card-accent-secondary">
                       <div class="card-header">
                         <h6 *ngIf="resource1">{{resource1.name}}</h6>
                       </div>
                       <div class="row card-body" style="background-color: #faf9f8">
-                        <button *ngFor="let mk of notMatchTransversal1" type="button" class="btn btn-pill btn-primary fields " >
+                        <button *ngFor="let mk of notMatchTransversal1" type="button"
+                          class="btn btn-pill btn-primary fields ">
                           {{mk}}
                         </button>
                       </div>
@@ -729,7 +782,8 @@
                         <h6 *ngIf="resource2">{{resource2.name}}</h6>
                       </div>
                       <div class="row card-body" style="background-color: #faf9f8">
-                        <button *ngFor="let mk of notMatchTransversal2" type="button" class="btn btn-pill btn-primary fields " >
+                        <button *ngFor="let mk of notMatchTransversal2" type="button"
+                          class="btn btn-pill btn-primary fields ">
                           {{mk}}
                         </button>
                       </div>
@@ -738,21 +792,20 @@
                 </div>
               </div>
 
-             </div>
+            </div>
 
 
             <div class="col-md-12 text-right">
               <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
-                      *ngIf="isAnonymous && (model.title != '' && model.description != '' )">
+                *ngIf="isAnonymous && (model.title != '' && model.description != '' )">
                 Save
               </button>
               <button type="submit" class="btn btn-pill btn-primary"
-                      *ngIf="isAnonymous && (model.title == '' || model.description == '' )"
-                      tooltip="Add a title and a description to save your Match." [disabled]="!saveOrg">
+                *ngIf="isAnonymous && (model.title == '' || model.description == '' )"
+                tooltip="Add a title and a description to save your Match." [disabled]="!saveOrg">
                 Save
               </button>
-              <button type="submit" class="btn btn-pill btn-primary" (click)="openModal()"
-                      *ngIf="!isAnonymous">
+              <button type="submit" class="btn btn-pill btn-primary" (click)="openModal()" *ngIf="!isAnonymous">
                 Login to save
               </button>
             </div>
