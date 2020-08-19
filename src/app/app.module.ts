@@ -66,6 +66,7 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
 // Custom Pipes
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { HighlightPipe } from './pipes/highlight.pipe';
+import { AbsPipe } from './pipes/abs.pipe';
 
 import { PopupComponent } from './components/popup/popup.component';
 import { Base64img } from './components/popup/base64img';
@@ -127,7 +128,8 @@ import { ChartNotCommon2Directive } from './views/detail/chart-not-common2.direc
     FaqComponent,
     ChartConceptsDirective,
     ChartNotCommon1Directive,
-    ChartNotCommon2Directive
+    ChartNotCommon2Directive,
+    AbsPipe
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

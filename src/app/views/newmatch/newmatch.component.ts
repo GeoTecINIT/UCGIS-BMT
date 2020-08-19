@@ -13,7 +13,7 @@ import { User, UserService } from '../../services/user.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
-import { BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
 import { AngularFireDatabase } from '@angular/fire/database';
 
@@ -27,7 +27,7 @@ import { AngularFireDatabase } from '@angular/fire/database';
 
 import * as pdfjs from 'pdfjs-dist';
 import { BokService } from '../../services/bok.service';
-import {LoginComponent} from '../login/login.component';
+import { LoginComponent } from '../login/login.component';
 
 @Component({
   selector: 'app-newmatch',
@@ -174,7 +174,7 @@ export class NewmatchComponent implements OnInit {
 
   ) {
     this.isAnonymous = false;
-      this.afAuth.auth.onAuthStateChanged(user => {
+    this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
@@ -266,7 +266,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitFrom1 = 0;
     this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
     this.currentPage1 = 0;
-    if ( this.type === -1 ) {
+    if (this.type === -1) {
       this.filteredByType1 = this.resourceService.allResources;
     }
     this.filteredResources1 = this.filteredByType1.filter(
@@ -280,7 +280,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitFrom2 = 0;
     this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
     this.currentPage2 = 0;
-    if ( this.type2 === -1 ) {
+    if (this.type2 === -1) {
       this.filteredByType2 = this.resourceService.allResources;
     }
     this.filteredResources2 = this.filteredByType2.filter(
@@ -336,7 +336,7 @@ export class NewmatchComponent implements OnInit {
     this.skills1 = this.getSkillsFromResource(res);
     this.fields1 = this.getFieldsFromResource(res);
     this.transversalSkills1 = this.getTransversalSkillsFromResource(res);
-    this.bokConcepts1.forEach( k => {
+    this.bokConcepts1.forEach(k => {
       this.notMatchConcepts1.push(k.code);
       this.conceptsName[k.code] = k.name;
     });
@@ -356,7 +356,7 @@ export class NewmatchComponent implements OnInit {
     this.skills2 = this.getSkillsFromResource(res);
     this.fields2 = this.getFieldsFromResource(res);
     this.transversalSkills2 = this.getTransversalSkillsFromResource(res);
-    this.bokConcepts2.forEach( k => {
+    this.bokConcepts2.forEach(k => {
       this.notMatchConcepts2.push(k.code);
       this.conceptsName[k.code] = k.name;
     });
@@ -392,7 +392,7 @@ export class NewmatchComponent implements OnInit {
               if (this.bokConcepts1.length === 0) {
                 this.errorFile1 = true;
               }
-              this.bokConcepts1.forEach( k => {
+              this.bokConcepts1.forEach(k => {
                 this.notMatchConcepts1.push(k.code);
               });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
@@ -433,7 +433,7 @@ export class NewmatchComponent implements OnInit {
               if (this.bokConcepts2.length === 0) {
                 this.errorFile2 = true;
               }
-              this.bokConcepts2.forEach( k => {
+              this.bokConcepts2.forEach(k => {
                 this.notMatchConcepts2.push(k.code);
               });
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
@@ -466,9 +466,9 @@ export class NewmatchComponent implements OnInit {
         if (rel[0] === 'eo4geo') {
           if (rel[1] !== '') {
             if (rel[1].endsWith(';')) {
-              concepts.push({code: rel[1].slice(0, -1), name: rdfEl});
+              concepts.push({ code: rel[1].slice(0, -1), name: rdfEl });
             } else {
-              concepts.push({code: rel[1], name: rdfEl});
+              concepts.push({ code: rel[1], name: rdfEl });
             }
           }
         }
@@ -485,14 +485,14 @@ export class NewmatchComponent implements OnInit {
     if (res && res.concepts && res.concepts.length > 0) {
       res.concepts.forEach(c => {
         const rel = c.split(']');
-        if (  rel[0][0] === '['  ) {
+        if (rel[0][0] === '[') {
           const concept = rel[0].slice(1);
           if (codConcepts.indexOf(concept) === -1) {
-            concepts.push({code: rel[0].slice(1), name: c});
+            concepts.push({ code: rel[0].slice(1), name: c });
             codConcepts.push(rel[0].slice(1));
           }
         } else {
-          concepts.push({code: rel[0], name: c });
+          concepts.push({ code: rel[0], name: c });
           codConcepts.push(rel[0]);
         }
       });
@@ -501,12 +501,12 @@ export class NewmatchComponent implements OnInit {
   }
   getSkillsFromResource(res) {
     const skills = [];
-    if ( res.type ===  0 ) {
+    if (res.type === 0) {
       if (res && res.learningObjectives && res.learningObjectives.length > 0) {
         res.learningObjectives.forEach(c => {
-          let code =  c.concept_id.split(']');
+          let code = c.concept_id.split(']');
           let skill = '';
-            skill = c.name;
+          skill = c.name;
           skills.push(skill);
         });
       }
@@ -531,9 +531,9 @@ export class NewmatchComponent implements OnInit {
       res.occuProf.fields.forEach(c => {
         fields.push(c.name);
       });
-    } else if (!res.fields && res.occuProf ) {
+    } else if (!res.fields && res.occuProf) {
       fields.push(res.occuProf.field.name);
-    }  else if (!res.fields && res.field ) {
+    } else if (!res.fields && res.field) {
       fields.push(res.field.name);
     }
     return fields;
@@ -550,7 +550,7 @@ export class NewmatchComponent implements OnInit {
       res.occuProf.competences.forEach(c => {
         transversalSkills.push(c.preferredLabel);
       });
-    } else if (res.competences && res.competences.preferredLabel && !res.occuProf ) {
+    } else if (res.competences && res.competences.preferredLabel && !res.occuProf) {
       transversalSkills.push(res.occuProf.competences.preferredLabel);
     }
     return transversalSkills;
@@ -570,7 +570,7 @@ export class NewmatchComponent implements OnInit {
             found = true;
           }
         });
-        if (!found ) {
+        if (!found) {
           this.notMatchConcepts1.push(bok1.code);
           this.conceptsName[bok1.code] = bok1.name;
         }
@@ -582,7 +582,7 @@ export class NewmatchComponent implements OnInit {
             found = true;
           }
         });
-        if (!found ) {
+        if (!found) {
           this.conceptsName[bok.code] = bok.name;
           this.notMatchConcepts2.push(bok.code);
         }
@@ -592,7 +592,7 @@ export class NewmatchComponent implements OnInit {
       this.commonBokConcepts.sort();
     }
     this.commonSkills = [];
-    if (this.skills1.length > 0 && this.skills2.length > 0 ) {
+    if (this.skills1.length > 0 && this.skills2.length > 0) {
       this.notMatchSkills1 = [];
       this.notMatchSkills2 = [];
       this.skills1.forEach(bok1 => {
@@ -611,7 +611,7 @@ export class NewmatchComponent implements OnInit {
     }
 
     this.commonFields = [];
-    if (this.fields1.length > 0 && this.fields2.length > 0 ) {
+    if (this.fields1.length > 0 && this.fields2.length > 0) {
       this.notMatchFields1 = [];
       this.notMatchFields2 = [];
       this.fields1.forEach(bok1 => {
@@ -630,7 +630,7 @@ export class NewmatchComponent implements OnInit {
     }
 
     this.commonTransversalSkills = [];
-    if (this.transversalSkills1.length > 0 && this.transversalSkills2.length > 0 ) {
+    if (this.transversalSkills1.length > 0 && this.transversalSkills2.length > 0) {
       this.notMatchTransversal1 = [];
       this.notMatchTransversal2 = [];
       this.transversalSkills1.forEach(bok1 => {
@@ -658,10 +658,10 @@ export class NewmatchComponent implements OnInit {
       let tempTotal = 0;
       this.commonBokConcepts.forEach(kn => {
         let code = this.getParent(kn);
-        if ( code === undefined ) {
+        if (code === undefined) {
           code = kn.slice(0, 2);
         }
-        if ( code === 'GIST' ) {
+        if (code === 'GIST') {
           code = kn;
         }
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
@@ -684,12 +684,12 @@ export class NewmatchComponent implements OnInit {
     if (this.commonBokConcepts) {
       const tempStats2 = {};
       let tempTotal2 = 0;
-      this.notMatchConcepts1.forEach( nc => {
+      this.notMatchConcepts1.forEach(nc => {
         let code = this.getParent(nc);
-        if ( code === undefined ) {
+        if (code === undefined) {
           code = nc.slice(0, 2);
         }
-        if ( code === 'GIST' ) {
+        if (code === 'GIST') {
           code = nc;
         }
         tempStats2[code] !== undefined ? tempStats2[code]++ : tempStats2[code] = 1;
@@ -697,22 +697,22 @@ export class NewmatchComponent implements OnInit {
       });
       Object.keys(tempStats2).forEach(k => {
         let nameKA = '';
-        if (  this.kaCodes[k] !== undefined ) {
-           nameKA = k + ' - ' + this.kaCodes[k];
+        if (this.kaCodes[k] !== undefined) {
+          nameKA = k + ' - ' + this.kaCodes[k];
         } else {
           const nameConcept = this.conceptsName[k];
           nameKA = k + ' - ' + nameConcept.split(']')[1];
         }
-        this.statisticsNotMatching1.push({ code: nameKA, value: Math.round(tempStats2[k] * 100 / tempTotal2), count: tempStats2[k]  });
+        this.statisticsNotMatching1.push({ code: nameKA, value: Math.round(tempStats2[k] * 100 / tempTotal2), count: tempStats2[k] });
       });
       const tempStats3 = {};
       let tempTotal3 = 0;
-      this.notMatchConcepts2.forEach( nc => {
+      this.notMatchConcepts2.forEach(nc => {
         let code = this.getParent(nc);
-        if ( code === undefined ) {
+        if (code === undefined) {
           code = nc.slice(0, 2);
         }
-        if ( code === 'GIST' ) {
+        if (code === 'GIST') {
           code = nc;
         }
         tempStats3[code] !== undefined ? tempStats3[code]++ : tempStats3[code] = 1;
@@ -720,29 +720,29 @@ export class NewmatchComponent implements OnInit {
       });
       Object.keys(tempStats3).forEach(k => {
         let nameKA = '';
-        if (  this.kaCodes[k] !== undefined ) {
+        if (this.kaCodes[k] !== undefined) {
           nameKA = k + ' - ' + this.kaCodes[k];
         } else if (this.conceptsName[k] !== undefined) {
           const nameConcept = this.conceptsName[k];
           nameKA = k + ' - ' + nameConcept.split(']')[1];
         }
-        this.statisticsNotMatching2.push({ code: nameKA, value: Math.round(tempStats3[k] * 100 / tempTotal3), count: tempStats3[k]  });
+        this.statisticsNotMatching2.push({ code: nameKA, value: Math.round(tempStats3[k] * 100 / tempTotal3), count: tempStats3[k] });
       });
     }
     this.graphStatisticsNotMatch1(this.statisticsNotMatching1, 'notMatch1');
     this.graphStatisticsNotMatch2(this.statisticsNotMatching2, 'notMatch2');
   }
-  calculateSkillsStatistics () {
+  calculateSkillsStatistics() {
     this.statisticsSkills = [];
     if (this.commonSkills) {
       const tempStats = {};
       let tempTotal = 0;
-      this.commonSkills.forEach( nc => {
+      this.commonSkills.forEach(nc => {
         let code = this.getParent(nc);
-        if ( code === undefined ) {
+        if (code === undefined) {
           code = nc.slice(0, 2);
         }
-        if ( code === 'GIST' ) {
+        if (code === 'GIST') {
           code = nc;
         }
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
@@ -754,12 +754,12 @@ export class NewmatchComponent implements OnInit {
       });
     }
   }
-  calculateFieldsStatistics () {
+  calculateFieldsStatistics() {
     this.statisticsFields = [];
     if (this.commonFields) {
       const tempStats = {};
       let tempTotal = 0;
-      this.commonFields.forEach( nc => {
+      this.commonFields.forEach(nc => {
         const code = nc;
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
         tempTotal++;
@@ -775,6 +775,10 @@ export class NewmatchComponent implements OnInit {
       size = 1;
     }
     return [...Array(size).keys()].map(i => i + startAt);
+  }
+
+  int(number) {
+    return Math.round(number);
   }
 
   nextPage1() {
@@ -862,50 +866,50 @@ export class NewmatchComponent implements OnInit {
 
   }
   openModal() {
-    this.modalRef = this.modalService.show(LoginComponent, {class: 'modal-lg'});
+    this.modalRef = this.modalService.show(LoginComponent, { class: 'modal-lg' });
   }
 
   graphStatistics(statistics, chartId) {
-      if (this.myChart !== null) {
-        this.myChart.destroy();
-      }
-      const ctx = document.getElementById(chartId);
-      const dataToGraph = [];
-      const labelsToGraph = [];
-      const colorsToGraph = [];
-      statistics.forEach( st => {
-        dataToGraph.push(st.count);
-        labelsToGraph.push(st.code);
-        colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
-      });
-      this.myChart  = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          datasets: [{
-            data: dataToGraph,
-            backgroundColor: colorsToGraph
-          }],
-          labels: labelsToGraph
-        },
-        options: {
-        }
-      });
-  }
-
-  graphStatisticsNotMatch1(statistics, chartId) {
-    if (this.notMatchChart1 !== null) {
-      this.notMatchChart1 .destroy();
+    if (this.myChart !== null) {
+      this.myChart.destroy();
     }
     const ctx = document.getElementById(chartId);
     const dataToGraph = [];
     const labelsToGraph = [];
     const colorsToGraph = [];
-    statistics.forEach( st => {
+    statistics.forEach(st => {
       dataToGraph.push(st.count);
       labelsToGraph.push(st.code);
       colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
     });
-    this.notMatchChart1  = new Chart(ctx, {
+    this.myChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: dataToGraph,
+          backgroundColor: colorsToGraph
+        }],
+        labels: labelsToGraph
+      },
+      options: {
+      }
+    });
+  }
+
+  graphStatisticsNotMatch1(statistics, chartId) {
+    if (this.notMatchChart1 !== null) {
+      this.notMatchChart1.destroy();
+    }
+    const ctx = document.getElementById(chartId);
+    const dataToGraph = [];
+    const labelsToGraph = [];
+    const colorsToGraph = [];
+    statistics.forEach(st => {
+      dataToGraph.push(st.count);
+      labelsToGraph.push(st.code);
+      colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
+    });
+    this.notMatchChart1 = new Chart(ctx, {
       type: 'doughnut',
       data: {
         datasets: [{
@@ -920,18 +924,18 @@ export class NewmatchComponent implements OnInit {
   }
   graphStatisticsNotMatch2(statistics, chartId) {
     if (this.notMatchChart2 !== null) {
-      this.notMatchChart2 .destroy();
+      this.notMatchChart2.destroy();
     }
     const ctx = document.getElementById(chartId);
     const dataToGraph = [];
     const labelsToGraph = [];
     const colorsToGraph = [];
-    statistics.forEach( st => {
+    statistics.forEach(st => {
       dataToGraph.push(st.count);
       labelsToGraph.push(st.code);
       colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
     });
-    this.notMatchChart2  = new Chart(ctx, {
+    this.notMatchChart2 = new Chart(ctx, {
       type: 'doughnut',
       data: {
         datasets: [{
@@ -946,26 +950,26 @@ export class NewmatchComponent implements OnInit {
   }
   getColor(code) {
     const colors = {
-      'bok-GI' : '#40e0d0',
-      'bok-IP' : '#1f77b4',
-      'bok-CF' : '#aec7e8',
-      'bok-CV' : '#ff7f0e',
-      'bok-DA' : '#ffbb78',
-      'bok-DM' : '#2ca02c',
-      'bok-DN' : '#98df8a',
-      'bok-PS' : '#d62728',
-      'bok-GD' : '#cc5b59',
-      'bok-GS' : '#9467bd',
-      'bok-AM' : '#8c564b',
-      'bok-MD' : '#8c564b',
-      'bok-OI' : '#c49c94',
-      'bok-GC' : '#e377c2',
-      'bok-PP' : '#f7b6d2',
-      'bok-SD' : '#7f7f7f',
-      'bok-SH' : '#c7c7c7',
-      'bok-TA' : '#bcbd22',
-      'bok-WB' : '#07561e',
-      'bok-no' : '#17becf',
+      'bok-GI': '#40e0d0',
+      'bok-IP': '#1f77b4',
+      'bok-CF': '#aec7e8',
+      'bok-CV': '#ff7f0e',
+      'bok-DA': '#ffbb78',
+      'bok-DM': '#2ca02c',
+      'bok-DN': '#98df8a',
+      'bok-PS': '#d62728',
+      'bok-GD': '#cc5b59',
+      'bok-GS': '#9467bd',
+      'bok-AM': '#8c564b',
+      'bok-MD': '#8c564b',
+      'bok-OI': '#c49c94',
+      'bok-GC': '#e377c2',
+      'bok-PP': '#f7b6d2',
+      'bok-SD': '#7f7f7f',
+      'bok-SH': '#c7c7c7',
+      'bok-TA': '#bcbd22',
+      'bok-WB': '#07561e',
+      'bok-no': '#17becf',
     };
     return colors['bok-' + code];
   }
@@ -976,14 +980,14 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts = this.bokService.getRelationsPrent(allRelations, allConcepts);
   }
 
-  getParent( concept ) {
+  getParent(concept) {
     let parentCode = '';
     let parentNode = [];
     let res = '';
-    this.allConcepts.forEach( con => {
-      if ( con.code === concept ) {
+    this.allConcepts.forEach(con => {
+      if (con.code === concept) {
         parentNode = con;
-        while ( parentCode !== 'GIST' && parentNode['code'] !== 'GIST' ) {
+        while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
           parentNode = parentNode['parent'];
           parentCode = parentNode['parent']['code'];
         }
@@ -994,40 +998,44 @@ export class NewmatchComponent implements OnInit {
   }
 
   getStatisticsNumberOfConcepts() {
-    this.numberOfConcepts1 = this.getNumberOfConcepts( this.bokConcepts1);
-    this.numberOfConcepts2 = this.getNumberOfConcepts( this.bokConcepts2);
+    this.numberOfConcepts1 = this.getNumberOfConcepts(this.bokConcepts1);
+    this.numberOfConcepts2 = this.getNumberOfConcepts(this.bokConcepts2);
     let numberCommonConcepts = [];
-    numberCommonConcepts = this.getNumberOfConcepts( this.commonBokConcepts);
+    numberCommonConcepts = this.getNumberOfConcepts(this.commonBokConcepts);
     this.statNumberOfConcepts1 = [];
     this.statNumberOfConcepts2 = [];
     let percentage1 = 0;
     let percentage2 = 0;
-    Object.keys(numberCommonConcepts).forEach( bokConcept => {
+    Object.keys(numberCommonConcepts).forEach(bokConcept => {
 
-      percentage1 = ( Math.round((numberCommonConcepts[bokConcept] * 100)   / this.numberOfConcepts1[bokConcept]));
-      this.statNumberOfConcepts1.push({ code: bokConcept, value: percentage1, numberCommon: numberCommonConcepts[bokConcept],
-        numberCon: this.numberOfConcepts1[bokConcept] });
+      percentage1 = (Math.round((numberCommonConcepts[bokConcept] * 100) / this.numberOfConcepts1[bokConcept]));
+      this.statNumberOfConcepts1.push({
+        code: bokConcept, value: percentage1, numberCommon: numberCommonConcepts[bokConcept],
+        numberCon: this.numberOfConcepts1[bokConcept]
+      });
 
-      percentage2 = ( Math.round((numberCommonConcepts[bokConcept] * 100 )  / this.numberOfConcepts2[bokConcept]));
-      this.statNumberOfConcepts2.push({ code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
-        numberCon: this.numberOfConcepts2[bokConcept] });
+      percentage2 = (Math.round((numberCommonConcepts[bokConcept] * 100) / this.numberOfConcepts2[bokConcept]));
+      this.statNumberOfConcepts2.push({
+        code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
+        numberCon: this.numberOfConcepts2[bokConcept]
+      });
 
     });
   }
-  getNumberOfConcepts( conceptsToAnalize ) {
+  getNumberOfConcepts(conceptsToAnalize) {
     const numConcepts = [];
     let i = 0;
 
     conceptsToAnalize.forEach(bok1 => {
       let parent = '';
-      if ( bok1.code ) {
+      if (bok1.code) {
         parent = this.getParent(bok1.code);
       } else {
         parent = this.getParent(bok1);
       }
-      if ( this.kaCodes[parent] !== undefined) {
+      if (this.kaCodes[parent] !== undefined) {
         i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
-        numConcepts[parent] = i ;
+        numConcepts[parent] = i;
       }
     });
     return numConcepts;
