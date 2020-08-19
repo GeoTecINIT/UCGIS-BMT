@@ -156,6 +156,17 @@ export class NewmatchComponent implements OnInit {
   public currentPage2 = 0;
   public collectionOT = 'Other';
 
+
+  sortNameAsc1 = true;
+  sortOrgAsc1 = true;
+  sortUpdAsc1 = true;
+  sortedBy1 = 'lastUpdated';
+
+  sortNameAsc2 = true;
+  sortOrgAsc2 = true;
+  sortUpdAsc2 = true;
+  sortedBy2 = 'lastUpdated';
+
   constructor(
     private matchService: MatchService,
     private otherService: OtherService,
@@ -198,7 +209,7 @@ export class NewmatchComponent implements OnInit {
       }
     });
     // sort resources by name
-    this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
+   // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
     this.filteredResources1 = this.resourceService.allResources;
     this.filteredResources2 = this.resourceService.allResources;
   }
@@ -819,13 +830,15 @@ export class NewmatchComponent implements OnInit {
       this.currentPage1 = 0;
       this.filteredResources1 = [];
       if (type === -1) {
-        this.filteredResources1 = this.resourceService.allResources;
+        this.filteredResources1 = Object.assign([], this.resourceService.allResources);
       } else {
-        this.filteredResources1 = this.resourceService.allResources.filter(
+        this.filteredResources1 = Object.assign([], this.resourceService.allResources);
+        const filtered = this.filteredResources1.filter(
           it =>
             it.type === type
         );
-        this.filteredByType1 = this.filteredResources1;
+        this.filteredByType1 = filtered;
+        this.filteredResources1 = filtered;
       }
       this.type = type;
     } else {
@@ -834,13 +847,15 @@ export class NewmatchComponent implements OnInit {
       this.currentPage2 = 0;
       this.filteredResources2 = [];
       if (type === -1) {
-        this.filteredResources2 = this.resourceService.allResources;
+        this.filteredResources2 = Object.assign([], this.resourceService.allResources);
       } else {
-        this.filteredResources2 = this.resourceService.allResources.filter(
+        this.filteredResources2 = Object.assign([], this.resourceService.allResources);
+        const filtered = this.filteredResources2.filter(
           it =>
             it.type === type
         );
-        this.filteredByType2 = this.filteredResources2;
+        this.filteredByType2 = filtered;
+        this.filteredResources2 = filtered;
       }
       this.type2 = type;
     }
@@ -1039,5 +1054,57 @@ export class NewmatchComponent implements OnInit {
       }
     });
     return numConcepts;
+  }
+
+  sortBy1(attr) {
+    this.filteredResources1 = Object.assign([], this.filteredResources1);
+    this.paginationLimitFrom1 = 0;
+    this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
+    this.currentPage1 = 0;
+    switch (attr) {
+      case 'name':
+        this.sortNameAsc1 = !this.sortNameAsc1;
+        this.sortedBy1 = 'name';
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources1.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? this.sortNameAsc1 ? 1 : -1 : this.sortNameAsc1 ? -1 : 1);
+        break;
+      case 'lastUpdated':
+        this.sortUpdAsc1 = !this.sortUpdAsc1;
+        this.sortedBy1 = 'lastUpdated';
+        this.filteredResources1.sort((a, b) => (a.updatedAt > b.updatedAt) ? this.sortUpdAsc1 ? 1 : -1 : this.sortUpdAsc1 ? -1 : 1);
+        break;
+      case 'organization':
+        this.sortOrgAsc1 = !this.sortOrgAsc1;
+        this.sortedBy1 = 'organization';
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources1.sort((a, b) => (a.orgName.toLowerCase() > b.orgName.toLowerCase()) ? this.sortOrgAsc1 ? 1 : -1 : this.sortOrgAsc1 ? -1 : 1);
+        break;
+    }
+  }
+
+  sortBy2(attr) {
+    this.filteredResources2 = Object.assign([], this.filteredResources2);
+    this.paginationLimitFrom2 = 0;
+    this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
+    this.currentPage2 = 0;
+    switch (attr) {
+      case 'name':
+        this.sortNameAsc2 = !this.sortNameAsc2;
+        this.sortedBy2 = 'name';
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? this.sortNameAsc2 ? 1 : -1 : this.sortNameAsc2 ? -1 : 1);
+        break;
+      case 'lastUpdated':
+        this.sortUpdAsc2 = !this.sortUpdAsc2;
+        this.sortedBy2 = 'lastUpdated';
+        this.filteredResources2.sort((a, b) => (a.updatedAt > b.updatedAt) ? this.sortUpdAsc2 ? 1 : -1 : this.sortUpdAsc2 ? -1 : 1);
+        break;
+      case 'organization':
+        this.sortOrgAsc2 = !this.sortOrgAsc2;
+        this.sortedBy2 = 'organization';
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2.sort((a, b) => (a.orgName.toLowerCase() > b.orgName.toLowerCase()) ? this.sortOrgAsc2 ? 1 : -1 : this.sortOrgAsc2 ? -1 : 1);
+        break;
+    }
   }
 }
