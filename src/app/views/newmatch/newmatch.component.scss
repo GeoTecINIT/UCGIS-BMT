@@ -6,15 +6,18 @@
 .btn-pill {
     margin: 5px;
 }
+
 .btn-pill.fields {
-  margin: 2px;
-  pointer-events: none;
+    margin: 2px;
+    pointer-events: none;
 }
-.btn-pill.skills{
-  margin: 2px;
-  pointer-events: none;
-  display: block;
+
+.btn-pill.skills {
+    margin: 2px;
+    pointer-events: none;
+    display: block;
 }
+
 .ma {
     margin: auto;
 }
@@ -27,6 +30,7 @@
 .btn-pill a {
     color: #faf9f8 !important;
 }
+
 .pagination>.page-item>.page-link,
 .pagination>.page-item>span {
     border: 0;
@@ -76,11 +80,21 @@
 
 .row-no-padding {
     [class*="col-"] {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
-  }
-h5 strong {
-  font-size: 1rem;
 }
 
+h5 strong {
+    font-size: 1rem;
+}
+
+.bolder {
+    font-weight: bolder;
+}
+
+.text-lastupdated {
+    font-size: small;
+    font-weight: bolder;
+    color: #73818f !important;
+}

@@ -140,7 +140,7 @@
                           target="_blank"> guidelines </a> on how to annotate a PDF with eo4geo BoK.</h6>
                     </div>
 
-                    <div class="col-md-12">
+                    <div *ngIf="filteredResources1 && filteredResources1.length > 0 else loading" class="col-md-12">
                       <br>
                       <h5 *ngIf="resource1 != null && file1 == null "> Currently selected resource: {{resource1.name}}
                       </h5>
@@ -202,6 +202,32 @@
                         </ng-container> -->
                       </div>
 
+                      <div class="row mt-2">
+                        <div class="col-md-3 text-center mt-2">
+                          Sort by:
+                        </div>
+
+                        <!-- sortedBy -->
+                        <div class="col-md-3 text-center">
+                          <button type="button" class="btn btn-block btn-link" (click)="sortBy1('lastUpdated');">
+                            <i [ngClass]="sortUpdAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                            <span [ngClass]="sortedBy1 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
+                          </button>
+                        </div>
+                        <div class="col-md-3 text-center">
+                          <button type="button" class="btn btn-block btn-link" (click)="sortBy1('name');">
+                            <i [ngClass]="sortNameAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                            <span [ngClass]="sortedBy1 == 'name'? 'bolder' : ''"> Name</span>
+                          </button>
+                        </div>
+                        <div class="col-md-3 text-center">
+                          <button type="button" class="btn btn-block btn-link" (click)="sortBy1('organization');">
+                            <i [ngClass]="sortOrgAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                            <span [ngClass]="sortedBy1 == 'organization'? 'bolder' : ''">Organization</span>
+                          </button>
+                        </div>
+                      </div>
+
                       <div
                         *ngFor="let resource of filteredResources1 | slice:paginationLimitFrom1:paginationLimitTo1; let i=index">
                         <div *ngIf="showResource1==-1 || showResource1 == resource.type" class="row">
@@ -224,6 +250,9 @@
                                   {{ resource.knowledge.length }} Knowledge | </div>
                                 <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
                                   {{ resource.skills.length }} Skills </div>
+                                  <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
+                                    {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
+                                  </span>
                                 <br>
                               </span>
 
@@ -274,9 +303,11 @@
                         </div>
                       </div>
                     </div>
+                    <ng-template #loading>
+                      <app-loading-indicator style="margin: auto;"></app-loading-indicator>
+                    </ng-template>
                   </div>
                 </div>
-
               </div>
 
             </div>
@@ -333,7 +364,7 @@
                           target="_blank"> guidelines </a> on how to annotate a PDF with eo4geo BoK.</h6>
                     </div>
 
-                    <div class="col-md-12">
+                    <div *ngIf="filteredResources2 && filteredResources2.length > 0 else loading2" class="col-md-12">
                       <br>
                       <h5 *ngIf="resource2 != null && file2 == null">Currently selected resource: {{resource2.name}}
                       </h5>
@@ -364,6 +395,32 @@
                         </div>
                       </div>
 
+                      <div class="row mt-2">
+                        <div class="col-md-3 text-center mt-2">
+                          Sort by:
+                        </div>
+
+                        <!-- sortedBy -->
+                        <div class="col-md-3 text-center">
+                          <button type="button" class="btn btn-block btn-link" (click)="sortBy2('lastUpdated');">
+                            <i [ngClass]="sortUpdAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                            <span [ngClass]="sortedBy2 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
+                          </button>
+                        </div>
+                        <div class="col-md-3 text-center">
+                          <button type="button" class="btn btn-block btn-link" (click)="sortBy2('name');">
+                            <i [ngClass]="sortNameAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                            <span [ngClass]="sortedBy2 == 'name'? 'bolder' : ''"> Name</span>
+                          </button>
+                        </div>
+                        <div class="col-md-3 text-center">
+                          <button type="button" class="btn btn-block btn-link" (click)="sortBy2('organization');">
+                            <i [ngClass]="sortOrgAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                            <span [ngClass]="sortedBy2 == 'organization'? 'bolder' : ''">Organization</span>
+                          </button>
+                        </div>
+                      </div>
+
                       <div
                         *ngFor="let resource of filteredResources2 | slice:paginationLimitFrom2:paginationLimitTo2; let i=index ">
                         <div *ngIf="showResource2==-1 || showResource2 == resource.type" class="row">
@@ -382,6 +439,9 @@
                                   {{ resource.knowledge.length }} Knowledge | </div>
                                 <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
                                   {{ resource.skills.length }} Skills </div>
+                                  <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
+                                    {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
+                                  </span>
                                 <br>
                               </span>
 
@@ -433,6 +493,9 @@
                         </div>
                       </div>
                     </div>
+                    <ng-template #loading2>
+                      <app-loading-indicator style="margin: auto;"></app-loading-indicator>
+                    </ng-template>
                   </div>
                 </div>
               </div>
