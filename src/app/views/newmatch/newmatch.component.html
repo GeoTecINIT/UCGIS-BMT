@@ -51,14 +51,14 @@
               </div>
               <div class="card-body" style="background-color: #faf9f8">
                 <div class="row">
-                  <div class="col-md-8">
+                  <div class="col-md-12">
                     <div class="form-group">
                       <label for="title">Title *</label>
                       <input type="text" class="form-control" id="title" placeholder="Title" [(ngModel)]="model.title"
                         name="title" required />
                     </div>
                   </div>
-                  <div *ngIf="saveOrg" class="col-md-2" style="display: inline-flex">
+                  <!--                   <div *ngIf="saveOrg" class="col-md-2" style="display: inline-flex">
                     <span class="input-group-prepend">
                       <div class="pr-1"> Visibility: Private </div>
                       <label class="switch switch-label switch-pill switch-outline-primary-alt">
@@ -68,7 +68,7 @@
                       </label>
                       <div class="pl-1">Public </div>
                     </span>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="row">
                   <div class="col-md-12">
@@ -109,7 +109,7 @@
                     <div class="col-md-2 text-center">
                       or
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12 pb-2">
                       <div class="input-group">
                         <span class="input-group-prepend">
                           <button class="btn btn-primary" type="button" (click)="filter1()">
@@ -121,6 +121,17 @@
                           (keyup)="filter1()" />
                       </div>
                     </div>
+
+                    <div class="col-md-2 text-center">
+                      or
+                    </div>
+                    <div class="col-md-10">
+                      <button type="submit" class="btn btn-primary" tooltip="Browse the BoK to select concepts."
+                        (click)="bokModal.show(); customSelect = 1">
+                        Select concepts from Body of Knowledge
+                      </button>
+                    </div>
+
                   </div>
                   <div class="row" *ngIf="uploadPercent1">
                     <div class="col-md-6">
@@ -140,12 +151,21 @@
                           target="_blank"> guidelines </a> on how to annotate a PDF with eo4geo BoK.</h6>
                     </div>
 
-                    <div *ngIf="filteredResources1 && filteredResources1.length > 0 else loading" class="col-md-12">
+                    <div *ngIf="(filteredResources1 && filteredResources1.length > 0) || file1 != null else loading"
+                      class="col-md-12">
                       <br>
                       <h5 *ngIf="resource1 != null && file1 == null "> Currently selected resource: {{resource1.name}}
                       </h5>
                       <h5 *ngIf="resource1 == null && file1 == null "> Currently selected resource: none </h5>
                       <br>
+                      <div *ngIf="customSelect==1 && bokConcepts1.length > 0" class="row mb-2">
+                        <div class="col-md-12 text-center">
+                          <p>You have selected {{bokConcepts1.length}} concept(s)</p>
+                          <button class="btn btn-pill btn-outline-primary mr-2"
+                            (click)="clearCustomSelection1()">Clear custom
+                            selection</button>
+                        </div>
+                      </div>
                       <div class="row mb-2">
                         <!-- Filter by type -->
                         <div class="col-md-12">
@@ -250,9 +270,9 @@
                                   {{ resource.knowledge.length }} Knowledge | </div>
                                 <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
                                   {{ resource.skills.length }} Skills </div>
-                                  <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
-                                    {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
-                                  </span>
+                                <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
+                                  {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
+                                </span>
                                 <br>
                               </span>
 
@@ -332,7 +352,7 @@
                     <div class="col-md-2 text-center">
                       or
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12 pb-2">
                       <div class="input-group">
                         <span class="input-group-prepend">
                           <button class="btn btn-primary" type="button" (click)="filter2()">
@@ -343,6 +363,16 @@
                           placeholder="Search EO4GEO resource" autocomplete="search" [(ngModel)]="searchText2"
                           (keyup)="filter2()" />
                       </div>
+                    </div>
+
+                    <div class="col-md-2 text-center">
+                      or
+                    </div>
+                    <div class="col-md-10">
+                      <button type="submit" class="btn btn-primary" tooltip="Browse the BoK to select concepts."
+                        (click)="bokModal.show(); customSelect = 2">
+                        Select concepts from Body of Knowledge
+                      </button>
                     </div>
                   </div>
                   <div class="row" *ngIf="uploadPercent2">
@@ -364,12 +394,21 @@
                           target="_blank"> guidelines </a> on how to annotate a PDF with eo4geo BoK.</h6>
                     </div>
 
-                    <div *ngIf="filteredResources2 && filteredResources2.length > 0 else loading2" class="col-md-12">
+                    <div *ngIf="(filteredResources2 && filteredResources2.length > 0) || file2 != null else loading2"
+                      class="col-md-12">
                       <br>
                       <h5 *ngIf="resource2 != null && file2 == null">Currently selected resource: {{resource2.name}}
                       </h5>
                       <h5 *ngIf="resource2 == null && file2 == null "> Currently selected resource: none </h5>
                       <br>
+                      <div *ngIf="customSelect==2 && bokConcepts2.length > 0" class="row mb-2">
+                        <div class="col-md-12 text-center">
+                          <p>You have selected {{bokConcepts2.length}} concept(s)</p>
+                          <button class="btn btn-pill btn-outline-primary mr-2"
+                            (click)="clearCustomSelection2()">Clear custom
+                            selection</button>
+                        </div>
+                      </div>
                       <div class="row mb-2">
                         <!-- Filter by type -->
                         <div class="col-md-12">
@@ -431,7 +470,8 @@
                               <!-- routerLink="/detail/{{ resource._id }}" -->
                               <span>
                                 <h4 style="display: inline;">{{ resource.name }}</h4>
-                                <h6 style="display: inline;" class="text-level"> ({{ resource.collectionDisplay }})</h6>
+                                <h6 style="display: inline;" class="text-level"> ({{ resource.collectionDisplay }})
+                                </h6>
                                 <h6 style="display: inline;" class="text-level text-secondary">
                                   {{ resource.orgName }}</h6>
                                 <div style="display: inline;"
@@ -439,9 +479,9 @@
                                   {{ resource.knowledge.length }} Knowledge | </div>
                                 <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
                                   {{ resource.skills.length }} Skills </div>
-                                  <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
-                                    {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
-                                  </span>
+                                <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
+                                  {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
+                                </span>
                                 <br>
                               </span>
 
@@ -455,6 +495,7 @@
                           </div>
                         </div>
                       </div>
+
                       <div *ngIf="this.filteredResources2" class="row">
                         <div class="col-md-6 ml-auto mr-auto">
                           <nav aria-label="pagination">
@@ -857,7 +898,6 @@
 
             </div>
 
-
             <div class="col-md-12 text-right">
               <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
                 *ngIf="isAnonymous && (model.title != '' && model.description != '' )">
@@ -880,3 +920,123 @@
     <!--/.row-->
   </div>
 </div>
+
+<div bsModal #bokModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  id="bokModal" aria-hidden="true">
+  <div class="modal-dialog modal-info modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Select concepts from BoK to be used in the match.</h4>
+        <button type="button" class="close" (click)="bokModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Search Knowledge and skills card  [hidden]="!isDisplayBoK" -->
+        <div class="card card-accent-secondary">
+          <div class="card-header">
+            Body of Knowledge - Search knowledge and skills
+            <span
+              tooltip="Browse in the BoK for knowledge required for your new occupational profile. Once in the required knowledge, press the button 'Add' it will link the concept and the learning outcomes dependent on it."
+              class="badge badge-primary badge-pill">i</span>
+
+            <p class="text-center mt-1 mb-0 text-success" *ngIf="customSelect == 1 && bokConcepts1.length > 0"> You have
+              selected {{bokConcepts1.length}} concepts, continue selecting and close BoK window when finished. </p>
+            <p class="text-center mt-1 mb-0 text-success" *ngIf="customSelect == 2 && bokConcepts2.length > 0"> You have
+              selected {{bokConcepts2.length}} concepts, continue selecting and close BoK window when finished. </p>
+
+          </div>
+
+          <div class="card-body" style="background-color: #faf9f8">
+            <div class="row text-center">
+              <div class="col-lg-6 col-sm-6">
+                <div class="row text-center mb-1">
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <div class="input-group-prepend" dropdown>
+                        <button type="button" class="btn btn-primary">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </div>
+                      <input #searchInput type="text" id="input-competence-filter" name="input-competence-filter"
+                        class="form-control" [(ngModel)]="searchInputField" (keyup)="searchInBok(searchInput.value)"
+                        placeholder="Search Knowledge" />
+                    </div>
+                  </div>
+                  <div class="col-md-2" style="margin-right: 0;margin-left: auto;">
+                    <button type="button" class="btn btn-primary" (click)="addBokKnowledge()"> Select </button>
+                  </div>
+                </div>
+                <div id="bubbles">
+                </div>
+              </div>
+              <div class="col-lg-6 col-sm-6 text-justify">
+                <div class="row text-left">
+                  <div class="col-md-6">
+                    <a (click)="hasResults = !hasResults; currentConcept=''"
+                      *ngIf="!hasResults && currentConcept != 'GIST'">
+                      < Back to search results </a>
+                  </div>
+                  <div class="col-md-6">
+                    <a (click)="hasResults = false; cleanResults()" *ngIf="hasResults">
+                      &nbsp; X Clear search results </a>
+                  </div>
+                </div>
+                <br>
+                <h5 [hidden]="currentConcept == '' && currentConcept != 'GIST'">Knowledge</h5>
+                <div #textBoK id="textBoK" [hidden]="hasResults">
+                </div>
+                <div class="col" *ngIf="hasResults">
+                  <h3 class="center">
+                    {{ selectedNodes.length }} result(s) for
+                    {{ searchInput.value }}
+                  </h3>
+                  <div *ngFor="let item of selectedNodes; index as i">
+                    <div *ngIf="i < limitSearchTo && i >= limitSearchFrom">
+                      <div class="inline">{{ item.nameShort }}</div>
+                      <div class="inline" [innerHTML]="
+                            item.name | truncate: 100:searchInput.value
+                          "></div>
+                      <a class="inline" (click)="navigateToConcept(item.nameShort)">
+                        Details
+                      </a>
+                      <div class="small" [innerHTML]="
+                            item.description | truncate: 100:searchInput.value
+                          "></div>
+                    </div>
+                  </div>
+                  <div>
+                    <br />
+                    <div class="row">
+                      <div class="col-md-6 text-right">
+                        <a *ngIf="limitSearchFrom > 0" (click)="decrementLimit()">
+                          << Previous </a>
+                      </div>
+                      <div class="col-md-6 text-left"> <a *ngIf="limitSearchTo < selectedNodes.length"
+                          (click)="incrementLimit()">
+                          Next >>
+                        </a></div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <p class="text-center mt-1 mb-0 text-success" *ngIf="customSelect == 1 && bokConcepts1.length > 0"> You have
+          selected {{bokConcepts1.length}} concepts, continue selecting and close BoK window when finished. </p>
+        <p class="text-center mt-1 mb-0 text-success" *ngIf="customSelect == 2 && bokConcepts2.length > 0"> You have
+          selected {{bokConcepts2.length}} concepts, continue selecting and close BoK window when finished. </p>
+
+        <button type="button" class="btn btn-primary" (click)="addBokKnowledge()"> Select </button>
+        <button type="button" class="btn btn-danger" (click)="bokModal.hide()">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

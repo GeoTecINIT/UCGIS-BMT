@@ -15,19 +15,12 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
-import { AngularFireDatabase } from '@angular/fire/database';
-
-// import * as fs from 'fs';
-// import * as parsePdf from 'parse-pdf';
-
-// const fs = require('fs');
-// const parsePdf = require('parse-pdf');
-
-// import * as jspdf from 'parse-pdf';
-
 import * as pdfjs from 'pdfjs-dist';
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
+import * as bok from '@eo4geo/bok-dataviz';
+import { ModalDirective } from 'ngx-bootstrap/modal';
+
 
 @Component({
   selector: 'app-newmatch',
@@ -167,6 +160,19 @@ export class NewmatchComponent implements OnInit {
   sortUpdAsc2 = true;
   sortedBy2 = 'lastUpdated';
 
+  @ViewChild('textBoK') textBoK: ElementRef;
+  @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;
+  @ViewChild('bokModal') public bokModal: ModalDirective;
+
+  selectedNodes = [];
+  hasResults = false;
+  limitSearchFrom = 0;
+  limitSearchTo = 10;
+  searchInputField = '';
+  currentConcept = 'GIST';
+
+  customSelect = 0;
+
   constructor(
     private matchService: MatchService,
     private otherService: OtherService,
@@ -209,13 +215,14 @@ export class NewmatchComponent implements OnInit {
       }
     });
     // sort resources by name
-   // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
+    // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
     this.filteredResources1 = this.resourceService.allResources;
     this.filteredResources2 = this.resourceService.allResources;
   }
 
   ngOnInit() {
     this.getMode();
+    bok.visualizeBOKData('#bubbles', '#textBoK');
   }
 
   saveMatch() {
@@ -586,16 +593,16 @@ export class NewmatchComponent implements OnInit {
           this.conceptsName[bok1.code] = bok1.name;
         }
       });
-      this.bokConcepts2.forEach(bok => {
+      this.bokConcepts2.forEach(bok1 => {
         let found = false;
         this.bokConcepts1.forEach(bok2 => {
-          if (bok.code === bok2.code) {
+          if (bok1.code === bok2.code) {
             found = true;
           }
         });
         if (!found) {
-          this.conceptsName[bok.code] = bok.name;
-          this.notMatchConcepts2.push(bok.code);
+          this.conceptsName[bok1.code] = bok1.name;
+          this.notMatchConcepts2.push(bok1.code);
         }
       });
       this.notMatchConcepts1.sort();
@@ -613,9 +620,9 @@ export class NewmatchComponent implements OnInit {
           this.notMatchSkills1.push(bok1);
         }
       });
-      this.skills2.forEach(bok => {
-        if (this.commonSkills.indexOf(bok) < 0) {
-          this.notMatchSkills2.push(bok);
+      this.skills2.forEach(bok1 => {
+        if (this.commonSkills.indexOf(bok1) < 0) {
+          this.notMatchSkills2.push(bok1);
         }
       });
       this.commonSkills.sort();
@@ -632,9 +639,9 @@ export class NewmatchComponent implements OnInit {
           this.notMatchFields1.push(bok1);
         }
       });
-      this.fields2.forEach(bok => {
-        if (this.commonFields.indexOf(bok) < 0) {
-          this.notMatchFields2.push(bok);
+      this.fields2.forEach(bok1 => {
+        if (this.commonFields.indexOf(bok1) < 0) {
+          this.notMatchFields2.push(bok1);
         }
       });
       this.commonFields.sort();
@@ -651,9 +658,9 @@ export class NewmatchComponent implements OnInit {
           this.notMatchTransversal1.push(bok1);
         }
       });
-      this.transversalSkills2.forEach(bok => {
-        if (this.commonTransversalSkills.indexOf(bok) < 0) {
-          this.notMatchTransversal2.push(bok);
+      this.transversalSkills2.forEach(bok1 => {
+        if (this.commonTransversalSkills.indexOf(bok1) < 0) {
+          this.notMatchTransversal2.push(bok1);
         }
       });
       this.commonTransversalSkills.sort();
@@ -990,9 +997,11 @@ export class NewmatchComponent implements OnInit {
   }
 
   getRelations() {
-    const allConcepts = this.bokService.getConcepts();
-    const allRelations = this.bokService.getRelations();
-    this.allConcepts = this.bokService.getRelationsPrent(allRelations, allConcepts);
+    if (this.allConcepts.length === 0) {
+      const allConcepts = this.bokService.getConcepts();
+      const allRelations = this.bokService.getRelations();
+      this.allConcepts = this.bokService.getRelationsPrent(allRelations, allConcepts);
+    }
   }
 
   getParent(concept) {
@@ -1107,4 +1116,111 @@ export class NewmatchComponent implements OnInit {
         break;
     }
   }
+
+  searchInBok(text: string) {
+    if (text === '' || text === ' ') {
+      this.cleanResults();
+    } else {
+      this.selectedNodes = bok.searchInBoK(text);
+      this.hasResults = true;
+      this.currentConcept = '';
+
+      this.limitSearchFrom = 0;
+      this.limitSearchTo = 10;
+    }
+  }
+
+  navigateToConcept(conceptName) {
+    bok.browseToConcept(conceptName);
+    console.log('Current concept: ' + conceptName);
+    this.currentConcept = conceptName;
+    this.hasResults = false;
+  }
+
+  cleanResults() {
+    this.searchInputField = '';
+    bok.searchInBoK('');
+    this.navigateToConcept('GIST');
+  }
+
+  incrementLimit() {
+    this.limitSearchTo = this.limitSearchTo + 10;
+    this.limitSearchFrom = this.limitSearchFrom + 10;
+  }
+
+  decrementLimit() {
+    this.limitSearchTo = this.limitSearchTo - 10;
+    this.limitSearchFrom = this.limitSearchFrom - 10;
+  }
+
+  addBokKnowledge() {
+    this.getRelations();
+    this.conceptsName = [];
+
+    if (this.customSelect === 1) {
+      this.notMatchConcepts1 = [];
+      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+        .textContent;
+      const conceptId = concept.split(']')[0].substring(1);
+
+      this.bokConcepts1.push({ code: conceptId, name: concept });
+      this.resource1 = { name: 'Custom selection', concepts: [] };
+      this.resource1.concepts.push(concept);
+
+      this.bokConcepts1.forEach(k => {
+        this.notMatchConcepts1.push(k.code);
+        this.conceptsName[k.code] = k.name;
+      });
+
+    } else {
+      this.notMatchConcepts2 = [];
+      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+        .textContent;
+      const conceptId = concept.split(']')[0].substring(1);
+
+      this.bokConcepts2.push({ code: conceptId, name: concept });
+      this.resource2 = { name: 'Custom selection', concepts: [] };
+      this.resource2.concepts.push(concept);
+
+      this.bokConcepts2.forEach(k => {
+        this.notMatchConcepts2.push(k.code);
+        this.conceptsName[k.code] = k.name;
+      });
+    }
+
+    this.match();
+    this.getStatisticsNumberOfConcepts();
+
+    /*
+        const divs = this.textBoK.nativeElement.getElementsByTagName('div');
+        if (divs['bokskills'] != null) {
+          const shortCode = this.textBoK.nativeElement.getElementsByTagName('h4')[0].innerText.split(' ')[0];
+          const as = divs['bokskills'].getElementsByTagName('a');
+          for (const skill of as) {
+            newConcept.skills.push(skill.innerText);
+          }
+        }
+        if (divs['boksource'] != null) {
+          const shortCode = this.textBoK.nativeElement.getElementsByTagName('h4')[0].innerText.split(' ')[0];
+          const as = divs['boksource'].getElementsByTagName('a');
+          for (const bib of as) {
+            newConcept.bibliography.push(bib.innerText);
+          }
+        } */
+  }
+
+  clearCustomSelection1() {
+    this.resource1 = null;
+    this.bokConcepts1 = [];
+    this.notMatchConcepts1 = [];
+    this.calculateNotmatchingStatistics();
+  }
+
+  clearCustomSelection2() {
+    this.resource2 = null;
+    this.bokConcepts2 = [];
+    this.notMatchConcepts2 = [];
+    this.calculateNotmatchingStatistics();
+  }
+
 }
