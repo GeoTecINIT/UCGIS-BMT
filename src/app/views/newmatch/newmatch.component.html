@@ -181,10 +181,8 @@
                               {{ resource.orgName }}</h6>
                             <h6 *ngIf="resource.division" style="display: inline;" class="text-level text-secondary">
                               - {{ resource.division }}</h6>
-
                             <h6 *ngIf="!resource.isPublic" style="display: inline;" class="text-level text-primary">
                               Private</h6>
-
                             <div style="display: inline;" *ngIf="resource.knowledge && resource.knowledge.length> 0">
                               {{ resource.knowledge.length }} Knowledge | </div>
                             <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
@@ -396,6 +394,10 @@
                               {{ resource.orgName }}</h6> -->
                             <h6 style="display: inline;" class="text-level text-secondary">
                               {{ resource.orgName }}</h6>
+                            <h6 *ngIf="resource.division" style="display: inline;" class="text-level text-secondary">
+                              - {{ resource.division }}</h6>
+                            <h6 *ngIf="!resource.isPublic" style="display: inline;" class="text-level text-primary">
+                              Private</h6>
                             <div style="display: inline;" *ngIf="resource.knowledge && resource.knowledge.length> 0">
                               {{ resource.knowledge.length }} Knowledge | </div>
                             <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
@@ -408,8 +410,9 @@
 
                           <p>{{ resource.description }}
                             <a href={{resource.url}} target="_blank">More info</a>
-                            <a *ngIf="resource.type == 3 " (click)="deleteOtherRes(resource._id)" target="_blank"
-                              tooltip="You can delete you annotated resource from this list"
+                            <a *ngIf="resource.type == 3 && currentUser && currentUser._id === resource.userId"
+                              (click)="deleteOtherRes(resource._id)" target="_blank"
+                              tooltip="You can delete your annotated resource from this list"
                               class="pl-1 text-danger">Delete</a>
                           </p>
                         </button>
