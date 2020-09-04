@@ -134,3 +134,8 @@ popover-container {
 .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
   display: none !important;
 }
+
+.nav-tabs .nav-link.active {
+  border-top-color: #cc9c4d !important;
+  border-top-width: 2px;
+}

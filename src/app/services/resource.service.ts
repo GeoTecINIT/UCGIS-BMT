@@ -20,6 +20,7 @@ export class ResourceService {
   private db: AngularFirestore;
 
   public allResources = [];
+  public publicResources = [];
 
   constructor(db: AngularFirestore) {
     this.db = db;
@@ -28,6 +29,7 @@ export class ResourceService {
 
   getResources() {
     this.allResources = [];
+    this.publicResources = [];
     // get Job Offers
     const joSubs = this.db
       .collection<Resource>(collectionJO)
@@ -43,6 +45,9 @@ export class ResourceService {
           r.type = 2;
           r.description = r.occuProf.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         joSubs.unsubscribe();
       });
@@ -57,6 +62,7 @@ export class ResourceService {
           r.url = urlCDT + r._id;
           r.type = 0;
           r.isPublic = r.levelPublic;
+          console.log('LevelPublic : ' + r.isPublic + r.name);
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           r.concepts = r.concepts && r.concepts.length > 0 ? r.concepts : [];
           if (r.children && r.children.length > 0) { // modules
@@ -81,6 +87,9 @@ export class ResourceService {
             });
           }
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         spSubs.unsubscribe();
       });
@@ -98,6 +107,9 @@ export class ResourceService {
           r.type = 1;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         opSubs.unsubscribe();
       });
@@ -115,6 +127,9 @@ export class ResourceService {
           r.type = 3;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         otSubs.unsubscribe();
       });

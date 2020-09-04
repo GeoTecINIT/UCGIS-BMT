@@ -190,7 +190,7 @@ export class NewmatchComponent implements OnInit {
     private modalService: BsModalService
 
   ) {
-    this.isAnonymous = false;
+    this.isAnonymous = true;
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
@@ -206,7 +206,7 @@ export class NewmatchComponent implements OnInit {
                     it =>
                       this.currentUser.organizations.includes(it.orgId) || it.isPublic
                   );
-                  this.isAnonymous = true;
+                  this.isAnonymous = false;
                 }
               });
             });
@@ -216,8 +216,8 @@ export class NewmatchComponent implements OnInit {
     });
     // sort resources by name
     // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
-    this.filteredResources1 = this.resourceService.allResources;
-    this.filteredResources2 = this.resourceService.allResources;
+    this.filteredResources1 = this.resourceService.publicResources;
+    this.filteredResources2 = this.resourceService.publicResources;
   }
 
   ngOnInit() {
@@ -285,7 +285,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
     this.currentPage1 = 0;
     if (this.type === -1) {
-      this.filteredByType1 = this.resourceService.allResources;
+      this.filteredByType1 = this.isAnonymous ? this.resourceService.publicResources : this.resourceService.allResources;
     }
     this.filteredResources1 = this.filteredByType1.filter(
       it =>
@@ -299,7 +299,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
     this.currentPage2 = 0;
     if (this.type2 === -1) {
-      this.filteredByType2 = this.resourceService.allResources;
+      this.filteredByType2 = this.isAnonymous ? this.resourceService.publicResources : this.resourceService.allResources;
     }
     this.filteredResources2 = this.filteredByType2.filter(
       it =>
@@ -575,7 +575,7 @@ export class NewmatchComponent implements OnInit {
   }
   match() {
     this.commonBokConcepts = [];
-    if (this.bokConcepts1.length > 0 && this.bokConcepts2.length > 0) {
+    if (this.bokConcepts1.length > 0 || this.bokConcepts2.length > 0) {
       this.notMatchConcepts1 = [];
       this.notMatchConcepts2 = [];
       this.conceptsName = [];
@@ -837,9 +837,11 @@ export class NewmatchComponent implements OnInit {
       this.currentPage1 = 0;
       this.filteredResources1 = [];
       if (type === -1) {
-        this.filteredResources1 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources1 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
       } else {
-        this.filteredResources1 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources1 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
         const filtered = this.filteredResources1.filter(
           it =>
             it.type === type
@@ -854,9 +856,11 @@ export class NewmatchComponent implements OnInit {
       this.currentPage2 = 0;
       this.filteredResources2 = [];
       if (type === -1) {
-        this.filteredResources2 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
       } else {
-        this.filteredResources2 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
         const filtered = this.filteredResources2.filter(
           it =>
             it.type === type
@@ -874,6 +878,10 @@ export class NewmatchComponent implements OnInit {
     console.log('delete other resource: ' + idOther);
 
     this.resourceService.allResources = this.resourceService.allResources.filter(
+      it =>
+        it._id !== idOther
+    );
+    this.resourceService.publicResources = this.resourceService.publicResources.filter(
       it =>
         it._id !== idOther
     );
@@ -1164,7 +1172,9 @@ export class NewmatchComponent implements OnInit {
       const conceptId = concept.split(']')[0].substring(1);
 
       this.bokConcepts1.push({ code: conceptId, name: concept });
-      this.resource1 = { name: 'Custom selection', concepts: [] };
+      if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
+        this.resource1 = { name: 'Custom selection', concepts: [] };
+      }
       this.resource1.concepts.push(concept);
 
       this.bokConcepts1.forEach(k => {
@@ -1179,7 +1189,9 @@ export class NewmatchComponent implements OnInit {
       const conceptId = concept.split(']')[0].substring(1);
 
       this.bokConcepts2.push({ code: conceptId, name: concept });
-      this.resource2 = { name: 'Custom selection', concepts: [] };
+      if (this.resource2 == null || this.resource2.name !== 'Custom selection') {
+        this.resource2 = { name: 'Custom selection', concepts: [] };
+      }
       this.resource2.concepts.push(concept);
 
       this.bokConcepts2.forEach(k => {
@@ -1191,36 +1203,40 @@ export class NewmatchComponent implements OnInit {
     this.match();
     this.getStatisticsNumberOfConcepts();
 
-    /*
-        const divs = this.textBoK.nativeElement.getElementsByTagName('div');
-        if (divs['bokskills'] != null) {
-          const shortCode = this.textBoK.nativeElement.getElementsByTagName('h4')[0].innerText.split(' ')[0];
-          const as = divs['bokskills'].getElementsByTagName('a');
-          for (const skill of as) {
-            newConcept.skills.push(skill.innerText);
-          }
-        }
-        if (divs['boksource'] != null) {
-          const shortCode = this.textBoK.nativeElement.getElementsByTagName('h4')[0].innerText.split(' ')[0];
-          const as = divs['boksource'].getElementsByTagName('a');
-          for (const bib of as) {
-            newConcept.bibliography.push(bib.innerText);
-          }
-        } */
   }
 
   clearCustomSelection1() {
     this.resource1 = null;
     this.bokConcepts1 = [];
     this.notMatchConcepts1 = [];
-    this.calculateNotmatchingStatistics();
+    this.getStatisticsNumberOfConcepts();
+    this.match();
   }
 
   clearCustomSelection2() {
     this.resource2 = null;
     this.bokConcepts2 = [];
     this.notMatchConcepts2 = [];
-    this.calculateNotmatchingStatistics();
+    this.getStatisticsNumberOfConcepts();
+    this.match();
+  }
+
+  removeCustomConcept1(concept) {
+    const index = this.bokConcepts1.indexOf(concept);
+    this.bokConcepts1.splice(index, 1);
+    this.resource1.concepts.splice(index, 1);
+    this.notMatchConcepts1.splice(index, 1);
+    this.getStatisticsNumberOfConcepts();
+    this.match();
+  }
+
+  removeCustomConcept2(concept) {
+    const index = this.bokConcepts2.indexOf(concept);
+    this.bokConcepts2.splice(index, 1);
+    this.resource2.concepts.splice(index, 1);
+    this.notMatchConcepts2.splice(index, 1);
+    this.getStatisticsNumberOfConcepts();
+    this.match();
   }
 
 }
