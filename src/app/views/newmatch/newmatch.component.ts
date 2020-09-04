@@ -314,7 +314,7 @@ export class NewmatchComponent implements OnInit {
     const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       [this.file1] = event.target.files;
-      // console.log('onFileChange2');
+      this.clearCustomSelection1();
       // console.log(this.file2);
       // upload file to firebase storage to be able to get metadata
       this.uploadFile1(this.file1);
@@ -333,7 +333,7 @@ export class NewmatchComponent implements OnInit {
     const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       [this.file2] = event.target.files;
-      // console.log('onFileChange2');
+      this.clearCustomSelection2();
       // console.log(this.file2);
       // upload file to firebase storage to be able to get metadata
       this.uploadFile2(this.file2);
