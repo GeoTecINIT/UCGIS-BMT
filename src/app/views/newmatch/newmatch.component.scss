@@ -98,3 +98,33 @@ h5 strong {
     font-weight: bolder;
     color: #73818f !important;
 }
+
+.inline {
+    display: inline-block;
+    margin-left: 1em;
+    //  margin-top: 1em;
+}
+
+#bokModal a {
+    color: #1b8eb7 !important;
+    cursor: pointer !important;
+}
+
+#bokModal button a {
+    color: #fff !important; 
+}
+
+.text-small {
+    font-size: x-small;
+}
+
+.btn-xs {
+    padding: 0;
+    line-height: 1;
+    padding-right: 8px;
+}
+
+.btn-center {
+    display: block;
+    margin: 0 auto;
+}

@@ -126,9 +126,6 @@ p {
   border-bottom: none;
 }
 
-.modal-content {
-  height: 800px;
-}
 popover-container {
   min-width: max-content !important;
   max-width: none !important;
@@ -136,4 +133,9 @@ popover-container {
 // ng-select from newop, hide selected options inside the dropdown
 .ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
   display: none !important;
+}
+
+.nav-tabs .nav-link.active {
+  border-top-color: #cc9c4d !important;
+  border-top-width: 2px;
 }

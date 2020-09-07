@@ -20,6 +20,7 @@ export class ResourceService {
   private db: AngularFirestore;
 
   public allResources = [];
+  public publicResources = [];
 
   constructor(db: AngularFirestore) {
     this.db = db;
@@ -28,6 +29,7 @@ export class ResourceService {
 
   getResources() {
     this.allResources = [];
+    this.publicResources = [];
     // get Job Offers
     const joSubs = this.db
       .collection<Resource>(collectionJO)
@@ -39,10 +41,14 @@ export class ResourceService {
           r.skills = r.occuProf.skills;
           // r.fields = r.occuProf.fields;
           r.name = r.occuProf.title;
+          r.eqf = r.occuProf.eqf;
           r.url = urlJOT + r._id;
           r.type = 2;
           r.description = r.occuProf.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         joSubs.unsubscribe();
       });
@@ -81,6 +87,9 @@ export class ResourceService {
             });
           }
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         spSubs.unsubscribe();
       });
@@ -98,6 +107,9 @@ export class ResourceService {
           r.type = 1;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         opSubs.unsubscribe();
       });
@@ -115,6 +127,9 @@ export class ResourceService {
           r.type = 3;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
+          if (r.isPublic) {
+            this.publicResources.push(r);
+          }
         });
         otSubs.unsubscribe();
       });

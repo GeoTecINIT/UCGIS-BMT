@@ -36,7 +36,7 @@
     "@coreui/coreui": "^2.1.8",
     "@coreui/coreui-plugin-chartjs-custom-tooltips": "^1.2.0",
     "@coreui/icons": "0.3.0",
-    "@eo4geo/bok-dataviz": "^4.7.0",
+    "@eo4geo/bok-dataviz": "^5.2.3",
     "@ng-select/ng-select": "^2.20.0",
     "bootstrap": "^4.3.1",
     "chart.js": "^2.9.3",

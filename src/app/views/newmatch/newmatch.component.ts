@@ -15,19 +15,12 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
-import { AngularFireDatabase } from '@angular/fire/database';
-
-// import * as fs from 'fs';
-// import * as parsePdf from 'parse-pdf';
-
-// const fs = require('fs');
-// const parsePdf = require('parse-pdf');
-
-// import * as jspdf from 'parse-pdf';
-
 import * as pdfjs from 'pdfjs-dist';
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
+import * as bok from '@eo4geo/bok-dataviz';
+import { ModalDirective } from 'ngx-bootstrap/modal';
+
 
 @Component({
   selector: 'app-newmatch',
@@ -167,6 +160,19 @@ export class NewmatchComponent implements OnInit {
   sortUpdAsc2 = true;
   sortedBy2 = 'lastUpdated';
 
+  @ViewChild('textBoK') textBoK: ElementRef;
+  @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;
+  @ViewChild('bokModal') public bokModal: ModalDirective;
+
+  selectedNodes = [];
+  hasResults = false;
+  limitSearchFrom = 0;
+  limitSearchTo = 10;
+  searchInputField = '';
+  currentConcept = 'GIST';
+
+  customSelect = 0;
+
   constructor(
     private matchService: MatchService,
     private otherService: OtherService,
@@ -184,7 +190,7 @@ export class NewmatchComponent implements OnInit {
     private modalService: BsModalService
 
   ) {
-    this.isAnonymous = false;
+    this.isAnonymous = true;
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
@@ -200,7 +206,7 @@ export class NewmatchComponent implements OnInit {
                     it =>
                       this.currentUser.organizations.includes(it.orgId) || it.isPublic
                   );
-                  this.isAnonymous = true;
+                  this.isAnonymous = false;
                 }
               });
             });
@@ -209,13 +215,14 @@ export class NewmatchComponent implements OnInit {
       }
     });
     // sort resources by name
-   // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
-    this.filteredResources1 = this.resourceService.allResources;
-    this.filteredResources2 = this.resourceService.allResources;
+    // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
+    this.filteredResources1 = this.resourceService.publicResources;
+    this.filteredResources2 = this.resourceService.publicResources;
   }
 
   ngOnInit() {
     this.getMode();
+    bok.visualizeBOKData('#bubbles', '#textBoK');
   }
 
   saveMatch() {
@@ -278,7 +285,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
     this.currentPage1 = 0;
     if (this.type === -1) {
-      this.filteredByType1 = this.resourceService.allResources;
+      this.filteredByType1 = this.isAnonymous ? this.resourceService.publicResources : this.resourceService.allResources;
     }
     this.filteredResources1 = this.filteredByType1.filter(
       it =>
@@ -292,7 +299,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
     this.currentPage2 = 0;
     if (this.type2 === -1) {
-      this.filteredByType2 = this.resourceService.allResources;
+      this.filteredByType2 = this.isAnonymous ? this.resourceService.publicResources : this.resourceService.allResources;
     }
     this.filteredResources2 = this.filteredByType2.filter(
       it =>
@@ -307,7 +314,7 @@ export class NewmatchComponent implements OnInit {
     const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       [this.file1] = event.target.files;
-      // console.log('onFileChange2');
+      this.clearCustomSelection1();
       // console.log(this.file2);
       // upload file to firebase storage to be able to get metadata
       this.uploadFile1(this.file1);
@@ -326,7 +333,7 @@ export class NewmatchComponent implements OnInit {
     const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       [this.file2] = event.target.files;
-      // console.log('onFileChange2');
+      this.clearCustomSelection2();
       // console.log(this.file2);
       // upload file to firebase storage to be able to get metadata
       this.uploadFile2(this.file2);
@@ -408,7 +415,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                this.bokConcepts1, null, null, null, null, 3);
+                this.bokConcepts1, null, null, null, null, 3, null);
               // do the matching
               this.match();
             }).catch(function (err) {
@@ -449,7 +456,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
-                this.bokConcepts2, null, null, null, null, 3);
+                this.bokConcepts2, null, null, null, null, 3, null);
               this.match();
             }).catch(function (err) {
               console.log('Error getting meta data');
@@ -568,7 +575,7 @@ export class NewmatchComponent implements OnInit {
   }
   match() {
     this.commonBokConcepts = [];
-    if (this.bokConcepts1.length > 0 && this.bokConcepts2.length > 0) {
+    if (this.bokConcepts1.length > 0 || this.bokConcepts2.length > 0) {
       this.notMatchConcepts1 = [];
       this.notMatchConcepts2 = [];
       this.conceptsName = [];
@@ -586,16 +593,16 @@ export class NewmatchComponent implements OnInit {
           this.conceptsName[bok1.code] = bok1.name;
         }
       });
-      this.bokConcepts2.forEach(bok => {
+      this.bokConcepts2.forEach(bok1 => {
         let found = false;
         this.bokConcepts1.forEach(bok2 => {
-          if (bok.code === bok2.code) {
+          if (bok1.code === bok2.code) {
             found = true;
           }
         });
         if (!found) {
-          this.conceptsName[bok.code] = bok.name;
-          this.notMatchConcepts2.push(bok.code);
+          this.conceptsName[bok1.code] = bok1.name;
+          this.notMatchConcepts2.push(bok1.code);
         }
       });
       this.notMatchConcepts1.sort();
@@ -613,9 +620,9 @@ export class NewmatchComponent implements OnInit {
           this.notMatchSkills1.push(bok1);
         }
       });
-      this.skills2.forEach(bok => {
-        if (this.commonSkills.indexOf(bok) < 0) {
-          this.notMatchSkills2.push(bok);
+      this.skills2.forEach(bok1 => {
+        if (this.commonSkills.indexOf(bok1) < 0) {
+          this.notMatchSkills2.push(bok1);
         }
       });
       this.commonSkills.sort();
@@ -632,9 +639,9 @@ export class NewmatchComponent implements OnInit {
           this.notMatchFields1.push(bok1);
         }
       });
-      this.fields2.forEach(bok => {
-        if (this.commonFields.indexOf(bok) < 0) {
-          this.notMatchFields2.push(bok);
+      this.fields2.forEach(bok1 => {
+        if (this.commonFields.indexOf(bok1) < 0) {
+          this.notMatchFields2.push(bok1);
         }
       });
       this.commonFields.sort();
@@ -651,9 +658,9 @@ export class NewmatchComponent implements OnInit {
           this.notMatchTransversal1.push(bok1);
         }
       });
-      this.transversalSkills2.forEach(bok => {
-        if (this.commonTransversalSkills.indexOf(bok) < 0) {
-          this.notMatchTransversal2.push(bok);
+      this.transversalSkills2.forEach(bok1 => {
+        if (this.commonTransversalSkills.indexOf(bok1) < 0) {
+          this.notMatchTransversal2.push(bok1);
         }
       });
       this.commonTransversalSkills.sort();
@@ -830,9 +837,11 @@ export class NewmatchComponent implements OnInit {
       this.currentPage1 = 0;
       this.filteredResources1 = [];
       if (type === -1) {
-        this.filteredResources1 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources1 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
       } else {
-        this.filteredResources1 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources1 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
         const filtered = this.filteredResources1.filter(
           it =>
             it.type === type
@@ -847,9 +856,11 @@ export class NewmatchComponent implements OnInit {
       this.currentPage2 = 0;
       this.filteredResources2 = [];
       if (type === -1) {
-        this.filteredResources2 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
       } else {
-        this.filteredResources2 = Object.assign([], this.resourceService.allResources);
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2 = this.isAnonymous ? Object.assign([], this.resourceService.publicResources) : Object.assign([], this.resourceService.allResources);
         const filtered = this.filteredResources2.filter(
           it =>
             it.type === type
@@ -867,6 +878,10 @@ export class NewmatchComponent implements OnInit {
     console.log('delete other resource: ' + idOther);
 
     this.resourceService.allResources = this.resourceService.allResources.filter(
+      it =>
+        it._id !== idOther
+    );
+    this.resourceService.publicResources = this.resourceService.publicResources.filter(
       it =>
         it._id !== idOther
     );
@@ -888,27 +903,29 @@ export class NewmatchComponent implements OnInit {
     if (this.myChart !== null) {
       this.myChart.destroy();
     }
-    const ctx = document.getElementById(chartId);
-    const dataToGraph = [];
-    const labelsToGraph = [];
-    const colorsToGraph = [];
-    statistics.forEach(st => {
-      dataToGraph.push(st.count);
-      labelsToGraph.push(st.code);
-      colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
-    });
-    this.myChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        datasets: [{
-          data: dataToGraph,
-          backgroundColor: colorsToGraph
-        }],
-        labels: labelsToGraph
-      },
-      options: {
-      }
-    });
+    if (statistics.length > 0) {
+      const ctx = document.getElementById(chartId);
+      const dataToGraph = [];
+      const labelsToGraph = [];
+      const colorsToGraph = [];
+      statistics.forEach(st => {
+        dataToGraph.push(st.count);
+        labelsToGraph.push(st.code);
+        colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
+      });
+      this.myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: dataToGraph,
+            backgroundColor: colorsToGraph
+          }],
+          labels: labelsToGraph
+        },
+        options: {
+        }
+      });
+    }
   }
 
   graphStatisticsNotMatch1(statistics, chartId) {
@@ -990,9 +1007,11 @@ export class NewmatchComponent implements OnInit {
   }
 
   getRelations() {
-    const allConcepts = this.bokService.getConcepts();
-    const allRelations = this.bokService.getRelations();
-    this.allConcepts = this.bokService.getRelationsPrent(allRelations, allConcepts);
+    if (this.allConcepts.length === 0) {
+      const allConcepts = this.bokService.getConcepts();
+      const allRelations = this.bokService.getRelations();
+      this.allConcepts = this.bokService.getRelationsPrent(allRelations, allConcepts);
+    }
   }
 
   getParent(concept) {
@@ -1107,4 +1126,135 @@ export class NewmatchComponent implements OnInit {
         break;
     }
   }
+
+  searchInBok(text: string) {
+    if (text === '' || text === ' ') {
+      this.cleanResults();
+    } else {
+      this.selectedNodes = bok.searchInBoK(text);
+      this.hasResults = true;
+      this.currentConcept = '';
+
+      this.limitSearchFrom = 0;
+      this.limitSearchTo = 10;
+    }
+  }
+
+  navigateToConcept(conceptName) {
+    bok.browseToConcept(conceptName);
+    console.log('Current concept: ' + conceptName);
+    this.currentConcept = conceptName;
+    this.hasResults = false;
+  }
+
+  cleanResults() {
+    this.searchInputField = '';
+    bok.searchInBoK('');
+    this.navigateToConcept('GIST');
+  }
+
+  incrementLimit() {
+    this.limitSearchTo = this.limitSearchTo + 10;
+    this.limitSearchFrom = this.limitSearchFrom + 10;
+  }
+
+  decrementLimit() {
+    this.limitSearchTo = this.limitSearchTo - 10;
+    this.limitSearchFrom = this.limitSearchFrom - 10;
+  }
+
+  addBokKnowledge() {
+    this.getRelations();
+    this.conceptsName = [];
+
+    if (this.customSelect === 1) {
+      this.notMatchConcepts1 = [];
+      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+        .textContent;
+      const conceptId = concept.split(']')[0].substring(1);
+
+      this.bokConcepts1.push({ code: conceptId, name: concept });
+      if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
+        this.resource1 = { name: 'Custom selection', concepts: [] };
+      }
+      this.resource1.concepts.push(concept);
+
+      this.bokConcepts1.forEach(k => {
+        this.notMatchConcepts1.push(k.code);
+        this.conceptsName[k.code] = k.name;
+      });
+
+    } else {
+      this.notMatchConcepts2 = [];
+      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+        .textContent;
+      const conceptId = concept.split(']')[0].substring(1);
+
+      this.bokConcepts2.push({ code: conceptId, name: concept });
+      if (this.resource2 == null || this.resource2.name !== 'Custom selection') {
+        this.resource2 = { name: 'Custom selection', concepts: [] };
+      }
+      this.resource2.concepts.push(concept);
+
+      this.bokConcepts2.forEach(k => {
+        this.notMatchConcepts2.push(k.code);
+        this.conceptsName[k.code] = k.name;
+      });
+    }
+
+    this.match();
+    this.getStatisticsNumberOfConcepts();
+
+  }
+
+  clearCustomSelection1() {
+    this.resource1 = null;
+    this.bokConcepts1 = [];
+    this.skills1 = [];
+    this.notMatchConcepts1 = [];
+    this.notMatchFields1 = [];
+    this.notMatchSkills1 = [];
+    this.notMatchTransversal1 = [];
+    this.commonBokConcepts = [];
+    this.commonFields = [];
+    this.commonSkills = [];
+    this.commonTransversalSkills = [];
+    this.getStatisticsNumberOfConcepts();
+    this.match();
+  }
+
+  clearCustomSelection2() {
+    this.resource2 = null;
+    this.bokConcepts2 = [];
+    this.skills2 = [];
+    this.notMatchConcepts2 = [];
+    this.notMatchFields2 = [];
+    this.notMatchSkills2 = [];
+    this.notMatchTransversal2 = [];
+    this.commonBokConcepts = [];
+    this.commonFields = [];
+    this.commonSkills = [];
+    this.commonTransversalSkills = [];
+    this.getStatisticsNumberOfConcepts();
+    this.match();
+  }
+
+  removeCustomConcept1(concept) {
+    const index = this.bokConcepts1.indexOf(concept);
+    this.bokConcepts1.splice(index, 1);
+    this.resource1.concepts.splice(index, 1);
+    this.notMatchConcepts1.splice(index, 1);
+    this.getStatisticsNumberOfConcepts();
+    this.match();
+  }
+
+  removeCustomConcept2(concept) {
+    const index = this.bokConcepts2.indexOf(concept);
+    this.bokConcepts2.splice(index, 1);
+    this.resource2.concepts.splice(index, 1);
+    this.notMatchConcepts2.splice(index, 1);
+    this.getStatisticsNumberOfConcepts();
+    this.match();
+  }
+
 }
