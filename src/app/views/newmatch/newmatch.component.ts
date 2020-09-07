@@ -415,7 +415,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                this.bokConcepts1, null, null, null, null, 3);
+                this.bokConcepts1, null, null, null, null, 3, null);
               // do the matching
               this.match();
             }).catch(function (err) {
@@ -456,7 +456,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
-                this.bokConcepts2, null, null, null, null, 3);
+                this.bokConcepts2, null, null, null, null, 3, null);
               this.match();
             }).catch(function (err) {
               console.log('Error getting meta data');
