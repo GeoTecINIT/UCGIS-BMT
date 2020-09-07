@@ -97,6 +97,7 @@ export class Resource extends Object {
     public occuProf: OcupationalProfile, // JO have some data in the OP
     public knowledge: string[],
     public type: number,
+    public eqf: number,
   ) {
     super();
   }

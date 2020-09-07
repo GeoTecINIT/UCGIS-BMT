@@ -903,27 +903,29 @@ export class NewmatchComponent implements OnInit {
     if (this.myChart !== null) {
       this.myChart.destroy();
     }
-    const ctx = document.getElementById(chartId);
-    const dataToGraph = [];
-    const labelsToGraph = [];
-    const colorsToGraph = [];
-    statistics.forEach(st => {
-      dataToGraph.push(st.count);
-      labelsToGraph.push(st.code);
-      colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
-    });
-    this.myChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        datasets: [{
-          data: dataToGraph,
-          backgroundColor: colorsToGraph
-        }],
-        labels: labelsToGraph
-      },
-      options: {
-      }
-    });
+    if (statistics.length > 0) {
+      const ctx = document.getElementById(chartId);
+      const dataToGraph = [];
+      const labelsToGraph = [];
+      const colorsToGraph = [];
+      statistics.forEach(st => {
+        dataToGraph.push(st.count);
+        labelsToGraph.push(st.code);
+        colorsToGraph.push(this.getColor(st.code.slice(0, 2)));
+      });
+      this.myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: dataToGraph,
+            backgroundColor: colorsToGraph
+          }],
+          labels: labelsToGraph
+        },
+        options: {
+        }
+      });
+    }
   }
 
   graphStatisticsNotMatch1(statistics, chartId) {
@@ -1209,6 +1211,13 @@ export class NewmatchComponent implements OnInit {
     this.resource1 = null;
     this.bokConcepts1 = [];
     this.notMatchConcepts1 = [];
+    this.notMatchFields1 = [];
+    this.notMatchSkills1 = [];
+    this.notMatchTransversal1 = [];
+    this.commonBokConcepts = [];
+    this.commonFields = [];
+    this.commonSkills = [];
+    this.commonTransversalSkills = [];
     this.getStatisticsNumberOfConcepts();
     this.match();
   }
@@ -1217,6 +1226,13 @@ export class NewmatchComponent implements OnInit {
     this.resource2 = null;
     this.bokConcepts2 = [];
     this.notMatchConcepts2 = [];
+    this.notMatchFields2 = [];
+    this.notMatchSkills2 = [];
+    this.notMatchTransversal2 = [];
+    this.commonBokConcepts = [];
+    this.commonFields = [];
+    this.commonSkills = [];
+    this.commonTransversalSkills = [];
     this.getStatisticsNumberOfConcepts();
     this.match();
   }

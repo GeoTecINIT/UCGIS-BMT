@@ -41,6 +41,7 @@ export class ResourceService {
           r.skills = r.occuProf.skills;
           // r.fields = r.occuProf.fields;
           r.name = r.occuProf.title;
+          r.eqf = r.occuProf.eqf;
           r.url = urlJOT + r._id;
           r.type = 2;
           r.description = r.occuProf.description.slice(0, 100) + '[...]'; // truncate description
