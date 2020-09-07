@@ -63,7 +63,6 @@ export class ResourceService {
           r.url = urlCDT + r._id;
           r.type = 0;
           r.isPublic = r.levelPublic;
-          console.log('LevelPublic : ' + r.isPublic + r.name);
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           r.concepts = r.concepts && r.concepts.length > 0 ? r.concepts : [];
           if (r.children && r.children.length > 0) { // modules

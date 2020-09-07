@@ -1210,6 +1210,7 @@ export class NewmatchComponent implements OnInit {
   clearCustomSelection1() {
     this.resource1 = null;
     this.bokConcepts1 = [];
+    this.skills1 = [];
     this.notMatchConcepts1 = [];
     this.notMatchFields1 = [];
     this.notMatchSkills1 = [];
@@ -1225,6 +1226,7 @@ export class NewmatchComponent implements OnInit {
   clearCustomSelection2() {
     this.resource2 = null;
     this.bokConcepts2 = [];
+    this.skills2 = [];
     this.notMatchConcepts2 = [];
     this.notMatchFields2 = [];
     this.notMatchSkills2 = [];
