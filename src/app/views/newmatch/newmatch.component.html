@@ -136,24 +136,24 @@
                   </div>
 
                   <div class="row mt-2">
-                    <div class="col-md-3 text-center mt-2">
+                    <div class="col-md-3 text-center mt-2 col-0padding">
                       Sort by:
                     </div>
 
                     <!-- sortedBy -->
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy1('lastUpdated');">
                         <i [ngClass]="sortUpdAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy1 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
                       </button>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy1('name');">
                         <i [ngClass]="sortNameAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy1 == 'name'? 'bolder' : ''"> Name</span>
                       </button>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy1('organization');">
                         <i [ngClass]="sortOrgAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy1 == 'organization'? 'bolder' : ''">Organization</span>
@@ -351,31 +351,32 @@
                   </div>
 
                   <div class="row mt-2">
-                    <div class="col-md-1 text-center mt-2">
+                    <div class="col-md-1 text-center mt-2 col-0padding">
                       Sort by:
                     </div>
 
                     <!-- sortedBy -->
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('lastUpdated');">
                         <i [ngClass]="sortUpdAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy2 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
                       </button>
                     </div>
-                    <div class="col-md-2 text-center">
+                    <div class="col-md-2 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('name');">
                         <i [ngClass]="sortNameAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy2 == 'name'? 'bolder' : ''"> Name</span>
                       </button>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('organization');">
                         <i [ngClass]="sortOrgAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy2 == 'organization'? 'bolder' : ''">Organization</span>
                       </button>
                     </div>
-                    <div class="col-md-3 text-center">
-                      <button type="button" class="btn btn-block btn-link" (click)="sortBy2('score');">
+                    <div class="col-md-3 text-center col-0padding">
+                      <button type="button" class="btn btn-block btn-link" (click)="sortBy2('score');"
+                        tooltip="Select one resource in first column to be able to sort by best matching resources in this column">
                         <i [ngClass]="sortScoAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy2 == 'score'? 'bolder' : ''">Matching Score</span>
                       </button>
@@ -531,7 +532,8 @@
 
           <div class="col-sm-12 col-md-12">
             <!-- EQF COMPARISON -->
-            <div [hidden]="resource1 !== null && resource1.eqf == null && resource2 !== null && resource2.eqf ==null" class="card card-accent-secondary">
+            <div [hidden]="resource1 !== null && resource1.eqf == null && resource2 !== null && resource2.eqf ==null"
+              class="card card-accent-secondary">
               <div class="card-header">
                 <h5><strong>EQF level comparison</strong></h5>
               </div>
@@ -581,12 +583,14 @@
                       class="badge badge-primary badge-pill">i</span></p>
                   <canvas id="myChart" width="800" [height]="450" style="height: 0"></canvas>
                 </div>
-                <div [hidden]="resource1 !== null && resource2 !== null && commonBokConcepts.length == 0" *ngIf="bokConcepts1.length > 0 && bokConcepts2.length > 0">
+                <div [hidden]="resource1 !== null && resource2 !== null && commonBokConcepts.length == 0"
+                  *ngIf="bokConcepts1.length > 0 && bokConcepts2.length > 0">
                   <p>Percentage of BoK concepts covered <span
                       tooltip="The percentage, per knowledge area, of BoK concepts covered by the other resource."
                       class="badge badge-primary badge-pill">i</span></p>
                 </div>
-                <div [hidden]="resource1 !== null && resource2 !== null && commonBokConcepts.length == 0"  *ngIf="bokConcepts1.length > 0 && bokConcepts2.length > 0" class="container row col-md-12">
+                <div [hidden]="resource1 !== null && resource2 !== null && commonBokConcepts.length == 0"
+                  *ngIf="bokConcepts1.length > 0 && bokConcepts2.length > 0" class="container row col-md-12">
                   <div class="col-md-6">
                     <div class="card card-accent-secondary">
                       <div class="card-header">
@@ -693,7 +697,9 @@
               </div>
             </div>
             <!-- Skills section-->
-            <div [hidden]="resource1 !== null && resource2 !== null && commonSkills.length == 0 && notMatchSkills1.length == 0 && notMatchSkills2.length == 0"  class="card card-accent-secondary">
+            <div
+              [hidden]="resource1 !== null && resource2 !== null && commonSkills.length == 0 && notMatchSkills1.length == 0 && notMatchSkills2.length == 0"
+              class="card card-accent-secondary">
               <div class="card-header">
                 <h5><strong> Matching BoK skills </strong>
                   <span
@@ -754,7 +760,9 @@
               </div>
             </div>
             <!-- fields section-->
-            <div [hidden]="resource1 !== null && resource2 !== null && commonFields.length == 0 && notMatchFields1.length == 0 && notMatchFields2.length == 0"  class="card card-accent-secondary">
+            <div
+              [hidden]="resource1 !== null && resource2 !== null && commonFields.length == 0 && notMatchFields1.length == 0 && notMatchFields2.length == 0"
+              class="card card-accent-secondary">
               <div class="card-header">
                 <h5><strong> Matching fields </strong>
                   <span
@@ -808,7 +816,9 @@
               </div>
             </div>
             <!--Transversal Skills section-->
-            <div  [hidden]="resource1 !== null && resource2 !== null && commonTransversalSkills.length == 0 && notMatchTransversal1.length == 0 && notMatchTransversal2.length == 0"  class="card card-accent-secondary">
+            <div
+              [hidden]="resource1 !== null && resource2 !== null && commonTransversalSkills.length == 0 && notMatchTransversal1.length == 0 && notMatchTransversal2.length == 0"
+              class="card card-accent-secondary">
               <div class="card-header">
                 <h5><strong> Matching Transversal skills </strong>
                   <span
@@ -907,28 +917,30 @@
               tooltip="Browse in the BoK for knowledge required for your new occupational profile. Once in the required knowledge, press the button 'Add' it will link the concept and the learning outcomes dependent on it."
               class="badge badge-primary badge-pill">i</span>
 
-              <div class="row text-center mb-1">
-                <div class="col-md-12">
-                  <div *ngIf="customSelect == 1 && resource1 && resource1.name=='Custom selection' && resource1.concepts.length > 0"
-                    class="row text-center ma">
-                    <button *ngFor="let mk of bokConcepts1" type="button" class="btn btn-pill"
-                      [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
-                      <a (click)="removeCustomConcept1(mk)"> <i class="fa fa-close"></i> </a>
-                      <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
-                        {{conceptsName[mk.code]}} </a>
-                    </button>
-                  </div>
-                  <div *ngIf="customSelect == 2 && resource2 && resource2.name=='Custom selection' && resource2.concepts.length > 0"
-                    class="row text-center ma">
-                    <button *ngFor="let mk of bokConcepts2" type="button" class="btn btn-pill"
-                      [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
-                      <a (click)="removeCustomConcept2(mk)"> <i class="fa fa-close"></i> </a>
-                      <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
-                        {{conceptsName[mk.code]}} </a>
-                    </button>
-                  </div>
+            <div class="row text-center mb-1">
+              <div class="col-md-12">
+                <div
+                  *ngIf="customSelect == 1 && resource1 && resource1.name=='Custom selection' && resource1.concepts.length > 0"
+                  class="row text-center ma">
+                  <button *ngFor="let mk of bokConcepts1" type="button" class="btn btn-pill"
+                    [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                    <a (click)="removeCustomConcept1(mk)"> <i class="fa fa-close"></i> </a>
+                    <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
+                      {{conceptsName[mk.code]}} </a>
+                  </button>
+                </div>
+                <div
+                  *ngIf="customSelect == 2 && resource2 && resource2.name=='Custom selection' && resource2.concepts.length > 0"
+                  class="row text-center ma">
+                  <button *ngFor="let mk of bokConcepts2" type="button" class="btn btn-pill"
+                    [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                    <a (click)="removeCustomConcept2(mk)"> <i class="fa fa-close"></i> </a>
+                    <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
+                      {{conceptsName[mk.code]}} </a>
+                  </button>
                 </div>
               </div>
+            </div>
 
             <p class="text-center mt-1 mb-0 text-success" *ngIf="customSelect == 1 && bokConcepts1.length > 0"> You have
               selected {{bokConcepts1.length}} concepts, continue selecting and close BoK window when finished. </p>
@@ -957,7 +969,7 @@
                     <button type="button" class="btn btn-primary" (click)="addBokKnowledge()"> Select </button>
                   </div>
                   <div class="col-md-2" style="margin-right: 0;margin-left: auto;">
-                    <button type="button" class="btn btn-danger" (click)="bokModal.hide()">Finish</button>                  </div>
+                    <button type="button" class="btn btn-danger" (click)="bokModal.hide()">Finish</button> </div>
                 </div>
                 <div id="bubbles">
                 </div>

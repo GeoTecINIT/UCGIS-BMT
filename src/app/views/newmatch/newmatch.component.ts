@@ -415,11 +415,11 @@ export class NewmatchComponent implements OnInit {
               const conceptsString = [];
               this.bokConcepts1.forEach(k => {
                 this.notMatchConcepts1.push(k.code);
-                conceptsString.push('[' + k.code + '] - ' + k.name);
+                conceptsString.push(k.name);
               });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                this.bokConcepts1, null, null, null, conceptsString, 3, null, 0);
+                conceptsString, null, null, null, conceptsString, 3, null, 0);
               // do the matching
               this.match();
               this.calculateMatchScore();
@@ -489,15 +489,15 @@ export class NewmatchComponent implements OnInit {
         if (rel[0] === 'eo4geo') {
           if (rel[1] !== '') {
             if (rel[1].endsWith(';')) {
-              concepts.push({ code: rel[1].slice(0, -1), name: '' });
+              // tslint:disable-next-line:max-line-length  '[' + rel[1].slice(0, -1) + '] '
+              concepts.push({ code: rel[1].slice(0, -1), name: '[' + rel[1].slice(0, -1) + '] ' + this.bokService.getConceptInfoByCode(rel[1].slice(0, -1)).name });
             } else {
-              concepts.push({ code: rel[1], name: '' });
+              concepts.push({ code: rel[1], name: '[' + rel[1] + '] ' + this.bokService.getConceptInfoByCode(rel[1]).name });
             }
           }
         }
       });
     }
-
     return concepts;
   }
 
