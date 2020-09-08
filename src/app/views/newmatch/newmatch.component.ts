@@ -158,6 +158,7 @@ export class NewmatchComponent implements OnInit {
   sortNameAsc2 = true;
   sortOrgAsc2 = true;
   sortUpdAsc2 = true;
+  sortScoAsc2 = true;
   sortedBy2 = 'lastUpdated';
 
   @ViewChild('textBoK') textBoK: ElementRef;
@@ -364,6 +365,7 @@ export class NewmatchComponent implements OnInit {
     this.resource1 = res;
     this.match();
     this.getStatisticsNumberOfConcepts();
+    this.calculateMatchScore();
   }
 
   selectResource2(res) {
@@ -410,14 +412,17 @@ export class NewmatchComponent implements OnInit {
               if (this.bokConcepts1.length === 0) {
                 this.errorFile1 = true;
               }
+              const conceptsString = [];
               this.bokConcepts1.forEach(k => {
                 this.notMatchConcepts1.push(k.code);
+                conceptsString.push('[' + k.code + '] - ' + k.name);
               });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                this.bokConcepts1, null, null, null, null, 3, null);
+                this.bokConcepts1, null, null, null, conceptsString, 3, null, 0);
               // do the matching
               this.match();
+              this.calculateMatchScore();
             }).catch(function (err) {
               console.log('Error getting meta data');
               console.log(err);
@@ -456,7 +461,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
-                this.bokConcepts2, null, null, null, null, 3, null);
+                this.bokConcepts2, null, null, null, null, 3, null, 0);
               this.match();
             }).catch(function (err) {
               console.log('Error getting meta data');
@@ -484,9 +489,9 @@ export class NewmatchComponent implements OnInit {
         if (rel[0] === 'eo4geo') {
           if (rel[1] !== '') {
             if (rel[1].endsWith(';')) {
-              concepts.push({ code: rel[1].slice(0, -1), name: rdfEl });
+              concepts.push({ code: rel[1].slice(0, -1), name: '' });
             } else {
-              concepts.push({ code: rel[1], name: rdfEl });
+              concepts.push({ code: rel[1], name: '' });
             }
           }
         }
@@ -1124,6 +1129,12 @@ export class NewmatchComponent implements OnInit {
         // tslint:disable-next-line:max-line-length
         this.filteredResources2.sort((a, b) => (a.orgName.toLowerCase() > b.orgName.toLowerCase()) ? this.sortOrgAsc2 ? 1 : -1 : this.sortOrgAsc2 ? -1 : 1);
         break;
+      case 'score':
+        this.sortScoAsc2 = !this.sortScoAsc2;
+        this.sortedBy2 = 'score';
+        // tslint:disable-next-line:max-line-length
+        this.filteredResources2.sort((a, b) => (a.score > b.score) ? this.sortScoAsc2 ? 1 : -1 : this.sortScoAsc2 ? -1 : 1);
+        break;
     }
   }
 
@@ -1205,6 +1216,7 @@ export class NewmatchComponent implements OnInit {
     this.match();
     this.getStatisticsNumberOfConcepts();
 
+    this.calculateMatchScore();
   }
 
   clearCustomSelection1() {
@@ -1255,6 +1267,29 @@ export class NewmatchComponent implements OnInit {
     this.notMatchConcepts2.splice(index, 1);
     this.getStatisticsNumberOfConcepts();
     this.match();
+  }
+
+  calculateMatchScore() {
+    if (this.resource1 && this.resource1.concepts.length > 0) {
+      this.filteredResources2.forEach(res => {
+        if (res.concepts.length > 0) {
+          const found = [];
+          res.concepts.forEach(c => {
+            if (this.resource1.concepts.indexOf(c) > -1) {
+              found.push(c);
+            }
+          });
+          if (found.length > 0) {
+            const score = Math.round((found.length * 100) / this.resource1.concepts.length);
+            res.score = score > 100 ? 100 : score;
+          } else {
+            res.score = 0;
+          }
+        } else {
+          res.score = 0;
+        }
+      });
+    }
   }
 
 }

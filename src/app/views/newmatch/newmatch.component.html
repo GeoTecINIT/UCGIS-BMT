@@ -183,8 +183,8 @@
                               - {{ resource.division }}</h6>
                             <h6 *ngIf="!resource.isPublic" style="display: inline;" class="text-level text-primary">
                               Private</h6>
-                            <div style="display: inline;" *ngIf="resource.knowledge && resource.knowledge.length> 0">
-                              {{ resource.knowledge.length }} Knowledge | </div>
+                            <div style="display: inline;" *ngIf="resource.concepts && resource.concepts.length> 0">
+                              {{ resource.concepts.length }} Knowledge | </div>
                             <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
                               {{ resource.skills.length }} Skills </div>
                             <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
@@ -351,7 +351,7 @@
                   </div>
 
                   <div class="row mt-2">
-                    <div class="col-md-3 text-center mt-2">
+                    <div class="col-md-1 text-center mt-2">
                       Sort by:
                     </div>
 
@@ -362,7 +362,7 @@
                         <span [ngClass]="sortedBy2 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
                       </button>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-2 text-center">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('name');">
                         <i [ngClass]="sortNameAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy2 == 'name'? 'bolder' : ''"> Name</span>
@@ -372,6 +372,12 @@
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('organization');">
                         <i [ngClass]="sortOrgAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
                         <span [ngClass]="sortedBy2 == 'organization'? 'bolder' : ''">Organization</span>
+                      </button>
+                    </div>
+                    <div class="col-md-3 text-center">
+                      <button type="button" class="btn btn-block btn-link" (click)="sortBy2('score');">
+                        <i [ngClass]="sortScoAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
+                        <span [ngClass]="sortedBy2 == 'score'? 'bolder' : ''">Matching Score</span>
                       </button>
                     </div>
                   </div>
@@ -398,10 +404,12 @@
                               - {{ resource.division }}</h6>
                             <h6 *ngIf="!resource.isPublic" style="display: inline;" class="text-level text-primary">
                               Private</h6>
-                            <div style="display: inline;" *ngIf="resource.knowledge && resource.knowledge.length> 0">
-                              {{ resource.knowledge.length }} Knowledge | </div>
+                            <div style="display: inline;" *ngIf="resource.concepts && resource.concepts.length> 0">
+                              {{ resource.concepts.length }} Knowledge </div>
                             <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
-                              {{ resource.skills.length }} Skills </div>
+                              | {{ resource.skills.length }} Skills </div>
+                            <div style="display: inline;" *ngIf="resource.score && resource.score> 0">
+                              | {{ resource.score }} % Matching Score </div>
                             <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
                               {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
                             </span>
@@ -528,8 +536,7 @@
                 <h5><strong>EQF level comparison</strong></h5>
               </div>
               <div class="row card-body" style="background-color: #faf9f8"
-                *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null ) ||
-                (resource2 !== null &&  resource2.occuProf.eqf !==null) || (resource1 !== null && resource1.occuProf.eqf!==null )">
+                *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null )">
                 <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.eqf  )">
                   {{resource1.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
