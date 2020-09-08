@@ -98,6 +98,7 @@ export class Resource extends Object {
     public knowledge: string[],
     public type: number,
     public eqf: number,
+    public score: number
   ) {
     super();
   }

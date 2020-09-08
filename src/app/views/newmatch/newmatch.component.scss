@@ -111,7 +111,7 @@ h5 strong {
 }
 
 #bokModal button a {
-    color: #fff !important; 
+    color: #fff !important;
 }
 
 .text-small {
@@ -127,4 +127,9 @@ h5 strong {
 .btn-center {
     display: block;
     margin: 0 auto;
+}
+
+.col-0padding {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
 }
