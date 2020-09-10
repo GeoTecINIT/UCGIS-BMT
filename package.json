@@ -44,6 +44,7 @@
     "firebase": "^7.2.1",
     "font-awesome": "^4.7.0",
     "jspdf": "^1.5.3",
+    "lodash.clonedeep": "^4.5.0",
     "moment": "^2.24.0",
     "mutationobserver-shim": "^0.3.3",
     "ng2-charts": "^1.6.0",

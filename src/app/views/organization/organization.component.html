@@ -71,9 +71,8 @@
 
                     <div class="input-group mb-3">
                       <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Organization contact email"
-                          name="contact" required [(ngModel)]="o.contact"
-                          [disabled]="!(o.admin.indexOf(user._id) > -1)">
+                        <input type="text" class="form-control" placeholder="Organization contact email" name="contact"
+                          required [(ngModel)]="o.contact" [disabled]="!(o.admin.indexOf(user._id) > -1)">
                       </div>
                     </div>
 
@@ -100,10 +99,52 @@
                     <p class="text-success mt-3" [innerText]="msgSaved" [hidden]="!msgSaved"></p>
                   </div> -->
                 </div>
+
+
+                <!-- Divisions-->
+
+
+                <div *ngIf="o.admin.indexOf(user._id) > -1">
+                  <!-- o.divisions && o.divisions.length > 0  -->
+                  <div class="col-sm-12 col-md-12 mb-3" style="max-width: 80%; margin: auto;">
+                    <h5 class="text-muted" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Add / Remove divisions to this
+                      organization</h5>
+
+                    <div *ngFor="let div of o.divisions" class="row" style="max-width: 50%; margin: auto;">
+                      <div class="col-sm-6 mb-1"> {{div}}
+                      </div>
+                      <div class="col-sm-6 mb-1 text-center">
+                        <button type="button" class="btn btn-outline-primary px-4" (click)="removeDivision(i, div)"
+                          [hidden]="!(o.admin.indexOf(user._id) > -1)"><i class="icon-trash"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" style="max-width: 80%; margin: auto;">
+                  <div class="col-sm-6 col-md-9 mb-3 mt-3">
+                    <div class="input-group mb-3">
+                      <div class="input-group" [hidden]="!(o.admin.indexOf(user._id) > -1)">
+                        <input #divToAdd type="text" class="form-control" placeholder="Division to add" name="division">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6 col-md-3 mt-3 text-center">
+                    <button type="button" class="btn  btn-outline-primary px-4" (click)="newDivision(i, divToAdd.value)"
+                      [hidden]="!(o.admin.indexOf(user._id) > -1)"> Add
+                      division</button>
+                  </div>
+                </div>
+
+                <div [hidden]="currentOrg && o._id != currentOrg._id" class="col-sm-12 col-md-12 mb-3 text-center">
+                  <p class="text-success" [innerText]="msgDivSaved" [hidden]="!msgDivSaved"></p>
+                  <p class="text-danger" [innerText]="msgDivError" [hidden]="!msgDivError"></p>
+                </div>
                 <div class="row" style="max-width: 80%; margin: auto;" *ngIf="o.admin.indexOf(user._id) > -1">
                   <div class="col-sm-12 col-md-12 mb-3">
-                    <p class="text-muted" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Add / Remove users or change
-                      permissions</p>
+                    <h5 class="text-muted" [hidden]="!(o.admin.indexOf(user._id) > -1)"> Add / Remove users or change
+                      permissions</h5>
                   </div>
                   <div class="col-sm-6 col-md-3 mb-3"> Name
                   </div>

@@ -16,6 +16,8 @@ export class OrganizationComponent implements OnInit {
   public msgNoOrg: string;
   public msgSavedJoin: string;
   public msgErrorJoin: string;
+  public msgDivSaved: string;
+  public msgDivError: string;
 
   public name: string;
 
@@ -334,4 +336,23 @@ export class OrganizationComponent implements OnInit {
       }
     }
   }
+
+  newDivision(orgIndex, nameDiv) {
+    this.currentOrg = this.orgs[orgIndex];
+    if (!this.currentOrg.divisions) {
+      this.currentOrg.divisions = [];
+    }
+    this.currentOrg.divisions.push(nameDiv);
+    this.organizationService.updateOrganizationWithId(this.currentOrg._id, this.currentOrg);
+    this.msgDivSaved = nameDiv + ' division saved';
+  }
+
+   removeDivision(orgIndex, nameDiv) {
+    this.currentOrg = this.orgs[orgIndex];
+    const indexToRemove = this.currentOrg.divisions.indexOf(nameDiv);
+    this.currentOrg.divisions.splice(indexToRemove, 1);
+    this.organizationService.updateOrganizationWithId(this.currentOrg._id, this.currentOrg);
+    this.msgDivSaved = nameDiv + ' division removed';
+   }
+   
 }
