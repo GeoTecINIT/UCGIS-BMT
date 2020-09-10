@@ -420,7 +420,7 @@
                               {{ resource.concepts.length }} Knowledge </div>
                             <div style="display: inline;" *ngIf="resource.skills && resource.skills.length> 0">
                               | {{ resource.skills.length }} Skills </div>
-                            <div style="display: inline;" *ngIf="resource.score && resource.score> 0">
+                            <div style="display: inline;" *ngIf="resource1 != null ">
                               | {{ resource.score }} % Matching Score </div>
                             <span *ngIf="resource.updatedAt" class="text-lastupdated "> | Updated:
                               {{resource.updatedAt.toDate() | date:'dd-MMM-yyyy'}}
