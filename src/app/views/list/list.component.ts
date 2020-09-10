@@ -6,9 +6,10 @@ import { Match, Resource } from '../../model/resources.model';
 import { ModalDirective, ModalOptions } from 'ngx-bootstrap/modal';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User, UserService } from '../../services/user.service';
-import { OrganizationService } from '../../services/organization.service';
+import { OrganizationService, Organization } from '../../services/organization.service';
 import { MatchService } from '../../services/match.service';
 import { ActivatedRoute } from '@angular/router';
+import * as cloneDeep from 'lodash/cloneDeep';
 
 @Component({
   selector: 'app-list',
@@ -43,7 +44,7 @@ export class ListComponent implements OnInit {
             .subscribe(matches => {
               this.matches = [];
               matches.forEach(ma => {
-                if (ma.userId === this.currentUser._id ) {
+                if (ma.userId === this.currentUser._id) {
                   this.matches.push(ma);
                 }
               });
@@ -54,27 +55,18 @@ export class ListComponent implements OnInit {
         });
       } else {
         this.isAnonymous = true;
-        this.matchService
-          .subscribeToMatches()
-          .subscribe(occuProfiles => {
-            this.matches = [];
-            /*occuProfiles.forEach(op => {
-              if (op.isPublic) {
-                this.matches.push(op);
-              }
-            });*/
-            this.filteredMatches = this.matches;
-          });
+        this.matches = [];
+        this.filteredMatches = [];
       }
     });
   }
 
   ngOnInit() {
-       if (this.route.snapshot.url[0].path === 'release-notes') {
-        const config: ModalOptions = { backdrop: true, keyboard: true };
-        this.releaseNotesModal.basicModal.config = config;
-        this.releaseNotesModal.basicModal.show({});
-      }
+    if (this.route.snapshot.url[0].path === 'release-notes') {
+      const config: ModalOptions = { backdrop: true, keyboard: true };
+      this.releaseNotesModal.basicModal.config = config;
+      this.releaseNotesModal.basicModal.show({});
+    }
   }
 
   removeMatch(id: string) {
@@ -87,7 +79,9 @@ export class ListComponent implements OnInit {
     this.filteredMatches = this.matches.filter(
       it =>
         it.title.toLowerCase().includes(search) ||
-        it.description.toLowerCase().includes(search)
+        it.description.toLowerCase().includes(search) ||
+        it.orgName.toLowerCase().includes(search) ||
+        it.division.toLowerCase().includes(search)
     );
     if (this.advancedSearch) {
       this.applyFilters();

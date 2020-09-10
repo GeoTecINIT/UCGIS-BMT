@@ -6,12 +6,12 @@
 
         <div class="card-header">
           <div class="row">
-            <div class="col-sm-4 col-md-4">
+            <div class="col-sm-2 col-md-2">
               <p *ngIf="userOrgs.length > 0" class="text-primary text-right">Save under organization </p>
             </div>
             <div class="col-sm-4 col-md-4">
               <ng-select *ngIf="userOrgs.length > 0 && userOrgs.length == currentUser.organizations.length"
-                [items]="userOrgs" name="userOrgs" bindLabel="name" [multiple]="false" [(ngModel)]="saveOrg">
+                [items]="userOrgs" name="userOrgs" bindLabel="name" [multiple]="false" [(ngModel)]="saveOrg" (change)="loadDivisions()">
                 <ng-template ng-optgroup-tmp let-item="item">
                   {{item.name}}
                 </ng-template>
@@ -21,7 +21,18 @@
                 &nbsp;You need to join or create an organization before you can save an occupational profile.
               </button>
             </div>
-            <div class="col-sm-12 col-md-12 text-right">
+            <div class="col-sm-2 col-md-2">
+              <p *ngIf="userOrgs.length > 0" class="text-primary text-right">Division </p>
+            </div>
+            <div class="col-sm-2 col-md-2">
+              <ng-select *ngIf="userDivisions.length > 0" [items]="userDivisions" name="userDivisions" bindLabel="name"
+                         [multiple]="false" [(ngModel)]="saveDiv">
+                <ng-template ng-optgroup-tmp let-item="item">
+                  {{item}}
+                </ng-template>
+              </ng-select>
+             </div>
+            <div class="col-sm-2 col-md-2 text-right">
               <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
                 *ngIf="!isAnonymous && (model.title != '' && model.description != '' )">
                 Save

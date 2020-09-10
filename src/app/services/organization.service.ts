@@ -18,6 +18,7 @@ export class Organization extends Object {
   public pendingUser: User[];
   public isPublic: boolean;
   public contact: string;
+  public divisions: string[];
 
   constructor(public org: Organization = null) {
     super();
@@ -33,6 +34,7 @@ export class Organization extends Object {
       this.pendingUser = org.pendingUser != null ? org.pendingUser : [];
       this.isPublic = org.isPublic != null ? org.isPublic : false;
       this.contact = org.contact != null ? org.contact : '';
+      this.divisions = org.divisions != null ? org.divisions : [];
     } else {
       this._id = null;
       this.name = '';
@@ -45,6 +47,7 @@ export class Organization extends Object {
       this.pendingUser = [];
       this.isPublic = false;
       this.contact = '';
+      this.divisions = [];
     }
   }
 }

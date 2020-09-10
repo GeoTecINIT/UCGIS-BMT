@@ -71,7 +71,7 @@
                   <span>
                     <h1 style="display: inline;">{{ m.title }}</h1>
                     <h6 *ngIf="!m.isPublic" style="display: inline;" class="text-level text-primary">Private</h6>
-                    <h6 style="display: inline;" class="text-level text-secondary">{{ m.orgName }}</h6>
+                    <h6 style="display: inline;" class="text-level text-secondary">{{ m.orgName }} <span *ngIf="m.division"> - {{ m.division }} </span></h6>
                     <br>
                     {{ m.resource1.name }} |
                     {{ m.resource2.name }} |

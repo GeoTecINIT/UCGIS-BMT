@@ -29,7 +29,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 })
 export class NewmatchComponent implements OnInit {
 
-  model = new Match('', '', '', '', '', '', true, null, null, null, null, null, null, null);
+  model = new Match('', '', '', '', '', '', true, null, null, null, null, null, null, null, '');
 
   selectedMatch: Match;
   _id: string;
@@ -40,6 +40,9 @@ export class NewmatchComponent implements OnInit {
   userOrgs: Organization[] = [];
   saveOrg: Organization;
   currentUser: User;
+
+  userDivisions: string[] = [];
+  saveDiv = '';
 
   showResource1 = -1;
   searchText1 = '';
@@ -202,6 +205,7 @@ export class NewmatchComponent implements OnInit {
                 if (org) {
                   this.userOrgs.push(org);
                   this.saveOrg = this.userOrgs[0];
+                  this.loadDivisions();
                   // remove private not your org resources
                   this.resourceService.allResources = this.resourceService.allResources.filter(
                     it =>
@@ -238,6 +242,7 @@ export class NewmatchComponent implements OnInit {
       this.model.resource2 = this.resource2;
       this.model.orgId = this.saveOrg._id;
       this.model.orgName = this.saveOrg.name;
+      this.model.division = this.saveDiv;
       if (this.model.resource1._id == null) {
         this.model.resource1.type = 3;
         this.otherService.addNewOther(this.model.resource1);
@@ -279,6 +284,11 @@ export class NewmatchComponent implements OnInit {
     this.matchService
       .getMatchById(this._id)
       .subscribe(m => (this.model = m));
+  }
+
+  loadDivisions() {
+    this.userDivisions = this.saveOrg.divisions ? this.saveOrg.divisions : [];
+    this.saveDiv = this.model ? this.model.division ? this.model.division : '' : '';
   }
 
   filter1() {
