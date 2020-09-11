@@ -70,10 +70,10 @@ export class LoginComponent implements OnInit {
 
     this.afAuth.auth.signInWithPopup(provider).then(result => {
       // This gives you a Google Access Token. You can use it to access the Google API.
-      if (result.additionalUserInfo.isNewUser) {
+     /* if (result.additionalUserInfo.isNewUser) {
         // deletes and signout user
         this.afAuth.auth.currentUser.delete();
-      }
+      }*/
       const token = result.credential;
       // The signed-in user info.
       const user = result.user;
