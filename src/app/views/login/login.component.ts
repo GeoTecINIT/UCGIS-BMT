@@ -34,6 +34,10 @@ export class LoginComponent implements OnInit {
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user && !user.isAnonymous) {
         this.ngZone.run(() => this.router.navigateByUrl(this.return)).then();
+         // Close modal after register & google login
+          for (let i = 1; i <= this.modalService.getModalsCount(); i++) {
+            this.modalService.hide(i);
+          }
       }
     });
   }
@@ -77,6 +81,7 @@ export class LoginComponent implements OnInit {
       const token = result.credential;
       // The signed-in user info.
       const user = result.user;
+
       // ...
     }).catch(error => {
       // Handle Errors here.
