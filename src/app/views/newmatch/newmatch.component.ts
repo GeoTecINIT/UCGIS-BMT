@@ -177,6 +177,8 @@ export class NewmatchComponent implements OnInit {
 
   customSelect = 0;
 
+  selectAllChildren = false;
+
   constructor(
     private matchService: MatchService,
     private otherService: OtherService,
@@ -1046,6 +1048,18 @@ export class NewmatchComponent implements OnInit {
     return res;
   }
 
+  getChildren(code) {
+    const arrayRes = this.allConcepts.filter(
+      it =>
+        it.code.toLowerCase() === code.toLowerCase()
+    );
+    if (arrayRes.length > 0) {
+      return arrayRes[0].children;
+    } else {
+      return [];
+    }
+  }
+
   getStatisticsNumberOfConcepts() {
     this.numberOfConcepts1 = this.getNumberOfConcepts(this.bokConcepts1);
     this.numberOfConcepts2 = this.getNumberOfConcepts(this.bokConcepts2);
@@ -1188,12 +1202,23 @@ export class NewmatchComponent implements OnInit {
     this.getRelations();
     this.conceptsName = [];
 
+    const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+    .textContent;
+    const conceptId = concept.split(']')[0].substring(1);
+
+    if (this.selectAllChildren) {
+      let children = this.getChildren(conceptId);
+      const allchildren = [];
+      while (children.lenght > 0) {
+        children.forEach(c => {
+          allchildren.push(c.code);
+          children = this.getChildren(c.code);
+        });
+      }
+    }
+
     if (this.customSelect === 1) {
       this.notMatchConcepts1 = [];
-      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
-        .textContent;
-      const conceptId = concept.split(']')[0].substring(1);
-
       this.bokConcepts1.push({ code: conceptId, name: concept });
       if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
         this.resource1 = { name: 'Custom selection', concepts: [] };
@@ -1207,10 +1232,6 @@ export class NewmatchComponent implements OnInit {
 
     } else {
       this.notMatchConcepts2 = [];
-      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
-        .textContent;
-      const conceptId = concept.split(']')[0].substring(1);
-
       this.bokConcepts2.push({ code: conceptId, name: concept });
       if (this.resource2 == null || this.resource2.name !== 'Custom selection') {
         this.resource2 = { name: 'Custom selection', concepts: [] };

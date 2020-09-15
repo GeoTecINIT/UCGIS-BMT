@@ -87,6 +87,5 @@ export class BokService {
     });
     return relations;
   }
-
 }
 
