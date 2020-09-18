@@ -326,12 +326,27 @@ export class OrganizationComponent implements OnInit {
       // check if user is already in this organization
       // tslint:disable-next-line:max-line-length
       if (this.joinOrg.admin.indexOf(this.user._id) === -1 && this.joinOrg.regular.indexOf(this.user._id) === -1 && this.joinOrg.pending.indexOf(this.user._id) === -1) {
-        this.joinOrg.pending.push(this.user._id);
+        // this.joinOrg.pending.push(this.user._id);
+        // directly join org as regular user
+        this.joinOrg.regular.push(this.user._id);
         this.organizationService.updateOrganizationWithId(this.joinOrg._id, this.joinOrg);
-        this.msgSavedJoin = 'You requested to join, wait for approval.';
+
+        const userSub = this.userService.getUserById(this.user._id).subscribe(user => {
+           if (user) {
+             const u = new User(user);
+               // Add org id to user
+               if (!u.organizations) {
+                 u.organizations = [];
+               }
+               u.organizations.push(this.joinOrg._id);
+               this.userService.updateUserWithId(u._id, u);
+             }
+           userSub.unsubscribe();
+         });
+         this.msgSavedJoin = 'You were added to the organization.';
         this.msgErrorJoin = null;
       } else {
-        this.msgErrorJoin = 'You are already a member of this organization, if you requested access wait for approval.';
+        this.msgErrorJoin = 'You are already a member of this organization.';
         this.msgSavedJoin = null;
       }
     }
