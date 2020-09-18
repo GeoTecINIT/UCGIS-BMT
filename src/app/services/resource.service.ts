@@ -43,6 +43,7 @@ export class ResourceService {
           r.name = r.occuProf.title;
           r.eqf = r.occuProf.eqf;
           r.url = urlJOT + r._id;
+          r.division = r.division ? r.division : '';
           r.type = 2;
           r.description = r.occuProf.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
@@ -61,6 +62,7 @@ export class ResourceService {
           r.collection = collectionSP;
           r.collectionDisplay = collectionSPDisplay;
           r.url = urlCDT + r._id;
+          r.division = r.division ? r.division : '';
           r.type = 0;
           r.isPublic = r.levelPublic;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
@@ -104,6 +106,7 @@ export class ResourceService {
           r.concepts = r.knowledge;
           r.name = r.title;
           r.url = urlOPT + r._id;
+          r.division = r.division ? r.division : '';
           r.type = 1;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);
@@ -124,6 +127,7 @@ export class ResourceService {
           r.concepts = r.concepts;
           r.name = r.title;
           r.url = r.url;
+          r.division = r.division ? r.division : '';
           r.type = 3;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
           this.allResources.push(r);

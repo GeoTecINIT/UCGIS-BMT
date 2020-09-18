@@ -301,7 +301,9 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources1 = this.filteredByType1.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-        it.description.toLowerCase().includes(this.searchText1.toLowerCase())
+          it.description.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+          it.orgName.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+          it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false
     );
   }
 
@@ -315,7 +317,9 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources2 = this.filteredByType2.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-        it.description.toLowerCase().includes(this.searchText2.toLowerCase())
+          it.description.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+          it.orgName.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+          it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false
     );
   }
 
@@ -427,9 +431,9 @@ export class NewmatchComponent implements OnInit {
                 this.notMatchConcepts1.push(k.code);
                 conceptsString.push(k.name);
               });
-              this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
+              this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '', this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                conceptsString, null, null, null, conceptsString, 3, null, 0);
+                conceptsString, null, null, null, conceptsString , 3, null, 0);
               // do the matching
               this.match();
               this.calculateMatchScore();
@@ -469,7 +473,7 @@ export class NewmatchComponent implements OnInit {
               this.bokConcepts2.forEach(k => {
                 this.notMatchConcepts2.push(k.code);
               });
-              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, this.collectionOT,
+              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '' , this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3, null, 0);
               this.match();
@@ -537,7 +541,6 @@ export class NewmatchComponent implements OnInit {
     if (res.type === 0) {
       if (res && res.learningObjectives && res.learningObjectives.length > 0) {
         res.learningObjectives.forEach(c => {
-          let code = c.concept_id.split(']');
           let skill = '';
           skill = c.name;
           skills.push(skill);
