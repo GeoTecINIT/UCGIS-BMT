@@ -1111,7 +1111,7 @@ export class NewmatchComponent implements OnInit {
         this.sortOrgAsc1 = !this.sortOrgAsc1;
         this.sortedBy1 = 'organization';
         // tslint:disable-next-line:max-line-length
-        this.filteredResources1.sort((a, b) => (a.orgName.toLowerCase() > b.orgName.toLowerCase()) ? this.sortOrgAsc1 ? 1 : -1 : this.sortOrgAsc1 ? -1 : 1);
+        this.filteredResources1.sort((a, b) => (a.orgName + (a.division ? a.division : '') > b.orgName + (b.division ? b.division : '')) ? this.sortOrgAsc1 ? 1 : -1 : this.sortOrgAsc1 ? -1 : 1);
         break;
     }
   }
@@ -1137,7 +1137,7 @@ export class NewmatchComponent implements OnInit {
         this.sortOrgAsc2 = !this.sortOrgAsc2;
         this.sortedBy2 = 'organization';
         // tslint:disable-next-line:max-line-length
-        this.filteredResources2.sort((a, b) => (a.orgName.toLowerCase() > b.orgName.toLowerCase()) ? this.sortOrgAsc2 ? 1 : -1 : this.sortOrgAsc2 ? -1 : 1);
+        this.filteredResources2.sort((a, b) => (a.orgName + (a.division ? a.division : '') > b.orgName + (b.division ? b.division : '')) ? this.sortOrgAsc1 ? 1 : -1 : this.sortOrgAsc1 ? -1 : 1);
         break;
       case 'score':
         this.sortScoAsc2 = !this.sortScoAsc2;
