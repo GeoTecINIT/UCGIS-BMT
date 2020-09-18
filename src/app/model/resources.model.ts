@@ -84,6 +84,7 @@ export class Resource extends Object {
     public userId: string,
     public orgId: string,
     public orgName: string,
+    public division: string,
     public collection: string,
     public collectionDisplay: string,
     public isPublic: boolean = false,
