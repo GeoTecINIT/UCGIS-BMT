@@ -178,6 +178,7 @@ export class NewmatchComponent implements OnInit {
   customSelect = 0;
 
   selectAllChildren = false;
+  allChildren = [];
 
   constructor(
     private matchService: MatchService,
@@ -1048,17 +1049,6 @@ export class NewmatchComponent implements OnInit {
     return res;
   }
 
-  getChildren(code) {
-    const arrayRes = this.allConcepts.filter(
-      it =>
-        it.code.toLowerCase() === code.toLowerCase()
-    );
-    if (arrayRes.length > 0) {
-      return arrayRes[0].children;
-    } else {
-      return [];
-    }
-  }
 
   getStatisticsNumberOfConcepts() {
     this.numberOfConcepts1 = this.getNumberOfConcepts(this.bokConcepts1);
@@ -1198,50 +1188,84 @@ export class NewmatchComponent implements OnInit {
     this.limitSearchFrom = this.limitSearchFrom - 10;
   }
 
+
+  getNode(code) {
+    const arrayRes = this.allConcepts.filter(
+      it =>
+        it.code.toLowerCase() === code.toLowerCase()
+    );
+    if (arrayRes.length > 0) {
+      return arrayRes[0];
+    } else {
+      return null;
+    }
+  }
+
+  allDescendants(node) {
+    for (let i = 0; i < node.children.length; i++) {
+      const child = node.children[i];
+      this.allChildren.push({ code: node.children[i].code, name: '[' + node.children[i].code + '] ' + node.children[i].name });
+      this.allDescendants(child);
+    }
+  }
+
   addBokKnowledge() {
     this.getRelations();
     this.conceptsName = [];
 
     const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
-    .textContent;
+      .textContent;
     const conceptId = concept.split(']')[0].substring(1);
 
+    this.allChildren = [];
     if (this.selectAllChildren) {
-      let children = this.getChildren(conceptId);
-      const allchildren = [];
-      while (children.lenght > 0) {
-        children.forEach(c => {
-          allchildren.push(c.code);
-          children = this.getChildren(c.code);
-        });
-      }
+      const node = this.getNode(conceptId);
+      this.allDescendants(node);
     }
 
     if (this.customSelect === 1) {
       this.notMatchConcepts1 = [];
-      this.bokConcepts1.push({ code: conceptId, name: concept });
+      this.bokConcepts1.push({ code: conceptId, name: concept, allChildren: this.allChildren });
+      this.allChildren.forEach(child => {
+        this.bokConcepts1.push({ code: child.code, name: child.name });
+      });
       if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
         this.resource1 = { name: 'Custom selection', concepts: [] };
       }
       this.resource1.concepts.push(concept);
-
-      this.bokConcepts1.forEach(k => {
-        this.notMatchConcepts1.push(k.code);
-        this.conceptsName[k.code] = k.name;
-      });
+      /* 
+            this.bokConcepts1.forEach(k => {
+              this.notMatchConcepts1.push(k.code);
+              this.conceptsName[k.code] = k.name;
+              if (k.allChildren.length > 0) {
+                k.allChildren.forEach(subchild => {
+                  this.notMatchConcepts1.push(subchild.code);
+                  this.conceptsName[subchild.code] = subchild.name;
+                });
+              }
+            }); */
 
     } else {
       this.notMatchConcepts2 = [];
-      this.bokConcepts2.push({ code: conceptId, name: concept });
+      this.bokConcepts2.push({ code: conceptId, name: concept, allChildren: this.allChildren });
+      this.allChildren.forEach(child => {
+        this.bokConcepts2.push({ code: child.code, name: child.name });
+      });
       if (this.resource2 == null || this.resource2.name !== 'Custom selection') {
         this.resource2 = { name: 'Custom selection', concepts: [] };
       }
       this.resource2.concepts.push(concept);
 
-      this.bokConcepts2.forEach(k => {
-        this.notMatchConcepts2.push(k.code);
-        this.conceptsName[k.code] = k.name;
-      });
+      /*  this.bokConcepts2.forEach(k => {
+         this.notMatchConcepts2.push(k.code);
+         this.conceptsName[k.code] = k.name;
+         if (k.allChildren.length > 0) {
+           k.allChildren.forEach(subchild => {
+             this.notMatchConcepts2.push(subchild.code);
+             this.conceptsName[subchild.code] = subchild.name;
+           });
+         }
+       }); */
     }
 
     this.match();

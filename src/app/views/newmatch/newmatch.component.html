@@ -273,6 +273,8 @@
                     <a (click)="removeCustomConcept1(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
                       {{conceptsName[mk.code]}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <br>
@@ -496,6 +498,8 @@
                     <a (click)="removeCustomConcept2(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
                       {{conceptsName[mk.code]}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <br>
@@ -939,6 +943,8 @@
                     <a (click)="removeCustomConcept1(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
                       {{conceptsName[mk.code]}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <div
@@ -949,6 +955,8 @@
                     <a (click)="removeCustomConcept2(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
                       {{conceptsName[mk.code]}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
               </div>
@@ -980,7 +988,8 @@
               <div class="col-lg-6 col-sm-6 text-left">
                 <button type="button" class="btn btn-primary" style="float: left" (click)="addBokKnowledge()"> Select
                 </button>
-                <input type="checkbox" style="margin-left: 10px; margin-top: 10px;" [(ngModel)]="selectAllChildren" /> Select all subconcepts
+                <input type="checkbox" style="margin-left: 10px; margin-top: 10px;" [(ngModel)]="selectAllChildren" />
+                Select all subconcepts
                 <button type="button" class="btn btn-danger" style="float: right"
                   (click)="bokModal.hide()">Finish</button>
               </div>
