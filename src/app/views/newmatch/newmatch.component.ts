@@ -179,6 +179,7 @@ export class NewmatchComponent implements OnInit {
 
   selectAllChildren = false;
   allChildren = [];
+  buttonClear = 0;
 
   constructor(
     private matchService: MatchService,
@@ -436,7 +437,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '', this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                conceptsString, null, null, null, conceptsString , 3, null, 0);
+                conceptsString, null, null, null, conceptsString, 3, null, 0);
               // do the matching
               this.match();
               this.calculateMatchScore();
@@ -476,7 +477,7 @@ export class NewmatchComponent implements OnInit {
               this.bokConcepts2.forEach(k => {
                 this.notMatchConcepts2.push(k.code);
               });
-              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '' , this.collectionOT,
+              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '', this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3, null, 0);
               this.match();
@@ -1229,15 +1230,15 @@ export class NewmatchComponent implements OnInit {
     if (this.customSelect === 1) {
       this.notMatchConcepts1 = [];
       this.bokConcepts1.push({ code: conceptId, name: concept, allChildren: this.allChildren });
-      this.allChildren.forEach(child => {
+      // Adds all children to array of displayed concepts
+    /*   this.allChildren.forEach(child => {
         this.bokConcepts1.push({ code: child.code, name: child.name });
-      });
+      }); */
       if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
         this.resource1 = { name: 'Custom selection', concepts: [] };
       }
       this.resource1.concepts.push(concept);
-      /* 
-            this.bokConcepts1.forEach(k => {
+      /* this.bokConcepts1.forEach(k => {
               this.notMatchConcepts1.push(k.code);
               this.conceptsName[k.code] = k.name;
               if (k.allChildren.length > 0) {
@@ -1251,9 +1252,10 @@ export class NewmatchComponent implements OnInit {
     } else {
       this.notMatchConcepts2 = [];
       this.bokConcepts2.push({ code: conceptId, name: concept, allChildren: this.allChildren });
-      this.allChildren.forEach(child => {
+         // Adds all children to array of displayed concepts
+      /* this.allChildren.forEach(child => {
         this.bokConcepts2.push({ code: child.code, name: child.name });
-      });
+      }); */
       if (this.resource2 == null || this.resource2.name !== 'Custom selection') {
         this.resource2 = { name: 'Custom selection', concepts: [] };
       }
@@ -1278,7 +1280,7 @@ export class NewmatchComponent implements OnInit {
   }
 
   clearCustomSelection1() {
-    if (this.resource1.name !== 'Custom selection') {
+    if ((this.resource1 && this.resource1.name !== 'Custom selection') || this.buttonClear === 1) {
       this.resource1 = null;
       this.bokConcepts1 = [];
       this.skills1 = [];
@@ -1290,13 +1292,14 @@ export class NewmatchComponent implements OnInit {
       this.commonFields = [];
       this.commonSkills = [];
       this.commonTransversalSkills = [];
+      this.buttonClear = 0;
       this.getStatisticsNumberOfConcepts();
       this.match();
     }
   }
 
   clearCustomSelection2() {
-    if (this.resource2.name !== 'Custom selection') {
+    if ((this.resource2 && this.resource2.name !== 'Custom selection') || this.buttonClear === 2) {
       this.resource2 = null;
       this.bokConcepts2 = [];
       this.skills2 = [];
@@ -1308,6 +1311,7 @@ export class NewmatchComponent implements OnInit {
       this.commonFields = [];
       this.commonSkills = [];
       this.commonTransversalSkills = [];
+      this.buttonClear = 0;
       this.getStatisticsNumberOfConcepts();
       this.match();
     }
