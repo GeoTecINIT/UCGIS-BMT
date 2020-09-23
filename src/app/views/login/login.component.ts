@@ -38,6 +38,8 @@ export class LoginComponent implements OnInit {
           for (let i = 1; i <= this.modalService.getModalsCount(); i++) {
             this.modalService.hide(i);
           }
+          const element = document.getElementsByTagName('body');
+          element[0].classList.remove('modal-open');
       }
     });
   }
