@@ -177,6 +177,8 @@ export class NewmatchComponent implements OnInit {
 
   customSelect = 0;
 
+  buttonClear = 0;
+
   constructor(
     private matchService: MatchService,
     private otherService: OtherService,
@@ -1233,7 +1235,7 @@ export class NewmatchComponent implements OnInit {
   }
 
   clearCustomSelection1() {
-    if (this.resource1.name !== 'Custom selection') {
+    if ((this.resource1 && this.resource1.name !== 'Custom selection') || this.buttonClear === 1) {
       this.resource1 = null;
       this.bokConcepts1 = [];
       this.skills1 = [];
@@ -1245,13 +1247,14 @@ export class NewmatchComponent implements OnInit {
       this.commonFields = [];
       this.commonSkills = [];
       this.commonTransversalSkills = [];
+      this.buttonClear = 0;
       this.getStatisticsNumberOfConcepts();
       this.match();
     }
   }
 
   clearCustomSelection2() {
-    if (this.resource2.name !== 'Custom selection') {
+    if ((this.resource2 && this.resource2.name !== 'Custom selection') || this.buttonClear === 2) {
       this.resource2 = null;
       this.bokConcepts2 = [];
       this.skills2 = [];
@@ -1263,6 +1266,7 @@ export class NewmatchComponent implements OnInit {
       this.commonFields = [];
       this.commonSkills = [];
       this.commonTransversalSkills = [];
+      this.buttonClear = 0;
       this.getStatisticsNumberOfConcepts();
       this.match();
     }
@@ -1297,7 +1301,7 @@ export class NewmatchComponent implements OnInit {
             }
           });
           if (found.length > 0) {
-            const score = Math.round((found.length * 100) / this.resource1.concepts.length);
+            const score = Math.round((found.length * 100) / res.concepts.length);
             res.score = score > 100 ? 100 : score;
           } else {
             res.score = 0;

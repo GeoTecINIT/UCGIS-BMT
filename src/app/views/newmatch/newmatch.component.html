@@ -279,7 +279,7 @@
                   class="row mb-2">
                   <div class="col-md-12 text-center">
                     <p>You have selected {{bokConcepts1.length}} concept(s)</p>
-                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="clearCustomSelection1()">Clear
+                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="buttonClear = 1; clearCustomSelection1()">Clear
                       custom
                       selection</button>
                   </div>
@@ -502,7 +502,7 @@
                   class="row mb-2">
                   <div class="col-md-12 text-center">
                     <p>You have selected {{bokConcepts2.length}} concept(s)</p>
-                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="clearCustomSelection2()">Clear
+                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="buttonClear = 2; clearCustomSelection2()">Clear
                       custom
                       selection</button>
                   </div>
