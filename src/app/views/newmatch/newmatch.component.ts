@@ -603,11 +603,42 @@ export class NewmatchComponent implements OnInit {
       this.conceptsName = [];
       this.bokConcepts1.forEach(bok1 => {
         let found = false;
+        // Compare BoK1  <-> BoK2
         this.bokConcepts2.forEach(bok2 => {
           if (bok1.code === bok2.code) {
             this.commonBokConcepts.push(bok1.code);
             this.conceptsName[bok1.code] = bok1.name;
             found = true;
+          }
+          if (bok1.allChildren) {
+            // Compare BoK1 children <-> BoK2
+            bok1.allChildren.forEach(bok1Ch => {
+              if (bok1Ch.code === bok2.code) {
+                this.commonBokConcepts.push(bok1Ch.code);
+                this.conceptsName[bok1Ch.code] = bok1Ch.name;
+                // found = true;
+              }
+              if (bok2.allChildren) {
+                // Compare BoK1 children <-> BoK2 children
+                bok2.allChildren.forEach(bok2Ch => {
+                  if (bok2Ch.code === bok1Ch.code) {
+                    this.commonBokConcepts.push(bok2Ch.code);
+                    this.conceptsName[bok2Ch.code] = bok2Ch.name;
+                    // found = true;
+                  }
+                });
+              }
+            });
+          }
+          if (bok2.allChildren) {
+            // Compare BoK1  <-> BoK2 children
+            bok2.allChildren.forEach(bok2Ch => {
+              if (bok2Ch.code === bok1.code) {
+                this.commonBokConcepts.push(bok2Ch.code);
+                this.conceptsName[bok2Ch.code] = bok2Ch.name;
+                // found = true;
+              }
+            });
           }
         });
         if (!found) {
@@ -1076,7 +1107,6 @@ export class NewmatchComponent implements OnInit {
         code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
         numberCon: this.numberOfConcepts2[bokConcept]
       });
-
     });
   }
   getNumberOfConcepts(conceptsToAnalize) {
@@ -1231,28 +1261,18 @@ export class NewmatchComponent implements OnInit {
       this.notMatchConcepts1 = [];
       this.bokConcepts1.push({ code: conceptId, name: concept, allChildren: this.allChildren });
       // Adds all children to array of displayed concepts
-    /*   this.allChildren.forEach(child => {
-        this.bokConcepts1.push({ code: child.code, name: child.name });
-      }); */
+      /*   this.allChildren.forEach(child => {
+          this.bokConcepts1.push({ code: child.code, name: child.name });
+        }); */
       if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
         this.resource1 = { name: 'Custom selection', concepts: [] };
       }
       this.resource1.concepts.push(concept);
-      /* this.bokConcepts1.forEach(k => {
-              this.notMatchConcepts1.push(k.code);
-              this.conceptsName[k.code] = k.name;
-              if (k.allChildren.length > 0) {
-                k.allChildren.forEach(subchild => {
-                  this.notMatchConcepts1.push(subchild.code);
-                  this.conceptsName[subchild.code] = subchild.name;
-                });
-              }
-            }); */
 
     } else {
       this.notMatchConcepts2 = [];
       this.bokConcepts2.push({ code: conceptId, name: concept, allChildren: this.allChildren });
-         // Adds all children to array of displayed concepts
+      // Adds all children to array of displayed concepts
       /* this.allChildren.forEach(child => {
         this.bokConcepts2.push({ code: child.code, name: child.name });
       }); */
@@ -1260,17 +1280,6 @@ export class NewmatchComponent implements OnInit {
         this.resource2 = { name: 'Custom selection', concepts: [] };
       }
       this.resource2.concepts.push(concept);
-
-      /*  this.bokConcepts2.forEach(k => {
-         this.notMatchConcepts2.push(k.code);
-         this.conceptsName[k.code] = k.name;
-         if (k.allChildren.length > 0) {
-           k.allChildren.forEach(subchild => {
-             this.notMatchConcepts2.push(subchild.code);
-             this.conceptsName[subchild.code] = subchild.name;
-           });
-         }
-       }); */
     }
 
     this.match();
@@ -1346,7 +1355,7 @@ export class NewmatchComponent implements OnInit {
             }
           });
           if (found.length > 0) {
-            const score = Math.round((found.length * 100) / this.resource1.concepts.length);
+            const score = Math.round((found.length * 100) / res.concepts.length);
             res.score = score > 100 ? 100 : score;
           } else {
             res.score = 0;
