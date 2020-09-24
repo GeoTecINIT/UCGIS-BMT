@@ -38,6 +38,8 @@ export class LoginComponent implements OnInit {
           for (let i = 1; i <= this.modalService.getModalsCount(); i++) {
             this.modalService.hide(i);
           }
+          const element = document.getElementsByTagName('body');
+          element[0].classList.remove('modal-open');
       }
     });
   }
@@ -62,11 +64,6 @@ export class LoginComponent implements OnInit {
     if (this.afAuth.auth.currentUser && !this.afAuth.auth.currentUser.isAnonymous) {
       this.ngZone.run(() => this.router.navigateByUrl(this.return)).then();
     }
-      for (let i = 1; i <= this.modalService.getModalsCount(); i++) {
-        this.modalService.hide(i);
-      }
-    const element = document.getElementsByTagName('body');
-    element[0].classList.remove('modal-open');
   }
 
   loginWithGoogle() {
