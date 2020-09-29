@@ -309,9 +309,9 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources1 = this.filteredByType1.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          it.description.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          it.orgName.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          (it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false)
+        it.description.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+        it.orgName.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+        (it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false)
     );
   }
 
@@ -325,9 +325,9 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources2 = this.filteredByType2.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          it.description.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          it.orgName.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          (it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false)
+        it.description.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+        it.orgName.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+        (it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false)
     );
   }
 
@@ -1377,14 +1377,15 @@ export class NewmatchComponent implements OnInit {
   }
 
   removeCustomSubConcept(concept) {
-
     const index = this.subconceptsModal.indexOf(concept);
     this.subconceptsModal.splice(index, 1);
+  }
 
-
- /*    this.subconceptsModal.forEach (sc => {
-      if (sc.name === concept.name)
-    }); */
+  checkClosedModals() {
+    if (!this.bokModal.isShown && !this.customBokModal.isShown) {
+      const element = document.getElementsByTagName('body');
+      element[0].classList.remove('modal-open');
+    }
   }
 
 }
