@@ -167,6 +167,7 @@ export class NewmatchComponent implements OnInit {
   @ViewChild('textBoK') textBoK: ElementRef;
   @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;
   @ViewChild('bokModal') public bokModal: ModalDirective;
+  @ViewChild('customBokModal') public customBokModal: ModalDirective;
 
   selectedNodes = [];
   hasResults = false;
@@ -180,6 +181,9 @@ export class NewmatchComponent implements OnInit {
   selectAllChildren = false;
   allChildren = [];
   buttonClear = 0;
+
+  customBokModalConcept = '';
+  subconceptsModal = [];
 
   constructor(
     private matchService: MatchService,
@@ -307,7 +311,7 @@ export class NewmatchComponent implements OnInit {
         it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
           it.description.toLowerCase().includes(this.searchText1.toLowerCase()) ||
           it.orgName.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false
+          (it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false)
     );
   }
 
@@ -1365,6 +1369,22 @@ export class NewmatchComponent implements OnInit {
         }
       });
     }
+  }
+
+  loadCustomModal(concept) {
+    this.customBokModalConcept = concept.name;
+    this.subconceptsModal = concept.allChildren;
+  }
+
+  removeCustomSubConcept(concept) {
+
+    const index = this.subconceptsModal.indexOf(concept);
+    this.subconceptsModal.splice(index, 1);
+
+
+ /*    this.subconceptsModal.forEach (sc => {
+      if (sc.name === concept.name)
+    }); */
   }
 
 }
