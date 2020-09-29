@@ -327,7 +327,7 @@ export class NewmatchComponent implements OnInit {
         it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
           it.description.toLowerCase().includes(this.searchText2.toLowerCase()) ||
           it.orgName.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false
+          (it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false)
     );
   }
 
