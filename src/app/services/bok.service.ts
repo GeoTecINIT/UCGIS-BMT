@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { NULL_INJECTOR } from '@angular/core/src/render3/component';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 
@@ -17,15 +18,20 @@ export class BokService {
   public relations: any[];
   public allRelation: Observable<any>;
   public allConcepts: Observable<any>;
+  public currentVNumber = null;
+  public foundConcept = null;
   BOK_PERMALINK_PREFIX = 'https://bok.eo4geo.eu/';
 
-  constructor(db: AngularFireDatabase) {
+  constructor(private db: AngularFireDatabase) {
     db.list('current/concepts').valueChanges().subscribe(res => {
       this.concepts = this.parseConcepts(res);
     });
     db.list('current/relations').valueChanges().subscribe(res => {
       this.relations = res;
     });
+/*     db.list('current/relations/version').valueChanges().subscribe(res => {
+      this.currentVNumber = res;
+    }); */
   }
 
   parseConcepts(dbRes) {
@@ -44,6 +50,29 @@ export class BokService {
     return concepts;
   }
 
+/*   searchPreviousConceptsDB(code) {
+    if (this.currentVNumber) {
+      const vn = this.currentVNumber - 1;
+
+      while (vn > 0 && this.foundConcept === null) {
+
+        this.db.list('v' + vn + '/concepts').valueChanges().subscribe(res => {
+          res.forEach(concept => {
+            if (concept.code === code) {
+              this.foundConcept = {
+                code: concept.code,
+                name: concept.name,
+                description: concept.description,
+                permalink: this.BOK_PERMALINK_PREFIX + concept.code
+              };
+            }
+          });
+
+        });
+      }
+    }
+  } */
+
   getConceptInfoByCode(code) {
     const arrayRes = this.concepts.filter(
       it =>
@@ -61,15 +90,15 @@ export class BokService {
     }
   }
 
-  getConcepts () {
+  getConcepts() {
     return this.concepts;
   }
-  getRelations () {
+  getRelations() {
     return this.relations;
   }
-  getRelationsPrent( res, concepts ) {
+  getRelationsPrent(res, concepts) {
     const relations = [];
-    concepts.forEach( con => {
+    concepts.forEach(con => {
       const c = {
         code: con.code,
         name: con.name,
@@ -79,9 +108,9 @@ export class BokService {
       };
       relations.push(c);
     });
-    res.forEach( rel => {
-     if ( rel.name === 'is subconcept of') {
-        relations[rel.target].children.push( relations[rel.source]);
+    res.forEach(rel => {
+      if (rel.name === 'is subconcept of') {
+        relations[rel.target].children.push(relations[rel.source]);
         relations[rel.source].parent = relations[rel.target];
       }
     });
