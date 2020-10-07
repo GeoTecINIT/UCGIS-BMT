@@ -637,7 +637,7 @@ export class NewmatchComponent implements OnInit {
 
       // compare bok1
       this.bokConcepts1.forEach(bok1 => {
-        if (bok1.allChildren) {
+        if (bok1.allChildren && bok1.allChildren.length > 0) {
           let foundAllCh = true;
           const bok1Found = { code: bok1.code, name: bok1.name, allChildren: [] };
           const bok1NotFound = { code: bok1.code, name: bok1.name, allChildren: [] };
@@ -674,8 +674,8 @@ export class NewmatchComponent implements OnInit {
       // compare bok2
       this.bokConcepts2.forEach(bok2 => {
         // concept is in bok2
-        if (bok2.allChildren) {
-          let foundAllCh = true;
+        if (bok2.allChildren && bok2.allChildren.length > 0) {
+          let foundAllCh2 = true;
           const bok2Found = { code: bok2.code, name: bok2.name, allChildren: [] };
           const bok2NotFound = { code: bok2.code, name: bok2.name, allChildren: [] };
           bok2.allChildren.forEach(bok2Ch => {
@@ -683,11 +683,11 @@ export class NewmatchComponent implements OnInit {
               bok2Found.allChildren.push(bok2Ch);
             } else {
               bok2NotFound.allChildren.push(bok2Ch);
-              foundAllCh = false;
+              foundAllCh2 = false;
             }
           });
           // all children found
-          if (foundAllCh) {
+          if (foundAllCh2) {
             this.commonBokConcepts.push(bok2); // include children
           } else {
             // not all children found
@@ -708,36 +708,48 @@ export class NewmatchComponent implements OnInit {
         }
       });
 
+      const removeDuplicatesCommon = [];
 
-/*       let removeDuplicatesCommon = [];
-
+      // get all codes included in a concept
+      this.commonBokConcepts.forEach(bokCom => {
+        // bokCom.allCodes ? bokCom.allCodes.push(bokCom.code) : bokCom.allCodes = [];
+        bokCom.allCodes = [];
+        if (bokCom.allChildren) {
+          bokCom.allChildren.forEach(bokComCh => {
+            bokCom.allCodes.push(bokComCh.code);
+          });
+        }
+      });
+      let foundAllCh = true;
       // check for duplicates in common
       this.commonBokConcepts.forEach(bokCom => {
-        this.commonBokConcepts.forEach(bokComB => {
-          if (bokCom.code !== bokComB.code) {
-            let foundAllCh = true;
-            bokCom.allChildren.forEach(bokComCh => {
-
-              if (bokComB.allChildren.indexOf(bokComB.allChildren.filter(it => {
-                return it.code === bokComCh.code;
-              })) === -1) {
-                foundAllCh = false;
-
+        if (bokCom.allChildren && bokCom.allChildren.length === 0) {
+          // Alone concepts
+          removeDuplicatesCommon.push(bokCom);
+        } else {
+          this.commonBokConcepts.forEach(bokComB => {
+            if (bokCom.code !== bokComB.code) {
+              if (bokCom.allCodes.indexOf(bokComB.code) > -1) { // B concept is in bokCom
+                foundAllCh = true;
+                if (bokComB.allChildren && bokComB.allChildren.length === 0) {
+                  bokComB.allChildren.forEach(bokComBCh => {
+                    if (bokCom.allCodes.indexOf(bokComBCh.code) === -1) { // check all children of B concept
+                      foundAllCh = false;
+                    }
+                  });
+                }
+                if (foundAllCh) { // all children in bokComB are in BokCom
+                  removeDuplicatesCommon.push(bokCom);
+                }
               }
-
-              //  if (bokComB.allChildren.indexOf(bokComCh) === -1) {
-             
-            });
-            if (!foundAllCh) { // not all children in bokComB are in BokCom
-              removeDuplicatesCommon.push(bokCom);
             }
-          }
-        });
-      }); */
+          });
+        }
+      });
 
       this.commonBokConcepts = removeDuplicatesCommon;
 
-      this.commonBokConcepts.sort((a, b) => (a.allChildren.length < b.allChildren.length) ? 1 : -1);
+      this.commonBokConcepts.sort((a, b) => (a.code > b.code) ? 1 : -1);
 
       this.notMatchConcepts1.sort((a, b) => (a.code > b.code) ? 1 : -1);
       this.notMatchConcepts2.sort((a, b) => (a.code > b.code) ? 1 : -1);

@@ -558,19 +558,25 @@
               </div>
               <div class="row card-body" style="background-color: #faf9f8"
                 *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null )">
-                <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.eqf  )">
+                <div class="col-md-6 text-center ma" *ngIf="(resource1 !== null && resource1.eqf  )">
                   {{resource1.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                     placement="left">
                     EQF {{resource1.eqf }}
                   </button>
                 </div>
-                <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
+                <div class="col-md-6 text-center ma" *ngIf="(resource1 == null || !resource1.eqf  )">
+                  -
+                </div>
+                <div class="col-md-6 text-center ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
                   {{resource2.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                     placement="left">
                     EQF {{resource2.eqf }}
                   </button>
+                </div>
+                <div class="col-md-6 text-center ma" *ngIf="(resource2 == null || !resource2.eqf  )">
+                  -
                 </div>
               </div>
             </div>
@@ -1004,7 +1010,7 @@
               <div class="col-lg-6 col-sm-6 text-left">
                 <button type="button" class="btn btn-primary" style="float: left" (click)="addBokKnowledge()"> Select
                 </button>
-                  <input type="checkbox" style="margin-left: 10px; margin-top: 10px;" [(ngModel)]="selectAllChildren" />
+                <input type="checkbox" style="margin-left: 10px; margin-top: 10px;" [(ngModel)]="selectAllChildren" />
                 Select all subconcepts
                 <button type="button" class="btn btn-danger" style="float: right"
                   (click)="bokModal.hide(); checkClosedModals()">Finish</button>
@@ -1126,7 +1132,7 @@
                   <a *ngIf="isAbleToEditModal" (click)="removeCustomSubConcept(mk)"> <i class="fa fa-close"></i> </a>
                   <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
                     {{mk.name}} </a>
-                 <!--  <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
+                  <!--  <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
                     Subconcepts]</span> -->
                 </button>
               </div>
