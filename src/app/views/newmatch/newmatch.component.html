@@ -139,6 +139,8 @@
                         <button class="btn btn-pill btn-outline-primary mr-2" [ngClass]="{'active': showResource1==2}"
                           (click)="showResource1=2; filterByType(1, 2)">Job
                           Offers</button>
+                        <!--button class="btn btn-pill btn-outline-primary mr-2" [ngClass]="{'active': showResource1==4}"
+                                (click)="showResource1=4; filterByType(1, 4)">Training Materials</button-->
                         <button class="btn btn-pill btn-outline-primary mr-2" [ngClass]="{'active': showResource1==3}"
                           (click)="showResource1=3; filterByType(1, 3)">Others</button>
                       </div>
@@ -155,19 +157,22 @@
                     <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy1('lastUpdated');">
                         <i [ngClass]="sortUpdAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy1 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
+                        <u *ngIf="sortedBy1 == 'lastUpdated'"><span [ngClass]="'bolder'">Last updated</span></u>
+                        <span *ngIf="sortedBy1 !== 'lastUpdated'">Last updated</span>
                       </button>
                     </div>
                     <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy1('name');">
                         <i [ngClass]="sortNameAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy1 == 'name'? 'bolder' : ''"> Name</span>
+                        <u *ngIf="sortedBy1 == 'name'"><span [ngClass]="'bolder'"> Name</span></u>
+                        <span *ngIf="sortedBy1 !== 'name'">Name</span>
                       </button>
                     </div>
                     <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy1('organization');">
                         <i [ngClass]="sortOrgAsc1? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy1 == 'organization'? 'bolder' : ''">Organization</span>
+                        <u *ngIf="sortedBy1 == 'organization'"><span [ngClass]="'bolder'">Organization</span></u>
+                        <span *ngIf="sortedBy1 !== 'organization'">Organization</span>
                       </button>
                     </div>
                   </div>
@@ -354,6 +359,8 @@
                         <button class="btn btn-pill btn-outline-primary mr-2" [ngClass]="{'active': showResource2==2}"
                           (click)="showResource2=2; filterByType(2, 2)">Job
                           Offers</button>
+                        <!--button class="btn btn-pill btn-outline-primary mr-2" [ngClass]="{'active': showResource2==4}"
+                                (click)="showResource2=4; filterByType(2, 4)">Training Materials</button-->
                         <button class="btn btn-pill btn-outline-primary mr-2" [ngClass]="{'active': showResource2==3}"
                           (click)="showResource2=3; filterByType(2, 3)">Others</button>
                       </div>
@@ -370,26 +377,30 @@
                     <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('lastUpdated');">
                         <i [ngClass]="sortUpdAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy2 == 'lastUpdated'? 'bolder' : ''">Last updated</span>
+                        <u *ngIf="sortedBy2 == 'lastUpdated'"><span [ngClass]="'bolder'">Last updated</span></u>
+                        <span *ngIf="sortedBy2 !== 'lastUpdated'">Last updated</span>
                       </button>
                     </div>
                     <div class="col-md-2 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('name');">
                         <i [ngClass]="sortNameAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy2 == 'name'? 'bolder' : ''"> Name</span>
+                        <u *ngIf="sortedBy2 == 'name'"><span [ngClass]="'bolder'"> Name</span></u>
+                        <span *ngIf="sortedBy2 !== 'name'">Name</span>
                       </button>
                     </div>
                     <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('organization');">
                         <i [ngClass]="sortOrgAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy2 == 'organization'? 'bolder' : ''">Organization</span>
+                        <u *ngIf="sortedBy2 == 'organization'"><span [ngClass]="'bolder'">Organization</span></u>
+                        <span *ngIf="sortedBy2 !== 'organization'">Organization</span>
                       </button>
                     </div>
                     <div class="col-md-3 text-center col-0padding">
                       <button type="button" class="btn btn-block btn-link" (click)="sortBy2('score');"
                         tooltip="Select one resource in first column to be able to sort by best matching resources in this column">
                         <i [ngClass]="sortScoAsc2? 'fa fa-arrow-down' : 'fa fa-arrow-up'"></i>
-                        <span [ngClass]="sortedBy2 == 'score'? 'bolder' : ''">Matching Score</span>
+                        <u *ngIf="sortedBy2 == 'score'"><span [ngClass]="'bolder'">Matching Score</span></u>
+                        <span *ngIf="sortedBy2 !== 'score'">Matching Score</span>
                       </button>
                     </div>
                   </div>

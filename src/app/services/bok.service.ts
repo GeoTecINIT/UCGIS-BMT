@@ -56,7 +56,7 @@ export class BokService {
         code: '',
         name: '',
         description: '',
-        permalink: this.BOK_PERMALINK_PREFIX
+        permalink: this.BOK_PERMALINK_PREFIX + code
       };
     }
   }

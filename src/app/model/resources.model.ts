@@ -126,3 +126,29 @@ export class Other extends Object {
   }
 }
 
+export class TrainingMaterial extends Object {
+  constructor(
+    public _id: string,
+    public url: string,
+    public userId: string,
+    public orgId: string,
+    public orgName: string,
+    public collection: string,
+    public collectionDisplay: string,
+    public isPublic: boolean = false,
+    public name: string,
+    public title: string,
+    public description: string,
+    public abstract: string,
+    public contributors: any[],
+    public concepts: any[],
+    public type: number,
+    public eqf: number,
+    public creators: any[],
+    public updatedAt: any,
+    public hasMetadata: boolean,
+  ) {
+    super();
+  }
+}
+

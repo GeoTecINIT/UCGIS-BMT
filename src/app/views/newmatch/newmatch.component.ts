@@ -156,13 +156,15 @@ export class NewmatchComponent implements OnInit {
   sortNameAsc1 = true;
   sortOrgAsc1 = true;
   sortUpdAsc1 = true;
-  sortedBy1 = 'lastUpdated';
+  sortedBy1 = 'name';
+  sorted = false;
 
   sortNameAsc2 = true;
   sortOrgAsc2 = true;
   sortUpdAsc2 = true;
   sortScoAsc2 = true;
-  sortedBy2 = 'lastUpdated';
+  sortedBy2 = 'name';
+  bokResources = false;
 
   @ViewChild('textBoK') textBoK: ElementRef;
   @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;
@@ -178,6 +180,7 @@ export class NewmatchComponent implements OnInit {
   customSelect = 0;
 
   buttonClear = 0;
+  isLoaded = false;
 
   constructor(
     private matchService: MatchService,
@@ -223,8 +226,9 @@ export class NewmatchComponent implements OnInit {
     });
     // sort resources by name
     // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
-    this.filteredResources1 = this.resourceService.publicResources;
-    this.filteredResources2 = this.resourceService.publicResources;
+      this.filteredResources1 = this.resourceService.publicResources;
+      this.filteredResources2 = this.resourceService.publicResources;
+
   }
 
   ngOnInit() {
@@ -379,6 +383,7 @@ export class NewmatchComponent implements OnInit {
     this.notMatchFields1 = this.fields1;
     this.notMatchTransversal1 = this.transversalSkills1;
     this.resource1 = res;
+    this.cleanSelection2();
     this.match();
     this.getStatisticsNumberOfConcepts();
     this.calculateMatchScore();
@@ -524,15 +529,20 @@ export class NewmatchComponent implements OnInit {
     if (res && res.concepts && res.concepts.length > 0) {
       res.concepts.forEach(c => {
         const rel = c.split(']');
-        if (rel[0][0] === '[') {
-          const concept = rel[0].slice(1);
-          if (codConcepts.indexOf(concept) === -1) {
-            concepts.push({ code: rel[0].slice(1), name: c });
-            codConcepts.push(rel[0].slice(1));
+        if ( rel.length > 1 ) {
+          if (rel[0][0] === '[') {
+            const concept = rel[0].slice(1);
+            if (codConcepts.indexOf(concept) === -1) {
+              concepts.push({ code: rel[0].slice(1), name: c });
+              codConcepts.push(rel[0].slice(1));
+            }
+          } else {
+            concepts.push({ code: rel[0], name: c });
+            codConcepts.push(rel[0]);
           }
         } else {
-          concepts.push({ code: rel[0], name: c });
-          codConcepts.push(rel[0]);
+          concepts.push({ code: c, name: '[' + c + '] ' + this.bokService.getConceptInfoByCode(c).name });
+          codConcepts.push(c);
         }
       });
     }
@@ -739,7 +749,9 @@ export class NewmatchComponent implements OnInit {
           nameKA = k + ' - ' + this.kaCodes[k];
         } else {
           const nameConcept = this.conceptsName[k];
-          nameKA = k + ' - ' + nameConcept.split(']')[1];
+          if ( nameConcept ) {
+            nameKA = k + ' - ' + nameConcept.split(']')[1];
+          }
         }
         this.statisticsNotMatching1.push({ code: nameKA, value: Math.round(tempStats2[k] * 100 / tempTotal2), count: tempStats2[k] });
       });
@@ -1047,7 +1059,9 @@ export class NewmatchComponent implements OnInit {
         }
       }
     });
-    res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
+    if ( parentNode !== undefined ) {
+      res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
+    }
     return res;
   }
 
@@ -1126,6 +1140,7 @@ export class NewmatchComponent implements OnInit {
     this.paginationLimitFrom2 = 0;
     this.paginationLimitTo2 = this.LIMIT_PER_PAGE;
     this.currentPage2 = 0;
+    this.sorted = true;
     switch (attr) {
       case 'name':
         this.sortNameAsc2 = !this.sortNameAsc2;
@@ -1291,12 +1306,14 @@ export class NewmatchComponent implements OnInit {
   }
 
   calculateMatchScore() {
-    if (this.resource1 && this.resource1.concepts.length > 0) {
+    const tempfilter1 = this.filteredResources1;
+    this.filteredResources1 = [];
+    if (this.resource1 /*&& this.resource1.concepts.length > 0*/) {
       this.filteredResources2.forEach(res => {
         if (res.concepts.length > 0) {
           const found = [];
           res.concepts.forEach(c => {
-            if (this.resource1.concepts.indexOf(c) > -1) {
+            if (this.resource1.concepts.length > 0 && this.resource1.concepts.indexOf(c) > -1) {
               found.push(c);
             }
           });
@@ -1311,6 +1328,29 @@ export class NewmatchComponent implements OnInit {
         }
       });
     }
+    tempfilter1.forEach( res => {
+      this.filteredResources1.push(res);
+    });
+    if ( !this.sorted || this.sortedBy2 === 'score') {
+      this.filteredResources2.sort( (a , b) => b.score - a.score );
+      this.sortedBy2 = 'score';
+      this.sortScoAsc2 = false;
+    }
   }
 
+  cleanSelection2 () {
+    this.resource2 = null;
+    this.bokConcepts2 = [];
+    this.skills2 = [];
+    this.fields2 = [];
+    this.transversalSkills2 = [];
+    this.notMatchConcepts2 = [];
+    this.notMatchFields2 = [];
+    this.notMatchSkills2 = [];
+    this.notMatchTransversal2 = [];
+    this.commonBokConcepts = [];
+    this.commonFields = [];
+    this.commonSkills = [];
+    this.commonTransversalSkills = [];
+  }
 }
