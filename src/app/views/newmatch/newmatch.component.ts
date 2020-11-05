@@ -1166,7 +1166,7 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts.forEach(con => {
       if (con.code === concept) {
         parentNode = con;
-        while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
+        while (parentCode !== '' && parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
           parentNode = parentNode['parent'];
           parentCode = parentNode['parent']['code'];
         }
@@ -1212,23 +1212,25 @@ export class NewmatchComponent implements OnInit {
       } else {
         parent = this.getParent(bok1);
       }
-      if (this.kaCodes[parent] !== undefined) {
-        i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
-        numConcepts[parent] = i;
-      }
-      if (bok1.allChildren) {
-        bok1.allChildren.forEach(bok1Ch => {
-          //  let parent = '';
-          if (bok1Ch.code) {
-            parent = this.getParent(bok1Ch.code);
-          } else {
-            parent = this.getParent(bok1Ch);
-          }
-          if (this.kaCodes[parent] !== undefined) {
-            i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
-            numConcepts[parent] = i;
-          }
-        });
+      if (parent !== '') {
+        if (this.kaCodes[parent] !== undefined) {
+          i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+          numConcepts[parent] = i;
+        }
+        if (bok1.allChildren) {
+          bok1.allChildren.forEach(bok1Ch => {
+            //  let parent = '';
+            if (bok1Ch.code) {
+              parent = this.getParent(bok1Ch.code);
+            } else {
+              parent = this.getParent(bok1Ch);
+            }
+            if (this.kaCodes[parent] !== undefined) {
+              i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+              numConcepts[parent] = i;
+            }
+          });
+        }
       }
     });
     return numConcepts;

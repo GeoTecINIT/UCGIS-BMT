@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 export interface BoKConcept {
   permalink?: String;
-  descrption?: String;
+  description?: String;
   name?: String;
   code?: String;
 }
@@ -18,6 +18,7 @@ export class BokService {
   public relations: any[];
   public allRelation: Observable<any>;
   public allConcepts: Observable<any>;
+  public allConceptsCodes = [];
   public currentVNumber = null;
   public foundConcept = null;
   BOK_PERMALINK_PREFIX = 'https://bok.eo4geo.eu/';
@@ -29,9 +30,11 @@ export class BokService {
     db.list('current/relations').valueChanges().subscribe(res => {
       this.relations = res;
     });
-/*     db.list('current/relations/version').valueChanges().subscribe(res => {
-      this.currentVNumber = res;
-    }); */
+    const itemRef = db.object('current/version');
+    itemRef.snapshotChanges().subscribe(action => {
+      this.currentVNumber = action.payload.val();
+      this.searchPreviousConceptsDB();
+    });
   }
 
   parseConcepts(dbRes) {
@@ -44,34 +47,37 @@ export class BokService {
           description: concept.description,
           permalink: this.BOK_PERMALINK_PREFIX + concept.code
         };
+        this.allConceptsCodes.push(concept.code);
         concepts.push(c);
       });
     }
     return concepts;
   }
 
-/*   searchPreviousConceptsDB(code) {
+  searchPreviousConceptsDB() {
     if (this.currentVNumber) {
-      const vn = this.currentVNumber - 1;
+      let vn = this.currentVNumber - 1;
 
       while (vn > 0 && this.foundConcept === null) {
 
         this.db.list('v' + vn + '/concepts').valueChanges().subscribe(res => {
-          res.forEach(concept => {
-            if (concept.code === code) {
-              this.foundConcept = {
+          res.forEach((concept: BoKConcept) => {
+            if (this.allConceptsCodes.indexOf(concept.code) === -1) { // old concept not present in current
+              const c = {
                 code: concept.code,
                 name: concept.name,
                 description: concept.description,
                 permalink: this.BOK_PERMALINK_PREFIX + concept.code
               };
+              this.allConceptsCodes.push(concept.code);
+              this.concepts.push(c);
             }
           });
-
         });
+        vn = vn - 1;
       }
     }
-  } */
+  }
 
   getConceptInfoByCode(code) {
     const arrayRes = this.concepts.filter(
