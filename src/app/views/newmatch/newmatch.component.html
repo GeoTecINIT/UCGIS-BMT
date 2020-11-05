@@ -11,7 +11,8 @@
             </div>
             <div class="col-sm-4 col-md-4">
               <ng-select *ngIf="userOrgs.length > 0 && userOrgs.length == currentUser.organizations.length"
-                [items]="userOrgs" name="userOrgs" bindLabel="name" [multiple]="false" [(ngModel)]="saveOrg" (change)="loadDivisions()">
+                [items]="userOrgs" name="userOrgs" bindLabel="name" [multiple]="false" [(ngModel)]="saveOrg"
+                (change)="loadDivisions()">
                 <ng-template ng-optgroup-tmp let-item="item">
                   {{item.name}}
                 </ng-template>
@@ -26,12 +27,12 @@
             </div>
             <div class="col-sm-2 col-md-2">
               <ng-select *ngIf="userDivisions.length > 0" [items]="userDivisions" name="userDivisions" bindLabel="name"
-                         [multiple]="false" [(ngModel)]="saveDiv">
+                [multiple]="false" [(ngModel)]="saveDiv">
                 <ng-template ng-optgroup-tmp let-item="item">
                   {{item}}
                 </ng-template>
               </ng-select>
-             </div>
+            </div>
             <div class="col-sm-2 col-md-2 text-right">
               <button type="submit" class="btn btn-pill btn-primary" (click)="saveMatch()" routerLink="/list"
                 *ngIf="!isAnonymous && (model.title != '' && model.description != '' )">
@@ -271,7 +272,10 @@
                     [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
                     <a (click)="removeCustomConcept1(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
-                      {{conceptsName[mk.code]}} </a>
+                      {{mk.name}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                      (click)="customBokModal.show(); loadCustomModal(mk, true)"> [+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <br>
@@ -279,12 +283,12 @@
                   class="row mb-2">
                   <div class="col-md-12 text-center">
                     <p>You have selected {{bokConcepts1.length}} concept(s)</p>
-                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="buttonClear = 1; clearCustomSelection1()">Clear
+                    <button class="btn btn-pill btn-outline-danger mr-2"
+                      (click)=" buttonClear = 1; clearCustomSelection1()">Clear
                       custom
                       selection</button>
                   </div>
                 </div>
-
               </tab>
               <tab>
                 <ng-template tabHeading><i class="icon-doc"></i> Upload</ng-template>
@@ -494,7 +498,10 @@
                     [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
                     <a (click)="removeCustomConcept2(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
-                      {{conceptsName[mk.code]}} </a>
+                      {{mk.name}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                      (click)="customBokModal.show(); loadCustomModal(mk, true)">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <br>
@@ -502,7 +509,8 @@
                   class="row mb-2">
                   <div class="col-md-12 text-center">
                     <p>You have selected {{bokConcepts2.length}} concept(s)</p>
-                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="buttonClear = 2; clearCustomSelection2()">Clear
+                    <button class="btn btn-pill btn-outline-danger mr-2"
+                      (click)="buttonClear = 2; clearCustomSelection2()">Clear
                       custom
                       selection</button>
                   </div>
@@ -550,19 +558,25 @@
               </div>
               <div class="row card-body" style="background-color: #faf9f8"
                 *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null )">
-                <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.eqf  )">
+                <div class="col-md-6 text-center ma" *ngIf="(resource1 !== null && resource1.eqf  )">
                   {{resource1.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                     placement="left">
                     EQF {{resource1.eqf }}
                   </button>
                 </div>
-                <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
+                <div class="col-md-6 text-center ma" *ngIf="(resource1 == null || !resource1.eqf  )">
+                  -
+                </div>
+                <div class="col-md-6 text-center ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
                   {{resource2.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                     placement="left">
                     EQF {{resource2.eqf }}
                   </button>
+                </div>
+                <div class="col-md-6 text-center ma" *ngIf="(resource2 == null || !resource2.eqf  )">
+                  -
                 </div>
               </div>
             </div>
@@ -583,9 +597,13 @@
                     commonBokConcepts.length == 0 "> No matching concepts found
                   </div>
                   <button *ngFor="let mk of commonBokConcepts" type="button" class="btn btn-pill"
-                    [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                    <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank">
-                      {{ conceptsName[mk]}} </a>
+                    [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                    <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
+                      {{ mk.name}}
+                    </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                      (click)="customBokModal.show(); loadCustomModal(mk, false)">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <div class="col-md-4 ma">
@@ -669,9 +687,13 @@
                     <div class="card-body" style="background-color: #faf9f8">
                       <div class="row text-center ma">
                         <button *ngFor="let mk of notMatchConcepts1" type="button" class="btn btn-pill"
-                          [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                          <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank">
-                            {{conceptsName[mk]}} </a>
+                          [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                          <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
+                            {{mk.name}}
+                          </a>
+                          <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                            (click)="customBokModal.show(); loadCustomModal(mk, false)">[+ {{mk.allChildren.length}}
+                            Subconcepts]</span>
                         </button>
                       </div>
                     </div>
@@ -688,14 +710,17 @@
                       <h6 *ngIf="resource2">{{resource2.name}}</h6>
                     </div>
                     <div class="card-body" style="background-color: #faf9f8">
+
                       <div class="row  text-center ma">
-
                         <button *ngFor="let mk of notMatchConcepts2" type="button" class="btn btn-pill"
-                          [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                          <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank">
-                            {{conceptsName[mk]}} </a>
+                          [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                          <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
+                            {{mk.name}}
+                          </a>
+                          <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                            (click)="customBokModal.show(); loadCustomModal(mk, false)">[+ {{mk.allChildren.length}}
+                            Subconcepts]</span>
                         </button>
-
                       </div>
                     </div>
                     <div class="row card-body" style="background-color: #faf9f8; margin-left: 5px;">
@@ -914,7 +939,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Select concepts from BoK to be used in the match.</h4>
-        <button type="button" class="close" (click)="bokModal.hide()" aria-label="Close">
+        <button type="button" class="close" (click)="bokModal.hide(); checkClosedModals()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -937,7 +962,10 @@
                     [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
                     <a (click)="removeCustomConcept1(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
-                      {{conceptsName[mk.code]}} </a>
+                      {{mk.name}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                      (click)="customBokModal.show(); loadCustomModal(mk, true)">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
                 <div
@@ -947,7 +975,10 @@
                     [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
                     <a (click)="removeCustomConcept2(mk)"> <i class="fa fa-close"></i> </a>
                     <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
-                      {{conceptsName[mk.code]}} </a>
+                      {{mk.name}} </a>
+                    <span *ngIf="mk.allChildren && mk.allChildren.length > 0"
+                      (click)="customBokModal.show(); loadCustomModal(mk, true)">[+ {{mk.allChildren.length}}
+                      Subconcepts]</span>
                   </button>
                 </div>
               </div>
@@ -962,8 +993,31 @@
 
           <div class="card-body" style="background-color: #faf9f8">
             <div class="row text-center">
+              <div class="col-lg-6 col-sm-6 mb-1">
+
+                <div class="input-group">
+                  <div class="input-group-prepend" dropdown>
+                    <button type="button" class="btn btn-primary">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </div>
+                  <input #searchInput type="text" id="input-competence-filter" name="input-competence-filter"
+                    class="form-control" [(ngModel)]="searchInputField" (keyup)="searchInBok(searchInput.value)"
+                    placeholder="Search Knowledge" />
+                </div>
+
+              </div>
+              <div class="col-lg-6 col-sm-6 text-left">
+                <button type="button" class="btn btn-primary" style="float: left" (click)="addBokKnowledge()"> Select
+                </button>
+           <!--      <input type="checkbox" style="margin-left: 10px; margin-top: 10px;" [(ngModel)]="selectAllChildren" />
+                Select all subconcepts -->
+                <button type="button" class="btn btn-danger" style="float: right"
+                  (click)="bokModal.hide(); checkClosedModals()">Finish</button>
+              </div>
+
               <div class="col-lg-6 col-sm-6">
-                <div class="row text-center mb-1">
+                <!--              <div class="row text-center mb-1">
                   <div class="col-md-8">
                     <div class="input-group">
                       <div class="input-group-prepend" dropdown>
@@ -981,7 +1035,7 @@
                   </div>
                   <div class="col-md-2" style="margin-right: 0;margin-left: auto;">
                     <button type="button" class="btn btn-danger" (click)="bokModal.hide()">Finish</button> </div>
-                </div>
+                </div> -->
                 <div id="bubbles">
                 </div>
               </div>
@@ -1049,7 +1103,46 @@
           selected {{bokConcepts2.length}} concepts, continue selecting and close BoK window when finished. </p>
 
         <button type="button" class="btn btn-primary" (click)="addBokKnowledge()"> Select </button>
-        <button type="button" class="btn btn-danger" (click)="bokModal.hide()">Finish</button>
+        <button type="button" class="btn btn-danger" (click)="bokModal.hide(); checkClosedModals()">Finish</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #customBokModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  id="customBokModal" aria-hidden="true">
+  <div class="modal-dialog modal-info modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Subconcepts included in {{customBokModalConcept}}</h4>
+        <button type="button" class="close" (click)="customBokModal.hide(); checkClosedModals()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Search Knowledge and skills card  [hidden]="!isDisplayBoK" -->
+        <div class="card card-accent-secondary">
+
+          <div class="card-body" style="background-color: #faf9f8">
+            <div class="row text-center">
+              <div class="col-sm-12">
+                <button *ngFor="let mk of subconceptsModal" type="button" class="btn btn-pill"
+                  [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                  <a *ngIf="isAbleToEditModal" (click)="removeCustomSubConcept(mk)"> <i class="fa fa-close"></i> </a>
+                  <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank">
+                    {{mk.name}} </a>
+                  <!--  <span *ngIf="mk.allChildren && mk.allChildren.length > 0">[+ {{mk.allChildren.length}}
+                    Subconcepts]</span> -->
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="customBokModal.hide(); checkClosedModals()">Close</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

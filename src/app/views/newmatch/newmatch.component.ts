@@ -167,6 +167,7 @@ export class NewmatchComponent implements OnInit {
   @ViewChild('textBoK') textBoK: ElementRef;
   @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;
   @ViewChild('bokModal') public bokModal: ModalDirective;
+  @ViewChild('customBokModal') public customBokModal: ModalDirective;
 
   selectedNodes = [];
   hasResults = false;
@@ -177,7 +178,13 @@ export class NewmatchComponent implements OnInit {
 
   customSelect = 0;
 
+  selectAllChildren = false;
+  allChildren = [];
   buttonClear = 0;
+
+  customBokModalConcept = '';
+  subconceptsModal = [];
+  isAbleToEditModal = false;
 
   constructor(
     private matchService: MatchService,
@@ -303,9 +310,9 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources1 = this.filteredByType1.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          it.description.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          it.orgName.toLowerCase().includes(this.searchText1.toLowerCase()) ||
-          (it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false)
+        it.description.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+        it.orgName.toLowerCase().includes(this.searchText1.toLowerCase()) ||
+        (it.division ? (it.division.toLowerCase().includes(this.searchText1.toLowerCase())) : false)
     );
   }
 
@@ -319,9 +326,9 @@ export class NewmatchComponent implements OnInit {
     this.filteredResources2 = this.filteredByType2.filter(
       it =>
         it.name.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          it.description.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          it.orgName.toLowerCase().includes(this.searchText2.toLowerCase()) ||
-          (it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false)
+        it.description.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+        it.orgName.toLowerCase().includes(this.searchText2.toLowerCase()) ||
+        (it.division ? (it.division.toLowerCase().includes(this.searchText2.toLowerCase())) : false)
     );
   }
 
@@ -372,7 +379,7 @@ export class NewmatchComponent implements OnInit {
     this.fields1 = this.getFieldsFromResource(res);
     this.transversalSkills1 = this.getTransversalSkillsFromResource(res);
     this.bokConcepts1.forEach(k => {
-      this.notMatchConcepts1.push(k.code);
+      this.notMatchConcepts1.push(k);
       this.conceptsName[k.code] = k.name;
     });
     this.notMatchSkills1 = this.skills1;
@@ -393,7 +400,7 @@ export class NewmatchComponent implements OnInit {
     this.fields2 = this.getFieldsFromResource(res);
     this.transversalSkills2 = this.getTransversalSkillsFromResource(res);
     this.bokConcepts2.forEach(k => {
-      this.notMatchConcepts2.push(k.code);
+      this.notMatchConcepts2.push(k);
       this.conceptsName[k.code] = k.name;
     });
     this.notMatchSkills2 = this.skills2;
@@ -430,12 +437,13 @@ export class NewmatchComponent implements OnInit {
               }
               const conceptsString = [];
               this.bokConcepts1.forEach(k => {
-                this.notMatchConcepts1.push(k.code);
+                this.notMatchConcepts1.push(k);
                 conceptsString.push(k.name);
               });
-              this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '', this.collectionOT,
+              this.resource1 = new Resource(null, url, this.currentUser ? this.currentUser._id : '',
+                this.saveOrg ? this.saveOrg._id : '', this.saveOrg ? this.saveOrg.name : '', '', this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
-                conceptsString, null, null, null, conceptsString , 3, null, 0);
+                conceptsString, null, null, null, conceptsString, 3, null, 0);
               // do the matching
               this.match();
               this.calculateMatchScore();
@@ -473,9 +481,10 @@ export class NewmatchComponent implements OnInit {
                 this.errorFile2 = true;
               }
               this.bokConcepts2.forEach(k => {
-                this.notMatchConcepts2.push(k.code);
+                this.notMatchConcepts2.push(k);
               });
-              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '' , this.collectionOT,
+              this.resource2 = new Resource(null, url, this.currentUser ? this.currentUser._id : '',
+                this.saveOrg ? this.saveOrg._id : '', this.saveOrg ? this.saveOrg.name : '', '', this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3, null, 0);
               this.match();
@@ -527,17 +536,23 @@ export class NewmatchComponent implements OnInit {
         if (rel[0][0] === '[') {
           const concept = rel[0].slice(1);
           if (codConcepts.indexOf(concept) === -1) {
-            concepts.push({ code: rel[0].slice(1), name: c });
+            let na = c;
+            if (rel[1].length < 2) {
+              na = c + '' + this.bokService.getConceptInfoByCode(concept).name;
+            }
+            concepts.push({ code: concept, name: na });
             codConcepts.push(rel[0].slice(1));
           }
         } else {
-          concepts.push({ code: rel[0], name: c });
+          // get names from service when not present
+          concepts.push({ code: rel[0], name: '[' + rel[0] + '] ' + this.bokService.getConceptInfoByCode(rel[0]).name });
           codConcepts.push(rel[0]);
         }
       });
     }
     return concepts;
   }
+
   getSkillsFromResource(res) {
     const skills = [];
     if (res.type === 0) {
@@ -599,35 +614,145 @@ export class NewmatchComponent implements OnInit {
       this.notMatchConcepts1 = [];
       this.notMatchConcepts2 = [];
       this.conceptsName = [];
+      const bok1Codes = [];
+      const bok2Codes = [];
+
+      // retrieve all codes
       this.bokConcepts1.forEach(bok1 => {
-        let found = false;
-        this.bokConcepts2.forEach(bok2 => {
-          if (bok1.code === bok2.code) {
-            this.commonBokConcepts.push(bok1.code);
-            this.conceptsName[bok1.code] = bok1.name;
-            found = true;
-          }
-        });
-        if (!found) {
-          this.notMatchConcepts1.push(bok1.code);
-          this.conceptsName[bok1.code] = bok1.name;
+        bok1Codes.push(bok1.code);
+        if (bok1.allChildren) {
+          bok1.allChildren.forEach(bok1Ch => {
+            bok1Codes.push(bok1Ch.code);
+          });
         }
       });
-      this.bokConcepts2.forEach(bok1 => {
-        let found = false;
-        this.bokConcepts1.forEach(bok2 => {
-          if (bok1.code === bok2.code) {
-            found = true;
-          }
-        });
-        if (!found) {
-          this.conceptsName[bok1.code] = bok1.name;
-          this.notMatchConcepts2.push(bok1.code);
+      this.bokConcepts2.forEach(bok2 => {
+        bok2Codes.push(bok2.code);
+        if (bok2.allChildren) {
+          bok2.allChildren.forEach(bok2Ch => {
+            bok2Codes.push(bok2Ch.code);
+          });
         }
       });
-      this.notMatchConcepts1.sort();
-      this.notMatchConcepts2.sort();
-      this.commonBokConcepts.sort();
+
+      // compare bok1
+      this.bokConcepts1.forEach(bok1 => {
+        if (bok1.allChildren && bok1.allChildren.length > 0) {
+          let foundAllCh = true;
+          const bok1Found = { code: bok1.code, name: bok1.name, allChildren: [] };
+          const bok1NotFound = { code: bok1.code, name: bok1.name, allChildren: [] };
+          bok1.allChildren.forEach(bok1Ch => {
+            if (bok2Codes.indexOf(bok1Ch.code) > -1) {
+              bok1Found.allChildren.push(bok1Ch);
+            } else {
+              bok1NotFound.allChildren.push(bok1Ch);
+              foundAllCh = false;
+            }
+          });
+          // all children found
+          if (foundAllCh) {
+            this.commonBokConcepts.push(bok1); // include children
+          } else {
+            // not all children found
+            if (bok1Found.allChildren.length > 0) {
+              this.commonBokConcepts.push(bok1Found);
+            }
+            if (bok1NotFound.allChildren.length > 0) {
+              this.notMatchConcepts1.push(bok1NotFound);
+            }
+          }
+        } else {
+          // no children included
+          if (bok2Codes.indexOf(bok1.code) > -1) {
+            this.commonBokConcepts.push(bok1);
+          } else {
+            this.notMatchConcepts1.push(bok1);
+          }
+        }
+      });
+
+      // compare bok2
+      this.bokConcepts2.forEach(bok2 => {
+        // concept is in bok2
+        if (bok2.allChildren && bok2.allChildren.length > 0) {
+          let foundAllCh2 = true;
+          const bok2Found = { code: bok2.code, name: bok2.name, allChildren: [] };
+          const bok2NotFound = { code: bok2.code, name: bok2.name, allChildren: [] };
+          bok2.allChildren.forEach(bok2Ch => {
+            if (bok1Codes.indexOf(bok2Ch.code) > -1) {
+              bok2Found.allChildren.push(bok2Ch);
+            } else {
+              bok2NotFound.allChildren.push(bok2Ch);
+              foundAllCh2 = false;
+            }
+          });
+          // all children found
+          if (foundAllCh2) {
+            this.commonBokConcepts.push(bok2); // include children
+          } else {
+            // not all children found
+            if (bok2Found.allChildren.length > 0) {
+              this.commonBokConcepts.push(bok2Found);
+            }
+            if (bok2NotFound.allChildren.length > 0) {
+              this.notMatchConcepts1.push(bok2NotFound);
+            }
+          }
+        } else {
+          // no children included
+          if (bok1Codes.indexOf(bok2.code) > -1) {
+            this.commonBokConcepts.push(bok2);
+          } else {
+            this.notMatchConcepts2.push(bok2);
+          }
+        }
+      });
+
+      const removeDuplicatesCommon = [];
+
+      // get all codes included in a concept
+      this.commonBokConcepts.forEach(bokCom => {
+        // bokCom.allCodes ? bokCom.allCodes.push(bokCom.code) : bokCom.allCodes = [];
+        bokCom.allCodes = [];
+        if (bokCom.allChildren) {
+          bokCom.allChildren.forEach(bokComCh => {
+            bokCom.allCodes.push(bokComCh.code);
+          });
+        }
+      });
+      let foundAllCh = true;
+      // check for duplicates in common
+      this.commonBokConcepts.forEach(bokCom => {
+        if (bokCom.allChildren && bokCom.allChildren.length === 0) {
+          // Alone concepts
+          removeDuplicatesCommon.push(bokCom);
+        } else {
+          this.commonBokConcepts.forEach(bokComB => {
+            if (bokCom.code !== bokComB.code) {
+              if (bokCom.allCodes.indexOf(bokComB.code) > -1) { // B concept is in bokCom
+                foundAllCh = true;
+                if (bokComB.allChildren && bokComB.allChildren.length === 0) {
+                  bokComB.allChildren.forEach(bokComBCh => {
+                    if (bokCom.allCodes.indexOf(bokComBCh.code) === -1) { // check all children of B concept
+                      foundAllCh = false;
+                    }
+                  });
+                }
+                if (foundAllCh) { // all children in bokComB are in BokCom
+                  removeDuplicatesCommon.push(bokCom);
+                }
+              }
+            }
+          });
+        }
+      });
+
+      this.commonBokConcepts = removeDuplicatesCommon;
+
+      this.commonBokConcepts.sort((a, b) => (a.code > b.code) ? 1 : -1);
+
+      this.notMatchConcepts1.sort((a, b) => (a.code > b.code) ? 1 : -1);
+      this.notMatchConcepts2.sort((a, b) => (a.code > b.code) ? 1 : -1);
     }
     this.commonSkills = [];
     if (this.skills1.length > 0 && this.skills2.length > 0) {
@@ -695,12 +820,12 @@ export class NewmatchComponent implements OnInit {
       const tempStats = {};
       let tempTotal = 0;
       this.commonBokConcepts.forEach(kn => {
-        let code = this.getParent(kn);
+        let code = this.getParent(kn.code);
         if (code === undefined) {
-          code = kn.slice(0, 2);
+          code = kn.code.slice(0, 2);
         }
         if (code === 'GIST') {
-          code = kn;
+          code = kn.code;
         }
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
         tempTotal++;
@@ -723,12 +848,12 @@ export class NewmatchComponent implements OnInit {
       const tempStats2 = {};
       let tempTotal2 = 0;
       this.notMatchConcepts1.forEach(nc => {
-        let code = this.getParent(nc);
+        let code = this.getParent(nc.code);
         if (code === undefined) {
-          code = nc.slice(0, 2);
+          code = nc.code.slice(0, 2);
         }
         if (code === 'GIST') {
-          code = nc;
+          code = nc.code;
         }
         tempStats2[code] !== undefined ? tempStats2[code]++ : tempStats2[code] = 1;
         tempTotal2++;
@@ -746,12 +871,12 @@ export class NewmatchComponent implements OnInit {
       const tempStats3 = {};
       let tempTotal3 = 0;
       this.notMatchConcepts2.forEach(nc => {
-        let code = this.getParent(nc);
+        let code = this.getParent(nc.code);
         if (code === undefined) {
-          code = nc.slice(0, 2);
+          code = nc.code.slice(0, 2);
         }
         if (code === 'GIST') {
-          code = nc;
+          code = nc.code;
         }
         tempStats3[code] !== undefined ? tempStats3[code]++ : tempStats3[code] = 1;
         tempTotal3++;
@@ -1041,7 +1166,7 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts.forEach(con => {
       if (con.code === concept) {
         parentNode = con;
-        while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
+        while (parentCode !== '' && parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
           parentNode = parentNode['parent'];
           parentCode = parentNode['parent']['code'];
         }
@@ -1050,6 +1175,7 @@ export class NewmatchComponent implements OnInit {
     res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
     return res;
   }
+
 
   getStatisticsNumberOfConcepts() {
     this.numberOfConcepts1 = this.getNumberOfConcepts(this.bokConcepts1);
@@ -1073,7 +1199,6 @@ export class NewmatchComponent implements OnInit {
         code: bokConcept, value: percentage2, numberCommon: numberCommonConcepts[bokConcept],
         numberCon: this.numberOfConcepts2[bokConcept]
       });
-
     });
   }
   getNumberOfConcepts(conceptsToAnalize) {
@@ -1087,9 +1212,25 @@ export class NewmatchComponent implements OnInit {
       } else {
         parent = this.getParent(bok1);
       }
-      if (this.kaCodes[parent] !== undefined) {
-        i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
-        numConcepts[parent] = i;
+      if (parent !== '') {
+        if (this.kaCodes[parent] !== undefined) {
+          i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+          numConcepts[parent] = i;
+        }
+        if (bok1.allChildren) {
+          bok1.allChildren.forEach(bok1Ch => {
+            //  let parent = '';
+            if (bok1Ch.code) {
+              parent = this.getParent(bok1Ch.code);
+            } else {
+              parent = this.getParent(bok1Ch);
+            }
+            if (this.kaCodes[parent] !== undefined) {
+              i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+              numConcepts[parent] = i;
+            }
+          });
+        }
       }
     });
     return numConcepts;
@@ -1189,43 +1330,64 @@ export class NewmatchComponent implements OnInit {
     this.limitSearchFrom = this.limitSearchFrom - 10;
   }
 
+
+  getNode(code) {
+    const arrayRes = this.allConcepts.filter(
+      it =>
+        it.code.toLowerCase() === code.toLowerCase()
+    );
+    if (arrayRes.length > 0) {
+      return arrayRes[0];
+    } else {
+      return null;
+    }
+  }
+
+  allDescendants(node) {
+    for (let i = 0; i < node.children.length; i++) {
+      const child = node.children[i];
+      this.allChildren.push({ code: node.children[i].code, name: '[' + node.children[i].code + '] ' + node.children[i].name });
+      this.allDescendants(child);
+    }
+  }
+
   addBokKnowledge() {
     this.getRelations();
     this.conceptsName = [];
 
+    const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+      .textContent;
+    const conceptId = concept.split(']')[0].substring(1);
+
+    this.allChildren = [];
+    if (this.selectAllChildren) {
+      const node = this.getNode(conceptId);
+      this.allDescendants(node);
+    }
+
     if (this.customSelect === 1) {
       this.notMatchConcepts1 = [];
-      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
-        .textContent;
-      const conceptId = concept.split(']')[0].substring(1);
-
-      this.bokConcepts1.push({ code: conceptId, name: concept });
+      this.bokConcepts1.push({ code: conceptId, name: concept, allChildren: this.allChildren });
+      // Adds all children to array of displayed concepts
+      /*   this.allChildren.forEach(child => {
+          this.bokConcepts1.push({ code: child.code, name: child.name });
+        }); */
       if (this.resource1 == null || this.resource1.name !== 'Custom selection') {
         this.resource1 = { name: 'Custom selection', concepts: [] };
       }
       this.resource1.concepts.push(concept);
 
-      this.bokConcepts1.forEach(k => {
-        this.notMatchConcepts1.push(k.code);
-        this.conceptsName[k.code] = k.name;
-      });
-
     } else {
       this.notMatchConcepts2 = [];
-      const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
-        .textContent;
-      const conceptId = concept.split(']')[0].substring(1);
-
-      this.bokConcepts2.push({ code: conceptId, name: concept });
+      this.bokConcepts2.push({ code: conceptId, name: concept, allChildren: this.allChildren });
+      // Adds all children to array of displayed concepts
+      /* this.allChildren.forEach(child => {
+        this.bokConcepts2.push({ code: child.code, name: child.name });
+      }); */
       if (this.resource2 == null || this.resource2.name !== 'Custom selection') {
         this.resource2 = { name: 'Custom selection', concepts: [] };
       }
       this.resource2.concepts.push(concept);
-
-      this.bokConcepts2.forEach(k => {
-        this.notMatchConcepts2.push(k.code);
-        this.conceptsName[k.code] = k.name;
-      });
     }
 
     this.match();
@@ -1310,6 +1472,24 @@ export class NewmatchComponent implements OnInit {
           res.score = 0;
         }
       });
+    }
+  }
+
+  loadCustomModal(concept, isAbletoEdit) {
+    this.customBokModalConcept = concept.name;
+    this.subconceptsModal = concept.allChildren;
+    this.isAbleToEditModal = isAbletoEdit;
+  }
+
+  removeCustomSubConcept(concept) {
+    const index = this.subconceptsModal.indexOf(concept);
+    this.subconceptsModal.splice(index, 1);
+  }
+
+  checkClosedModals() {
+    if (!this.bokModal.isShown && !this.customBokModal.isShown) {
+      const element = document.getElementsByTagName('body');
+      element[0].classList.remove('modal-open');
     }
   }
 
