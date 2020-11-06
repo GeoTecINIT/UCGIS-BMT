@@ -18,9 +18,11 @@ export class BokService {
   public relations: any[];
   public allRelation: Observable<any>;
   public allConcepts: Observable<any>;
-  public allConceptsCodes = [];
+
   public currentVNumber = null;
   public foundConcept = null;
+  public allConceptsCodes = [];
+
   BOK_PERMALINK_PREFIX = 'https://bok.eo4geo.eu/';
 
   constructor(private db: AngularFireDatabase) {
@@ -30,9 +32,9 @@ export class BokService {
     db.list('current/relations').valueChanges().subscribe(res => {
       this.relations = res;
     });
-    const itemRef = db.object('current/version');
-    itemRef.snapshotChanges().subscribe(action => {
-      this.currentVNumber = action.payload.val();
+
+    db.object('current/version').valueChanges().subscribe(action => {
+      this.currentVNumber = action;
       this.searchPreviousConceptsDB();
     });
   }
@@ -91,7 +93,7 @@ export class BokService {
         code: '',
         name: '',
         description: '',
-        permalink: this.BOK_PERMALINK_PREFIX
+        permalink: this.BOK_PERMALINK_PREFIX + code
       };
     }
   }
