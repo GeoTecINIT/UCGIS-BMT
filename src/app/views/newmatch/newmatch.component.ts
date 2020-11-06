@@ -720,7 +720,7 @@ export class NewmatchComponent implements OnInit {
         }
       });
 
-      const removeDuplicatesCommon = [];
+      /*const removeDuplicatesCommon = [];
 
       // get all codes included in a concept
       this.commonBokConcepts.forEach(bokCom => {
@@ -758,7 +758,15 @@ export class NewmatchComponent implements OnInit {
           });
         }
       });
-
+*/
+      const removeDuplicatesCommon = [];
+      const removeDuplicatesCommonCodes = [];
+      this.commonBokConcepts.forEach(bokCom => {
+        if (removeDuplicatesCommonCodes.indexOf(bokCom.code) === -1) {
+          removeDuplicatesCommon.push(bokCom);
+          removeDuplicatesCommonCodes.push(bokCom.code);
+        }
+      });
       this.commonBokConcepts = removeDuplicatesCommon;
 
       this.commonBokConcepts.sort((a, b) => (a.code > b.code) ? 1 : -1);
