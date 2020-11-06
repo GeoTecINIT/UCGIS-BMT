@@ -371,6 +371,7 @@ export class NewmatchComponent implements OnInit {
     this.getRelations();
     this.notMatchConcepts1 = [];
     this.conceptsName = [];
+    this.file1 = null;
     this.bokConcepts1 = this.getBokConceptsFromResource(res);
     this.skills1 = this.getSkillsFromResource(res);
     this.fields1 = this.getFieldsFromResource(res);
@@ -393,6 +394,7 @@ export class NewmatchComponent implements OnInit {
     this.getRelations();
     this.notMatchConcepts2 = [];
     this.conceptsName = [];
+    this.file2 = null;
     this.bokConcepts2 = this.getBokConceptsFromResource(res);
     this.skills2 = this.getSkillsFromResource(res);
     this.fields2 = this.getFieldsFromResource(res);
@@ -438,7 +440,8 @@ export class NewmatchComponent implements OnInit {
                 this.notMatchConcepts1.push(k.code);
                 conceptsString.push(k.name);
               });
-              this.resource1 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '', this.collectionOT,
+              this.resource1 = new Resource(null, url, this.currentUser ? this.currentUser._id : '',
+                this.saveOrg ? this.saveOrg._id : '', this.saveOrg ? this.saveOrg.name : '', '', this.collectionOT,
                 this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
                 conceptsString, null, null, null, conceptsString , 3, null, 0);
               // do the matching
@@ -480,7 +483,8 @@ export class NewmatchComponent implements OnInit {
               this.bokConcepts2.forEach(k => {
                 this.notMatchConcepts2.push(k.code);
               });
-              this.resource2 = new Resource(null, url, this.currentUser._id, this.saveOrg._id, this.saveOrg.name, '' , this.collectionOT,
+              this.resource2 = new Resource(null, url, this.currentUser ? this.currentUser._id : '',
+                this.saveOrg ? this.saveOrg._id : '', this.saveOrg ? this.saveOrg.name : '', '', this.collectionOT,
                 this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
                 this.bokConcepts2, null, null, null, null, 3, null, 0);
               this.match();
@@ -533,11 +537,16 @@ export class NewmatchComponent implements OnInit {
           if (rel[0][0] === '[') {
             const concept = rel[0].slice(1);
             if (codConcepts.indexOf(concept) === -1) {
-              concepts.push({ code: rel[0].slice(1), name: c });
+              let na = c;
+              if (rel[1].length < 2) {
+                na = rel[0] + ' ' + this.bokService.getConceptInfoByCode(rel[0]).name;
+              }
+              concepts.push({ code: concept, name: na });
               codConcepts.push(rel[0].slice(1));
             }
           } else {
-            concepts.push({ code: rel[0], name: c });
+            // get names from service when not present
+            concepts.push({ code: rel[0], name: '[' + rel[0] + '] ' + this.bokService.getConceptInfoByCode(rel[0]).name });
             codConcepts.push(rel[0]);
           }
         } else {
@@ -1053,9 +1062,13 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts.forEach(con => {
       if (con.code === concept) {
         parentNode = con;
-        while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
-          parentNode = parentNode['parent'];
-          parentCode = parentNode['parent']['code'];
+        if ( parentNode['parent'].length > 1 ) {
+          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
+            parentNode = parentNode['parent'];
+            parentCode = parentNode['parent']['code'];
+          }
+        } else {
+          parentNode['code'] = con.code.slice(0, 2);
         }
       }
     });

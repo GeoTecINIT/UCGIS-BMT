@@ -284,7 +284,8 @@
                   class="row mb-2">
                   <div class="col-md-12 text-center">
                     <p>You have selected {{bokConcepts1.length}} concept(s)</p>
-                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="buttonClear = 1; clearCustomSelection1()">Clear
+                    <button class="btn btn-pill btn-outline-danger mr-2"
+                            (click)=" buttonClear = 1; clearCustomSelection1()">Clear
                       custom
                       selection</button>
                   </div>
@@ -513,7 +514,8 @@
                   class="row mb-2">
                   <div class="col-md-12 text-center">
                     <p>You have selected {{bokConcepts2.length}} concept(s)</p>
-                    <button class="btn btn-pill btn-outline-danger mr-2" (click)="buttonClear = 2; clearCustomSelection2()">Clear
+                    <button class="btn btn-pill btn-outline-danger mr-2"
+                            (click)="buttonClear = 2; clearCustomSelection2()">Clear
                       custom
                       selection</button>
                   </div>
@@ -561,19 +563,25 @@
               </div>
               <div class="row card-body" style="background-color: #faf9f8"
                 *ngIf="(resource1 !== null && resource1.eqf !==null  )|| (resource2 !== null &&  resource2.eqf!==null )">
-                <div class="col-md-6 text-left ma" *ngIf="(resource1 !== null && resource1.eqf  )">
+                <div class="col-md-6 text-center ma" *ngIf="(resource1 !== null && resource1.eqf  )">
                   {{resource1.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                     placement="left">
                     EQF {{resource1.eqf }}
                   </button>
                 </div>
-                <div class="col-md-6 text-left ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
-                  {{resource2.name}}
+                <div class="col-md-6 text-center ma" *ngIf="(resource1 == null || !resource1.eqf  )">
+                  -
+                </div>
+                <div class="col-md-6 text-center ma" *ngIf="(resource2 !== null &&  resource2.eqf)">
+                {{resource2.name}}
                   <button type="button" class="btn btn-default btn-secondary" style="pointer-events: none;"
                     placement="left">
                     EQF {{resource2.eqf }}
                   </button>
+                </div>
+                <div class="col-md-6 text-center ma" *ngIf="(resource2 == null || !resource2.eqf  )">
+                  -
                 </div>
               </div>
             </div>
