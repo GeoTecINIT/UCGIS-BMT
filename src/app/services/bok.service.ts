@@ -35,7 +35,7 @@ export class BokService {
       .subscribe(data => {
         this.concepts = this.parseConcepts(data['current']['concepts']);
         this.relations = data['current']['relations'];
-        this.currentVNumber = ['current']['version'];
+        this.currentVNumber = data['current']['version'];
         this.searchPreviousConceptsDB(data);
       });
 
