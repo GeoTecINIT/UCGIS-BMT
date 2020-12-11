@@ -55,7 +55,7 @@ export class ChartNotCommon1Directive implements OnInit {
       const tempStats2 = {};
       let tempTotal2 = 0;
       this.selectedMatch.notMatchConcepts1.forEach( nc => {
-        const code = nc.slice(0, 2);
+        const code = nc.code.slice(0, 2);
         tempStats2[code] !== undefined ? tempStats2[code]++ : tempStats2[code] = 1;
         tempTotal2++;
       });
