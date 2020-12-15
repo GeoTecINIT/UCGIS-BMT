@@ -56,7 +56,7 @@ export class ChartConceptsDirective implements OnInit {
       const tempStats = {};
       let tempTotal = 0;
       this.selectedMatch.commonConcepts.forEach(kn => {
-        const code = kn.slice(0, 2);
+        const code = kn.code.slice(0, 2);
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
         tempTotal++;
       });

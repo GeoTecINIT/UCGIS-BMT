@@ -154,9 +154,9 @@
                   <div class="col-md-8 text-left ma">
                       <h6 *ngIf="selectedMatch.commonConcepts.length == 0 "> It seems no BoK common concepts have been found </h6>
                     <button *ngFor="let mk of selectedMatch.commonConcepts" type="button" class="btn btn-pill"
-                      [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                      <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
-                        {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                      [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                      <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank"> {{ mk.code }} -
+                        {{this.bokService.getConceptInfoByCode(mk.code).name}} </a>
                     </button>
                   </div>
                   <div class="col-md-4 ma">
@@ -230,9 +230,9 @@
                         <div class="card-body" style="background-color: #faf9f8">
                           <div class="row text-center ma" *ngIf="selectedMatch.notMatchConcepts1.length > 0">
                               <button *ngFor="let mk of selectedMatch.notMatchConcepts1" type="button" class="btn btn-pill"
-                                [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                                <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
-                                  {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                                [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                                <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank"> {{ mk.code }} -
+                                  {{this.bokService.getConceptInfoByCode(mk.code).name}} </a>
                               </button>
                           </div>
                          <div class="row card-body" style="background-color: #faf9f8; margin-left: 5px;">
@@ -252,9 +252,9 @@
                         <div class="card-body" style="background-color: #faf9f8">
                           <div class="row text-center ma" *ngIf="selectedMatch.notMatchConcepts2.length > 0">
                               <button *ngFor="let mk of selectedMatch.notMatchConcepts2" type="button" class="btn btn-pill"
-                                [ngClass]="'bok-' + ( mk | slice:0:2 )">
-                                <a href="{{this.bokService.getConceptInfoByCode(mk).permalink}}" target="_blank"> {{ mk }} -
-                                  {{this.bokService.getConceptInfoByCode(mk).name}} </a>
+                                [ngClass]="'bok-' + ( mk.code | slice:0:2 )">
+                                <a href="{{this.bokService.getConceptInfoByCode(mk.code).permalink}}" target="_blank"> {{ mk.code }} -
+                                  {{this.bokService.getConceptInfoByCode(mk.code).name}} </a>
                               </button>
                           </div>
                           <div class="row card-body" style="background-color: #faf9f8; margin-left: 5px;">

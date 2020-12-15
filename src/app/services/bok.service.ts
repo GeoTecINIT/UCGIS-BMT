@@ -53,7 +53,7 @@ export class BokService {
   }
 
   parseConcepts(dbRes) {
-    let concepts = [];
+    const concepts = [];
     if (dbRes && dbRes.length > 0) {
       dbRes.forEach(concept => {
         const c = {
@@ -117,21 +117,15 @@ export class BokService {
     return this.relations;
   }
   getRelationsPrent(res, concepts) {
-    const relations = [];
-    concepts.forEach(con => {
-      const c = {
-        code: con.code,
-        name: con.name,
-        description: con.description,
-        children: [],
-        parent: []
-      };
-      relations.push(c);
-    });
+    const relations = concepts;
     res.forEach(rel => {
       if (rel.name === 'is subconcept of') {
-        relations[rel.target].children.push(relations[rel.source]);
-        relations[rel.source].parent = relations[rel.target];
+        if ( relations[rel.target]['children']) {
+          relations[rel.target].children.push(relations[rel.source]);
+        } else {
+          relations[rel.target]['children'] = [];
+        }
+        relations[rel.source]['parent'] = relations[rel.target];
       }
     });
     return relations;
