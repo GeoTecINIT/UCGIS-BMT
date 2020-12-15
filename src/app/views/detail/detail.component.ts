@@ -90,7 +90,7 @@ export class DetailComponent implements OnInit {
     setTimeout(() => {
       this.getRelations();
       this.getStatisticsNumberOfConcepts();
-    }, 4000);
+    }, 5000);
   }
   getMatchId(): void {
     const _id = this.route.snapshot.paramMap.get('name');
@@ -237,7 +237,9 @@ export class DetailComponent implements OnInit {
               parentCode = 'GIST';
             }
           }
-        }  else {
+        }  else if ( con.code === 'GIST' ) {
+          parentNode['code'] = 'GIST';
+        } else {
           parentNode['code'] = con.code.slice(0, 2);
         }
       }
