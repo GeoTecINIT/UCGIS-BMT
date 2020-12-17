@@ -1188,12 +1188,16 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts.forEach(con => {
       if (con.code === concept) {
         parentNode = con;
-        if ( parentNode['parent'].length > 1 ) {
-          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
-            parentNode = parentNode['parent'];
-            parentCode = parentNode['parent']['code'];
+        if ( parentNode['parent'] && parentNode['parent']['code'] && parentNode['parent']['code'] !== 'GIST') {
+          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST' ) {
+            if ( parentNode['parent']['parent'] ) {
+              parentNode = parentNode['parent'];
+              parentCode = parentNode['parent']['code'];
+            } else {
+              parentCode = 'GIST';
+            }
           }
-        } else {
+        }  else {
           parentNode['code'] = con.code.slice(0, 2);
         }
       }

@@ -92,21 +92,36 @@ export class ResourceService {
           r.type = 0;
           r.isPublic = r.levelPublic;
           r.description = r.description.slice(0, 100) + '[...]'; // truncate description
+          if ( r.concepts && r.concepts.length > 0 ) {
+            const cptTemp = [];
+            r.concepts.forEach( cpt => {
+              if (cptTemp.indexOf(cpt) === -1) {
+                cptTemp.push(cpt);
+              }
+            });
+            r.concepts = cptTemp;
+          }
           r.concepts = r.concepts && r.concepts.length > 0 ? r.concepts : [];
           if (r.children && r.children.length > 0) { // modules
             r.children.forEach(childM => {
               childM.concepts.forEach(c => {
-                r.concepts.push(c);
+                if (r.concepts.indexOf(c) === -1) {
+                  r.concepts.push(c);
+                }
               });
               if (childM.children && childM.children.length > 0) { // courses
                 childM.children.forEach(childC => {
                   childC.concepts.forEach(c => {
-                    r.concepts.push(c);
+                    if (r.concepts.indexOf(c) === -1) {
+                      r.concepts.push(c);
+                    }
                   });
                   if (childC.children && childC.children.length > 0) { // lectures
                     childC.children.forEach(childL => {
                       childL.concepts.forEach(c => {
-                        r.concepts.push(c);
+                        if (r.concepts.indexOf(c) === -1) {
+                          r.concepts.push(c);
+                        }
                       });
                     });
                   }

@@ -90,7 +90,7 @@ export class DetailComponent implements OnInit {
     setTimeout(() => {
       this.getRelations();
       this.getStatisticsNumberOfConcepts();
-    }, 2000);
+    }, 5000);
   }
   getMatchId(): void {
     const _id = this.route.snapshot.paramMap.get('name');
@@ -103,7 +103,7 @@ export class DetailComponent implements OnInit {
         this.selectedMatch = profile;
         this.skillsNotMatch1 = [];
         this.skillsNotMatch2 = [];
-        if (this.selectedMatch.resource1.skills.length > 0 ) {
+        if (this.selectedMatch.resource1.skills && this.selectedMatch.resource1.skills.length > 0 ) {
           this.selectedMatch.resource1.skills.forEach(bok1 => {
             if (this.selectedMatch.resource2.skills && this.selectedMatch.resource2.skills.indexOf(bok1) !== -1) {
               this.skillsMatch.push(bok1);
@@ -225,12 +225,22 @@ export class DetailComponent implements OnInit {
     let parentCode = '';
     let parentNode = [];
     let res = '';
-    this.allConcepts.forEach( con => {
-      if ( con.code === concept ) {
+    this.allConcepts.forEach(con => {
+      if (con.code === concept) {
         parentNode = con;
-        while ( parentCode !== 'GIST' && parentNode['code'] !== 'GIST' ) {
-          parentNode = parentNode['parent'];
-          parentCode = parentNode['parent']['code'];
+        if ( parentNode['parent'] && parentNode['parent']['code'] && parentNode['parent']['code'] !== 'GIST') {
+          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST' ) {
+            if ( parentNode['parent']['parent'] ) {
+              parentNode = parentNode['parent'];
+              parentCode = parentNode['parent']['code'];
+            } else {
+              parentCode = 'GIST';
+            }
+          }
+        }  else if ( con.code === 'GIST' ) {
+          parentNode['code'] = 'GIST';
+        } else {
+          parentNode['code'] = con.code.slice(0, 2);
         }
       }
     });
@@ -262,18 +272,30 @@ export class DetailComponent implements OnInit {
   getNumberOfConcepts( conceptsToAnalize ) {
     const numConcepts = [];
     let i = 0;
-
     conceptsToAnalize.forEach(bok1 => {
       let parent = '';
-      const conc = bok1.split(']');
-      if ( conc[0][0] === '[' ) {
-        parent = this.getParent(conc[0].slice(1));
+      if ( typeof  bok1 === 'string') {
+        const conc = bok1.split(']');
+        if ( conc[0][0] === '[' ) {
+          parent = this.getParent(conc[0].slice(1));
+        } else {
+          parent = this.getParent(bok1);
+        }
+        if ( this.kaCodes[parent] !== undefined) {
+          i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+          numConcepts[parent] = i ;
+        }
       } else {
-        parent = this.getParent(bok1);
-      }
-      if ( this.kaCodes[parent] !== undefined) {
-        i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
-        numConcepts[parent] = i ;
+        const conc = bok1.code.split(']');
+        if ( conc[0][0] === '[' ) {
+          parent = this.getParent(conc[0].slice(1));
+        } else {
+          parent = this.getParent(bok1.code);
+        }
+        if ( this.kaCodes[parent] !== undefined) {
+          i = numConcepts[parent] !== undefined ? numConcepts[parent] + 1 : 1;
+          numConcepts[parent] = i ;
+        }
       }
     });
     return numConcepts;
