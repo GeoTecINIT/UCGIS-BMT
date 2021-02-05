@@ -29,7 +29,7 @@ export class ResourceService {
   public traininMaterial = [];
   constructor(db: AngularFirestore,  public bokService: BokService, private http: HttpClient) {
     this.db = db;
-    // this.getTrainingMaterials();
+    this.getTrainingMaterials();
     this.getResources();
   }
 
@@ -37,7 +37,7 @@ export class ResourceService {
     this.allResources = [];
     this.publicResources = [];
     // get Training Materials
-    /*const tmSubs = this.db
+    const tmSubs = this.db
       .collection<Resource>(collectionTM)
       .valueChanges().subscribe(rs => {
         rs.forEach(r => {
@@ -54,7 +54,7 @@ export class ResourceService {
         });
         tmSubs.unsubscribe();
         this.sortedByName();
-      });*/
+      });
     // get Job Offers
     const joSubs = this.db
       .collection<Resource>(collectionJO)
