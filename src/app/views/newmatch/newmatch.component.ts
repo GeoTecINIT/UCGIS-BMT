@@ -15,7 +15,8 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
-import * as pdfjs from 'pdfjs-dist';
+import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
+import { pdfjsworker } from 'pdfjs-dist/es5/build/pdf.worker.entry';
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
 import * as bok from '@eo4geo/bok-dataviz';
@@ -419,6 +420,7 @@ export class NewmatchComponent implements OnInit {
   }
 
   uploadFile1(file) {
+    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsworker;
     const filePath = 'other/custom-' + encodeURI(file.name);
     // upload file to firebase storage
     const task = this.storage.upload(filePath, file);
@@ -432,7 +434,7 @@ export class NewmatchComponent implements OnInit {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
           // get pdf document from url
-          pdfjs.getDocument(url).then(pdfDoc_ => {
+          pdfjs.getDocument(url).promise.then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             // get metadata from pdf document
             pdfDoc.getMetadata().then(metadataObject => {
