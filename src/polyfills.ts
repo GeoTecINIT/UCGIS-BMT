@@ -70,6 +70,11 @@ import 'mutationobserver-shim';
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
  */
+
+
+import 'pdfjs-dist/es5/build/pdf';
+// import 'pdfjs-dist/es5/build/pdf.worker.entry'
+
 import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 

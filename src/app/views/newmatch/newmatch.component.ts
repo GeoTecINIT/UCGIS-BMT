@@ -471,6 +471,7 @@ export class NewmatchComponent implements OnInit {
   }
 
   uploadFile2(file) {
+    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsworker;
     const filePath = 'other/custom-' + encodeURI(file.name);
     const task = this.storage.upload(filePath, file);
 
@@ -480,7 +481,7 @@ export class NewmatchComponent implements OnInit {
       finalize(() => {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
-          pdfjs.getDocument(url).then(pdfDoc_ => {
+          pdfjs.getDocument(url).promise.then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             pdfDoc.getMetadata().then(metadataObject => {
               this.meta2 = metadataObject;
