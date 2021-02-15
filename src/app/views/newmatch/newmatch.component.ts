@@ -15,8 +15,8 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
-import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
-import { pdfjsworker } from 'pdfjs-dist/es5/build/pdf.worker.entry';
+import * as pdfjs from 'pdfjs-dist/build/pdf';
+import { pdfjsworker } from 'pdfjs-dist/build/pdf.worker.entry';
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
 import * as bok from '@eo4geo/bok-dataviz';
@@ -434,7 +434,7 @@ export class NewmatchComponent implements OnInit {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
           // get pdf document from url
-          pdfjs.getDocument(url).promise.then(pdfDoc_ => {
+          pdfjs.getDocument(url).then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             // get metadata from pdf document
             pdfDoc.getMetadata().then(metadataObject => {
@@ -481,7 +481,7 @@ export class NewmatchComponent implements OnInit {
       finalize(() => {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
-          pdfjs.getDocument(url).promise.then(pdfDoc_ => {
+          pdfjs.getDocument(url).then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             pdfDoc.getMetadata().then(metadataObject => {
               this.meta2 = metadataObject;

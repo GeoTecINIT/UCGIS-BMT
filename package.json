@@ -80,7 +80,9 @@
     "tslint": "^5.14.0",
     "typescript": "~3.2.4",
     "acorn": "^6.0.0",
-    "acorn-dynamic-import": "^4.0.0"
+    "acorn-dynamic-import": "^4.0.0",
+    "pdfjs-dist": "^2.3.200",
+    "zone.js": "^0.8.29"
   },
   "engines": {
     "node": ">= 8.9.4",
