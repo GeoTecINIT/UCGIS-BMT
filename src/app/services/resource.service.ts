@@ -298,7 +298,7 @@ export class ResourceService {
           dbIns
             .collection(collectionTM)
             .doc(tm._id)
-            .set(tm);
+            .set(Object.assign({}, tm));
         }
       });
       this.getResources();
