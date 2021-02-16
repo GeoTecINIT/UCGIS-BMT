@@ -114,7 +114,7 @@
                   </span>
                   <input class="form-control" id="input2-group1" type="search" name="input2-group1"
                     placeholder="Search EO4GEO resource" autocomplete="search" [(ngModel)]="searchText1"
-                    (keyup)="filter1()" />
+                    (keyup)="filter1()" (search)="filter1()" />
                 </div>
 
                 <div *ngIf="filteredResources1 != null && filteredResources1.length == 0 " class="col-md-12">
@@ -344,7 +344,7 @@
                   </span>
                   <input class="form-control" id="input2-group1" type="search" name="input2-group1"
                     placeholder="Search EO4GEO resource" autocomplete="search" [(ngModel)]="searchText2"
-                    (keyup)="filter2()" />
+                    (keyup)="filter2()" (search)="filter2()" />
                 </div>
 
                 <div *ngIf="filteredResources2 != null && filteredResources2.length == 0 " class="col-md-12">
