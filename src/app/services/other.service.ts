@@ -24,7 +24,7 @@ export class OtherService {
     this.db
       .collection(collection)
       .doc(id)
-      .set(newMatch);
+      .set(Object.assign({}, newMatch));
   }
 
   removeOther(otherId) {

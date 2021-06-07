@@ -36,7 +36,7 @@ export class MatchService {
     this.db
       .collection(collection)
       .doc(id)
-      .set(newMatch);
+      .set(Object.assign({}, newMatch));
   }
 
   removeMatch(matchId: string) {
