@@ -15,8 +15,8 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
-import * as pdfjs from 'pdfjs-dist/build/pdf';
-import { pdfjsworker } from 'pdfjs-dist/build/pdf.worker.entry';
+import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
+import { pdfjsworker } from 'pdfjs-dist/es5/build/pdf.worker.entry';
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
 import * as bok from '@eo4geo/bok-dataviz';
@@ -234,8 +234,8 @@ export class NewmatchComponent implements OnInit {
     });
     // sort resources by name
     // this.resourceService.allResources.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
-      this.filteredResources1 = this.resourceService.publicResources;
-      this.filteredResources2 = this.resourceService.publicResources;
+    this.filteredResources1 = this.resourceService.publicResources;
+    this.filteredResources2 = this.resourceService.publicResources;
 
   }
 
@@ -434,7 +434,9 @@ export class NewmatchComponent implements OnInit {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
           // get pdf document from url
-          pdfjs.getDocument(url).then(pdfDoc_ => {
+          const loadingTask = pdfjs.getDocument(url);
+          loadingTask.promise.then(pdfDoc_ => {
+            // pdfjs.getDocument(url).then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             // get metadata from pdf document
             pdfDoc.getMetadata().then(metadataObject => {
@@ -481,7 +483,9 @@ export class NewmatchComponent implements OnInit {
       finalize(() => {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
-          pdfjs.getDocument(url).then(pdfDoc_ => {
+         // pdfjs.getDocument(url).then(pdfDoc_ => {
+            const loadingTask = pdfjs.getDocument(url);
+            loadingTask.promise.then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             pdfDoc.getMetadata().then(metadataObject => {
               this.meta2 = metadataObject;
@@ -543,7 +547,7 @@ export class NewmatchComponent implements OnInit {
     if (res && res.concepts && res.concepts.length > 0) {
       res.concepts.forEach(c => {
         const rel = c.split(']');
-        if ( rel.length > 1 ) {
+        if (rel.length > 1) {
           if (rel[0][0] === '[') {
             const concept = rel[0].slice(1);
             if (codConcepts.indexOf(concept) === -1) {
@@ -887,7 +891,7 @@ export class NewmatchComponent implements OnInit {
           nameKA = k + ' - ' + this.kaCodes[k];
         } else {
           const nameConcept = this.conceptsName[k];
-          if ( nameConcept ) {
+          if (nameConcept) {
             nameKA = k + ' - ' + nameConcept.split(']')[1];
           }
         }
@@ -1191,21 +1195,21 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts.forEach(con => {
       if (con.code === concept) {
         parentNode = con;
-        if ( parentNode['parent'] && parentNode['parent']['code'] && parentNode['parent']['code'] !== 'GIST') {
-          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST' ) {
-            if ( parentNode['parent']['parent'] ) {
+        if (parentNode['parent'] && parentNode['parent']['code'] && parentNode['parent']['code'] !== 'GIST') {
+          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
+            if (parentNode['parent']['parent']) {
               parentNode = parentNode['parent'];
               parentCode = parentNode['parent']['code'];
             } else {
               parentCode = 'GIST';
             }
           }
-        }  else {
+        } else {
           parentNode['code'] = con.code.slice(0, 2);
         }
       }
     });
-    if ( parentNode !== undefined ) {
+    if (parentNode !== undefined) {
       res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
     }
     return res;
@@ -1511,17 +1515,17 @@ export class NewmatchComponent implements OnInit {
         }
       });
     }
-    tempfilter1.forEach( res => {
+    tempfilter1.forEach(res => {
       this.filteredResources1.push(res);
     });
-    if ( !this.sorted || this.sortedBy2 === 'score') {
-      this.filteredResources2.sort( (a , b) => b.score - a.score );
+    if (!this.sorted || this.sortedBy2 === 'score') {
+      this.filteredResources2.sort((a, b) => b.score - a.score);
       this.sortedBy2 = 'score';
       this.sortScoAsc2 = false;
     }
   }
 
-  cleanSelection2 () {
+  cleanSelection2() {
     this.resource2 = null;
     this.bokConcepts2 = [];
     this.skills2 = [];
