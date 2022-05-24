@@ -420,7 +420,8 @@ export class NewmatchComponent implements OnInit {
   }
 
   uploadFile1(file) {
-    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsworker;
+    //pdfjs.GlobalWorkerOptions.workerSrc = pdfjsworker;
+    pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
     const filePath = 'other/custom-' + encodeURI(file.name);
     // upload file to firebase storage
     const task = this.storage.upload(filePath, file);
@@ -442,6 +443,7 @@ export class NewmatchComponent implements OnInit {
             pdfDoc.getMetadata().then(metadataObject => {
               this.meta1 = metadataObject;
               // save in bokconcepts the concetps from pdf metadata
+              const title = this.getTitle(this.meta1);
               this.bokConcepts1 = this.getBokConceptsFromMeta(this.meta1);
               if (this.bokConcepts1.length === 0) {
                 this.errorFile1 = true;
@@ -453,7 +455,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource1 = new Resource(null, url, this.currentUser ? this.currentUser._id : '',
                 this.saveOrg ? this.saveOrg._id : '', this.saveOrg ? this.saveOrg.name : '', '', this.collectionOT,
-                this.collectionOT, true, true, this.meta1.info['Title'], this.meta1.info['Title'], '',
+                this.collectionOT, true, true, title ? title : 'Not title', title ? title : 'Not title', '',
                 conceptsString, null, null, null, conceptsString, 3, null, 0);
               // do the matching
               this.match();
@@ -473,7 +475,8 @@ export class NewmatchComponent implements OnInit {
   }
 
   uploadFile2(file) {
-    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsworker;
+    pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+    //pdfjs.GlobalWorkerOptions.workerSrc = pdfjsworker;
     const filePath = 'other/custom-' + encodeURI(file.name);
     const task = this.storage.upload(filePath, file);
 
@@ -490,6 +493,7 @@ export class NewmatchComponent implements OnInit {
             pdfDoc.getMetadata().then(metadataObject => {
               this.meta2 = metadataObject;
               console.log(this.meta2); // Metadata object here
+              const title = this.getTitle(this.meta2);
               this.bokConcepts2 = this.getBokConceptsFromMeta(this.meta2);
               if (this.bokConcepts2.length === 0) {
                 this.errorFile2 = true;
@@ -499,7 +503,7 @@ export class NewmatchComponent implements OnInit {
               });
               this.resource2 = new Resource(null, url, this.currentUser ? this.currentUser._id : '',
                 this.saveOrg ? this.saveOrg._id : '', this.saveOrg ? this.saveOrg.name : '', '', this.collectionOT,
-                this.collectionOT, true, true, this.meta2.info['Title'], this.meta2.info['Title'], '',
+                this.collectionOT, true, true, title ? title : 'Not title', title ? title : 'Not title', '',
                 this.bokConcepts2, null, null, null, null, 3, null, 0);
               this.match();
             }).catch(function (err) {
@@ -517,6 +521,20 @@ export class NewmatchComponent implements OnInit {
   }
 
 
+  getTitle(meta) {
+    let title = '';
+    // concepts are in Subject metadata
+    if (meta && meta.info && meta.info.Subject) {
+      const rdf = meta.info.Subject.split(';');
+      rdf.forEach(rdfEl => {
+        if ( rdfEl.indexOf('title') >= 0) {
+          const rel = rdfEl.split('dc:title ');
+          title = rel[1].replace('.pdf', '').replace('"', '').replace('"', '');
+        }
+      });
+    }
+    return title;
+  }
   getBokConceptsFromMeta(meta) {
     const concepts = [];
     // concepts are in Subject metadata

@@ -33,6 +33,8 @@ export class MatchService {
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
     newMatch.updatedAt = timestamp;
     newMatch.createdAt = timestamp;
+    newMatch.resource1 =  Object.assign({}, newMatch.resource1);
+    newMatch.resource2 =  Object.assign({}, newMatch.resource2);
     this.db
       .collection(collection)
       .doc(id)

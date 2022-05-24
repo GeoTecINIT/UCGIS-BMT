@@ -172,7 +172,7 @@ export class ResourceService {
           r.url = r.url;
           r.division = r.division ? r.division : '';
           r.type = 3;
-          r.description = r.description.slice(0, 100) + '[...]'; // truncate description
+          r.description = r.description ?  r.description.slice(0, 100) + '[...]' : ''; // truncate description
           this.allResources.push(r);
           if (r.isPublic) {
             this.publicResources.push(r);
