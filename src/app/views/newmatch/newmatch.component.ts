@@ -16,10 +16,12 @@ import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
 import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
-import { pdfjsworker } from 'pdfjs-dist/es5/build/pdf.worker.entry';
+/* import { pdfjsworker } from 'pdfjs-dist/build/pdf.worker.entry'; */
+/* import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
+import { pdfjsworker } from 'pdfjs-dist/es5/build/pdf.worker.entry'; */
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
-import * as bok from '@eo4geo/bok-dataviz';
+import * as bok from '@ucgis/find-in-bok-dataviz-tools';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 
@@ -167,8 +169,8 @@ export class NewmatchComponent implements OnInit {
   sortedBy2 = 'name';
   bokResources = false;
 
-  @ViewChild('textBoK') textBoK: ElementRef;
-  @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;
+  @ViewChild('textInfo') textInfo: ElementRef;
+  /*   @ViewChild('graphTreeDiv') public graphTreeDiv: ElementRef;*/
   @ViewChild('bokModal') public bokModal: ModalDirective;
   @ViewChild('customBokModal') public customBokModal: ModalDirective;
 
@@ -177,7 +179,7 @@ export class NewmatchComponent implements OnInit {
   limitSearchFrom = 0;
   limitSearchTo = 10;
   searchInputField = '';
-  currentConcept = 'GIST';
+  currentConcept = 'UCGIS';
 
   customSelect = 0;
 
@@ -241,7 +243,7 @@ export class NewmatchComponent implements OnInit {
 
   ngOnInit() {
     this.getMode();
-    bok.visualizeBOKData('#bubbles', '#textBoK');
+    bok.visualizeBOKData('https://ucgis-bok-default-rtdb.firebaseio.com/', 'current');
   }
 
   saveMatch() {
@@ -486,9 +488,9 @@ export class NewmatchComponent implements OnInit {
       finalize(() => {
         const ref = this.storage.ref(filePath);
         ref.getDownloadURL().subscribe(url => {
-         // pdfjs.getDocument(url).then(pdfDoc_ => {
-            const loadingTask = pdfjs.getDocument(url);
-            loadingTask.promise.then(pdfDoc_ => {
+          // pdfjs.getDocument(url).then(pdfDoc_ => {
+          const loadingTask = pdfjs.getDocument(url);
+          loadingTask.promise.then(pdfDoc_ => {
             const pdfDoc = pdfDoc_;
             pdfDoc.getMetadata().then(metadataObject => {
               this.meta2 = metadataObject;
@@ -527,7 +529,7 @@ export class NewmatchComponent implements OnInit {
     if (meta && meta.info && meta.info.Subject) {
       const rdf = meta.info.Subject.split(';');
       rdf.forEach(rdfEl => {
-        if ( rdfEl.indexOf('title') >= 0) {
+        if (rdfEl.indexOf('title') >= 0) {
           const rel = rdfEl.split('dc:title ');
           title = rel[1].replace('.pdf', '').replace('"', '').replace('"', '');
         }
@@ -869,7 +871,7 @@ export class NewmatchComponent implements OnInit {
         if (code === undefined) {
           code = kn.code.slice(0, 2);
         }
-        if (code === 'GIST') {
+        if (code === 'UCGIS') {
           code = kn.code;
         }
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
@@ -897,7 +899,7 @@ export class NewmatchComponent implements OnInit {
         if (code === undefined) {
           code = nc.code.slice(0, 2);
         }
-        if (code === 'GIST') {
+        if (code === 'UCGIS') {
           code = nc.code;
         }
         tempStats2[code] !== undefined ? tempStats2[code]++ : tempStats2[code] = 1;
@@ -922,7 +924,7 @@ export class NewmatchComponent implements OnInit {
         if (code === undefined) {
           code = nc.code.slice(0, 2);
         }
-        if (code === 'GIST') {
+        if (code === 'UCGIS') {
           code = nc.code;
         }
         tempStats3[code] !== undefined ? tempStats3[code]++ : tempStats3[code] = 1;
@@ -952,7 +954,7 @@ export class NewmatchComponent implements OnInit {
         if (code === undefined) {
           code = nc.slice(0, 2);
         }
-        if (code === 'GIST') {
+        if (code === 'UCGIS') {
           code = nc;
         }
         tempStats[code] !== undefined ? tempStats[code]++ : tempStats[code] = 1;
@@ -1213,13 +1215,13 @@ export class NewmatchComponent implements OnInit {
     this.allConcepts.forEach(con => {
       if (con.code === concept) {
         parentNode = con;
-        if (parentNode['parent'] && parentNode['parent']['code'] && parentNode['parent']['code'] !== 'GIST') {
-          while (parentCode !== 'GIST' && parentNode['code'] !== 'GIST') {
+        if (parentNode['parent'] && parentNode['parent']['code'] && parentNode['parent']['code'] !== 'UCGIS') {
+          while (parentCode !== 'UCGIS' && parentNode['code'] !== 'UCGIS') {
             if (parentNode['parent']['parent']) {
               parentNode = parentNode['parent'];
               parentCode = parentNode['parent']['code'];
             } else {
-              parentCode = 'GIST';
+              parentCode = 'UCGIS';
             }
           }
         } else {
@@ -1228,7 +1230,7 @@ export class NewmatchComponent implements OnInit {
       }
     });
     if (parentNode !== undefined) {
-      res = parentNode['code'] === 'GIST' ? concept : parentNode['code'];
+      res = parentNode['code'] === 'UCGIS' ? concept : parentNode['code'];
     }
     return res;
   }
@@ -1375,7 +1377,7 @@ export class NewmatchComponent implements OnInit {
   cleanResults() {
     this.searchInputField = '';
     bok.searchInBoK('');
-    this.navigateToConcept('GIST');
+    this.navigateToConcept('UCGIS');
   }
 
   incrementLimit() {
@@ -1413,7 +1415,7 @@ export class NewmatchComponent implements OnInit {
     this.getRelations();
     this.conceptsName = [];
 
-    const concept = this.textBoK.nativeElement.getElementsByTagName('h4')[0]
+    const concept = this.textInfo.nativeElement.getElementsByTagName('h4')[0]
       .textContent;
     const conceptId = concept.split(']')[0].substring(1);
 
