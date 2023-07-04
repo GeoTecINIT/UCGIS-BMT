@@ -1,9 +1,9 @@
-## EO4GEO - BoK Matching Tool (BMT)
+## UCGIS - BoK Matching Tool (BMT)
 
-The [BoK Matching Tool (BMT)](https://eo4geo-bmt.web.app) allows to compare EO4GEO BoK-annotated resources with respect to knowledge and skills and visually discover (dis)similarities. Resources can be ranked according to best/worst match and detailed statistics can be seen for every individual match. BoK-annotated resources understood by BMT are any content created by any of the other tools in the EO4GEO tools ecosystem: an educational offer (CDT), a job offer (JOT), an occupational profile (OPT) or an annotated PDF file (BAT). 
+The [BoK Matching Tool (BMT)](https://ucgis-tools-bmt.web.app/) allows to compare UCGI BoK-annotated resources with respect to knowledge and skills and visually discover (dis)similarities. Resources can be ranked according to best/worst match and detailed statistics can be seen for every individual match. BoK-annotated resources understood by BMT are any content created by any of the other tools in the UCGIS tools ecosystem: an educational offer (CDT), a job offer (JOT), an occupational profile (OPT) or an annotated PDF file (BAT). 
 
 #### Authors
-The EO4GEO BoK tools are developed by the [Geospatial Technologies Research Group](http://geotec.uji.es/) (GEOTEC) from the University Jaume I, Castellón (Spain) and are Licensed under GNU GPLv3.
+The UCGIS BoK tools are developed by the [Geospatial Technologies Research Group](http://geotec.uji.es/) (GEOTEC) from the University Jaume I, Castellón (Spain) and are Licensed under GNU GPLv3.
 
 
 #### Prerequisites
@@ -27,7 +27,7 @@ npm install -g @angular/cli
 
 ``` bash
 # clone the repo
-$ git clone https://github.com/GeoTecINIT/EO4GEO-BMT.git my-project
+$ git clone https://github.com/GeoTecINIT/UCGIS-BMT.git my-project
 
 # go into app's directory
 $ cd my-project

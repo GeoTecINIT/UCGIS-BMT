@@ -15,21 +15,16 @@ export class ChartNotCommon2Directive implements OnInit {
   myChart = null;
   statisticsNotMatching2 = [];
   kaCodes = {
-    AM: 'Analytical Methods',
-    CF: 'Conceptual Foundations',
+    AM: 'Analytics and Modeling',
+    CP: 'Computing Platforms',
     CV: 'Cartography and Visualization',
-    DA: 'Design and Setup of Geographic Information Systems',
-    DM: 'Data Modeling, Storage and Exploitation',
-    GC: 'Geocomputation',
-    GD: 'Geospatial Data',
-    GS: 'GI and Society',
-    IP: 'Image processing and analysis',
-    OI: 'Organizational and Institutional Aspects',
-    PP: 'Physical principles',
-    PS: 'Platforms, sensors and digital imagery',
-    TA: 'Thematic and application domains',
-    WB: 'Web-based GI',
-    GI: 'Geographic Information Science and Technology'
+    DA: 'Domain Applications',
+    DC: 'Data Capture',
+    DM: 'Data Management',
+    FC: 'Foundational Concepts',
+    GS: 'GIS& T and Society',
+    KE: 'Knowledge Economy',
+    PD: 'Programming and Development'
   };
   constructor( private el: ElementRef, private matchService: MatchService,
                private userService: UserService,
@@ -96,26 +91,18 @@ export class ChartNotCommon2Directive implements OnInit {
 
   getColor(code) {
     const colors = {
-      'bok-GI' : '#40e0d0',
-      'bok-IP' : '#1f77b4',
-      'bok-CF' : '#aec7e8',
-      'bok-CV' : '#ff7f0e',
-      'bok-DA' : '#ffbb78',
-      'bok-DM' : '#2ca02c',
-      'bok-DN' : '#98df8a',
-      'bok-PS' : '#d62728',
-      'bok-GD' : '#cc5b59',
-      'bok-GS' : '#9467bd',
-      'bok-AM' : '#8c564b',
-      'bok-MD' : '#8c564b',
-      'bok-OI' : '#c49c94',
-      'bok-GC' : '#e377c2',
-      'bok-PP' : '#f7b6d2',
-      'bok-SD' : '#7f7f7f',
-      'bok-SH' : '#c7c7c7',
-      'bok-TA' : '#bcbd22',
-      'bok-WB' : '#07561e',
-      'bok-no' : '#17becf',
+      'bok-AM': '#8dd3c7',
+      'bok-CP': '#ffffb3',
+      'bok-CV': '#bebada',
+      'bok-DA': '#fb8072',
+      'bok-DC': '#80b1d3',
+      'bok-DM': '#fdb462',
+      'bok-FC': '#b3de69',
+      'bok-GS': '#fccde5',
+      'bok-KE': '#d9d9d9',
+      'bok-PD': '#bc80bd',
+      'bok-UC': '#ccebc5',
+      'bok-no': '#17becf'
     };
     return colors['bok-' + code];
   }

@@ -22,21 +22,16 @@ export class DetailComponent implements OnInit {
   isAnonymous = null;
   myChart = null;
   kaCodes = {
-    AM: 'Analytical Methods',
-    CF: 'Conceptual Foundations',
+    AM: 'Analytics and Modeling',
+    CP: 'Computing Platforms',
     CV: 'Cartography and Visualization',
-    DA: 'Design and Setup of Geographic Information Systems',
-    DM: 'Data Modeling, Storage and Exploitation',
-    GC: 'Geocomputation',
-    GD: 'Geospatial Data',
-    GS: 'GI and Society',
-    IP: 'Image processing and analysis',
-    OI: 'Organizational and Institutional Aspects',
-    PP: 'Physical principles',
-    PS: 'Platforms, sensors and digital imagery',
-    TA: 'Thematic and application domains',
-    WB: 'Web-based GI',
-    GI: 'Geographic Information Science and Technology'
+    DA: 'Domain Applications',
+    DC: 'Data Capture',
+    DM: 'Data Management',
+    FC: 'Foundational Concepts',
+    GS: 'GIS& T and Society',
+    KE: 'Knowledge Economy',
+    PD: 'Programming and Development'
   };
 
   selectedMatch: Match;

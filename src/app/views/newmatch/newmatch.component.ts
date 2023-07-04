@@ -16,9 +16,6 @@ import { finalize } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Chart } from 'chart.js';
 import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
-/* import { pdfjsworker } from 'pdfjs-dist/build/pdf.worker.entry'; */
-/* import * as pdfjs from 'pdfjs-dist/es5/build/pdf';
-import { pdfjsworker } from 'pdfjs-dist/es5/build/pdf.worker.entry'; */
 import { BokService } from '../../services/bok.service';
 import { LoginComponent } from '../login/login.component';
 import * as bok from '@ucgis/find-in-bok-dataviz-tools';
@@ -125,21 +122,16 @@ export class NewmatchComponent implements OnInit {
   type = -1;
   type2 = -1;
   kaCodes = {
-    AM: 'Analytical Methods',
-    CF: 'Conceptual Foundations',
+    AM: 'Analytics and Modeling',
+    CP: 'Computing Platforms',
     CV: 'Cartography and Visualization',
-    DA: 'Design and Setup of Geographic Information Systems',
-    DM: 'Data Modeling, Storage and Exploitation',
-    GC: 'Geocomputation',
-    GD: 'Geospatial Data',
-    GS: 'GI and Society',
-    IP: 'Image processing and analysis',
-    OI: 'Organizational and Institutional Aspects',
-    PP: 'Physical principles',
-    PS: 'Platforms, sensors and digital imagery',
-    TA: 'Thematic and application domains',
-    WB: 'Web-based GI',
-    GI: 'Geographic Information Science and Technology',
+    DA: 'Domain Applications',
+    DC: 'Data Capture',
+    DM: 'Data Management',
+    FC: 'Foundational Concepts',
+    GS: 'GIS& T and Society',
+    KE: 'Knowledge Economy',
+    PD: 'Programming and Development'
   };
 
   formGroup = this.fb.group({
@@ -544,8 +536,8 @@ export class NewmatchComponent implements OnInit {
       const rdf = meta.info.Subject.split(' ');
       rdf.forEach(rdfEl => {
         const rel = rdfEl.split(':');
-        // if it's a eo4geo concept save the code
-        if (rel[0] === 'eo4geo') {
+        // if it's a ucgis concept save the code
+        if (rel[0] === 'ucgis') {
           if (rel[1] !== '') {
             if (rel[1].endsWith(';')) {
               // tslint:disable-next-line:max-line-length  '[' + rel[1].slice(0, -1) + '] '
@@ -1176,26 +1168,18 @@ export class NewmatchComponent implements OnInit {
   }
   getColor(code) {
     const colors = {
-      'bok-GI': '#40e0d0',
-      'bok-IP': '#1f77b4',
-      'bok-CF': '#aec7e8',
-      'bok-CV': '#ff7f0e',
-      'bok-DA': '#ffbb78',
-      'bok-DM': '#2ca02c',
-      'bok-DN': '#98df8a',
-      'bok-PS': '#d62728',
-      'bok-GD': '#cc5b59',
-      'bok-GS': '#9467bd',
-      'bok-AM': '#8c564b',
-      'bok-MD': '#8c564b',
-      'bok-OI': '#c49c94',
-      'bok-GC': '#e377c2',
-      'bok-PP': '#f7b6d2',
-      'bok-SD': '#7f7f7f',
-      'bok-SH': '#c7c7c7',
-      'bok-TA': '#bcbd22',
-      'bok-WB': '#07561e',
-      'bok-no': '#17becf',
+      'bok-AM': '#8dd3c7',
+      'bok-CP': '#ffffb3',
+      'bok-CV': '#bebada',
+      'bok-DA': '#fb8072',
+      'bok-DC': '#80b1d3',
+      'bok-DM': '#fdb462',
+      'bok-FC': '#b3de69',
+      'bok-GS': '#fccde5',
+      'bok-KE': '#d9d9d9',
+      'bok-PD': '#bc80bd',
+      'bok-UC': '#ccebc5',
+      'bok-no': '#17becf'
     };
     return colors['bok-' + code];
   }
