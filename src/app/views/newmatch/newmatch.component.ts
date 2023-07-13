@@ -206,6 +206,7 @@ export class NewmatchComponent implements OnInit {
       if (user) {
         this.userService.getUserById(user.uid).subscribe(userDB => {
           this.currentUser = new User(userDB);
+          this.isAnonymous = false;
           if (this.currentUser.organizations && this.currentUser.organizations.length > 0) {
             this.currentUser.organizations.forEach(orgId => {
               this.organizationService.getOrganizationById(orgId).subscribe(org => {
@@ -218,7 +219,6 @@ export class NewmatchComponent implements OnInit {
                     it =>
                       this.currentUser.organizations.includes(it.orgId) || it.isPublic
                   );
-                  this.isAnonymous = false;
                 }
               });
             });
@@ -1017,6 +1017,7 @@ export class NewmatchComponent implements OnInit {
   }
 
   filterByType(array, type) {
+    console.log("Filter by type")
     if (array === 1) {
       this.paginationLimitFrom1 = 0;
       this.paginationLimitTo1 = this.LIMIT_PER_PAGE;
