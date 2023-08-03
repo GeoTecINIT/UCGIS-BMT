@@ -24,8 +24,8 @@ export class BokService {
   public foundConcept = null;
   public allConceptsCodes = [];
 
-  BOK_PERMALINK_PREFIX = 'https://ucgis-bok.web.app/';
-  private URL_BASE = 'https://ucgis-bok-default-rtdb.firebaseio.com/';
+  BOK_PERMALINK_PREFIX = 'https://gistbok-bok.ucgis.org/';
+  private URL_BASE = 'https://ucgis-bok-dev-default-rtdb.firebaseio.com/';
 
 
   constructor(private db: AngularFireDatabase, private http: HttpClient) {
