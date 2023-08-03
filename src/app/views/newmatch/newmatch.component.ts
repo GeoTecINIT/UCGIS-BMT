@@ -1169,18 +1169,18 @@ export class NewmatchComponent implements OnInit {
   }
   getColor(code) {
     const colors = {
-      'bok-AM': '#8dd3c7',
-      'bok-CP': '#ffffb3',
-      'bok-CV': '#bebada',
-      'bok-DA': '#fb8072',
-      'bok-DC': '#80b1d3',
-      'bok-DM': '#fdb462',
-      'bok-FC': '#b3de69',
-      'bok-GS': '#fccde5',
-      'bok-KE': '#d9d9d9',
-      'bok-PD': '#bc80bd',
-      'bok-UC': '#ccebc5',
-      'bok-no': '#17becf'
+      'bok-AM': '#9999F8',
+      'bok-CP': '#AEB9C8',
+      'bok-CV': '#F19E70',
+      'bok-DA': '#4EAEEA',
+      'bok-DC': '#FBE7A3',
+      'bok-DM': '#B1CF95',
+      'bok-FC': '#F19E9C',
+      'bok-GS': '#439798',
+      'bok-KE': '#E4EEDC',
+      'bok-PD': '#A3C1E3',
+      'bok-UC': '#e4e4e4',
+      'bok-no': '#e4e4e4'
     };
     return colors['bok-' + code];
   }
