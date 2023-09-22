@@ -24,7 +24,7 @@ export class BokService {
   public foundConcept = null;
   public allConceptsCodes = [];
 
-  BOK_PERMALINK_PREFIX = 'https://gistbok-bok.ucgis.org/';
+  BOK_PERMALINK_PREFIX = 'https://gistbok-topics.ucgis.org/';
   private URL_BASE = 'https://ucgis-bok-dev-default-rtdb.firebaseio.com/';
 
 
